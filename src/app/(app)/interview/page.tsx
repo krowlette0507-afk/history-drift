@@ -627,6 +627,16 @@ function InterviewInner() {
     [interviewerId]
   );
 
+  /* ── Auth ── */
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    import("@/lib/supabase").then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data }) => {
+        setIsAuthenticated(!!data.session);
+      });
+    });
+  }, []);
+
   /* ── State ── */
   const [selectedInterviewer, setSelectedInterviewer] = useState<Interviewer>(interviewer);
   const [interviewState, setInterviewState] = useState<InterviewState>(
@@ -1031,7 +1041,7 @@ function InterviewInner() {
     if (nextCount >= PHASE_QUESTIONS_PER[currentPhase]) {
       setCompletedPhases((prev) => new Set([...prev, currentPhase]));
       // Freemium gate — after Story Hook phase, prompt sign up
-      if (currentPhase === "hook") {
+      if (currentPhase === "hook" && !isAuthenticated) {
         stopSpeaking();
         setShowFreemiumGate(true);
         return;
