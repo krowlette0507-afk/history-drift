@@ -1,9 +1,12 @@
-/**
- * Client-side localStorage persistence layer.
- * Mirrors the Supabase schema so swapping in real DB is trivial later.
+﻿/**
+ * Persistence layer: writes to localStorage (always) + Supabase (when authenticated).
  */
 
 import { PhaseId } from "./interview-config";
+import { supabase as _supabase } from "./supabase";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = _supabase as any;
 
 export interface StoredSession {
   id: string;
@@ -71,6 +74,11 @@ function uid(): string {
   return `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+async function getUserId(): Promise<string | null> {
+  const { data } = await db.auth.getSession();
+  return data.session?.user?.id ?? null;
+}
+
 /* ─── Sessions ────────────────────────────────────────────────────────── */
 const SESSIONS_KEY = "ls_sessions";
 
@@ -84,7 +92,7 @@ export function getSession(id: string): StoredSession | undefined {
   return getSessions().find((s) => s.id === id);
 }
 
-export function createSession(interviewerId: string, interviewerName: string): StoredSession {
+export async function createSession(interviewerId: string, interviewerName: string): Promise<StoredSession> {
   const session: StoredSession = {
     id: uid(),
     interviewerId,
@@ -94,22 +102,46 @@ export function createSession(interviewerId: string, interviewerName: string): S
   };
   const sessions = getSessions();
   save(SESSIONS_KEY, [session, ...sessions]);
+
+  const userId = await getUserId();
+  if (userId) {
+    await db.from("interview_sessions").insert({
+      id: session.id,
+      user_id: userId,
+      interviewer_id: session.interviewerId,
+      interviewer_name: session.interviewerName,
+      started_at: session.startedAt,
+      exchange_count: 0,
+    });
+  }
+
   return session;
 }
 
-export function updateSession(id: string, updates: Partial<StoredSession>): void {
+export async function updateSession(id: string, updates: Partial<StoredSession>): Promise<void> {
   const sessions = getSessions();
   const idx = sessions.findIndex((s) => s.id === id);
   if (idx >= 0) {
     sessions[idx] = { ...sessions[idx], ...updates };
     save(SESSIONS_KEY, sessions);
   }
+
+  const userId = await getUserId();
+  if (userId) {
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.completedAt !== undefined) dbUpdates.completed_at = updates.completedAt;
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.exchangeCount !== undefined) dbUpdates.exchange_count = updates.exchangeCount;
+    if (updates.summary !== undefined) dbUpdates.summary = updates.summary;
+    if (Object.keys(dbUpdates).length > 0) {
+      await db.from("interview_sessions").update(dbUpdates).eq("id", id);
+    }
+  }
 }
 
 export function deleteSession(id: string): void {
   const sessions = getSessions().filter((s) => s.id !== id);
   save(SESSIONS_KEY, sessions);
-  // Also delete all exchanges for this session
   const exchanges = getExchanges().filter((e) => e.sessionId !== id);
   save(EXCHANGES_KEY, exchanges);
 }
@@ -122,12 +154,12 @@ export function getExchanges(sessionId?: string): StoredExchange[] {
   return sessionId ? all.filter((e) => e.sessionId === sessionId) : all;
 }
 
-export function saveExchange(
+export async function saveExchange(
   sessionId: string,
   phase: PhaseId,
   question: string,
   answer: string
-): StoredExchange {
+): Promise<StoredExchange> {
   const exchange: StoredExchange = {
     id: uid(),
     sessionId,
@@ -139,7 +171,6 @@ export function saveExchange(
   const exchanges = load<StoredExchange>(EXCHANGES_KEY);
   save(EXCHANGES_KEY, [...exchanges, exchange]);
 
-  // Increment session exchange count
   const sessions = getSessions();
   const sIdx = sessions.findIndex((s) => s.id === sessionId);
   if (sIdx >= 0) {
@@ -147,15 +178,38 @@ export function saveExchange(
     save(SESSIONS_KEY, sessions);
   }
 
+  const userId = await getUserId();
+  if (userId) {
+    await db.from("interview_exchanges").insert({
+      id: exchange.id,
+      session_id: exchange.sessionId,
+      user_id: userId,
+      phase: exchange.phase,
+      question: exchange.question,
+      answer: exchange.answer,
+      saved_at: exchange.savedAt,
+    });
+    await db.from("interview_sessions")
+      .update({ exchange_count: (sessions[sIdx]?.exchangeCount ?? 1) })
+      .eq("id", sessionId);
+  }
+
   return exchange;
 }
 
-export function updateExchange(id: string, updates: Partial<StoredExchange>): void {
+export async function updateExchange(id: string, updates: Partial<StoredExchange>): Promise<void> {
   const exchanges = load<StoredExchange>(EXCHANGES_KEY);
   const idx = exchanges.findIndex((e) => e.id === id);
   if (idx >= 0) {
     exchanges[idx] = { ...exchanges[idx], ...updates };
     save(EXCHANGES_KEY, exchanges);
+  }
+
+  const userId = await getUserId();
+  if (userId && updates.memory !== undefined) {
+    await db.from("interview_exchanges")
+      .update({ memory: updates.memory as unknown })
+      .eq("id", id);
   }
 }
 
@@ -335,3 +389,4 @@ export function getStats() {
     quotesCount: quotes.length,
   };
 }
+

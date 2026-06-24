@@ -1,128 +1,66 @@
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+﻿// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Json = any;
 
 export interface Database {
   public: {
     Tables: {
-      profiles: {
+      interview_sessions: {
         Row: {
           id: string;
           user_id: string;
-          subject_name: string;
-          subject_relationship: string | null;
-          birth_year: number | null;
-          birth_place: string | null;
-          avatar_url: string | null;
-          bio_summary: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["profiles"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
-      };
-      interviews: {
-        Row: {
-          id: string;
-          profile_id: string;
           interviewer_id: string;
-          title: string;
-          status: "active" | "completed" | "paused";
+          interviewer_name: string;
           started_at: string;
           completed_at: string | null;
-          duration_seconds: number | null;
-        };
-        Insert: Omit<Database["public"]["Tables"]["interviews"]["Row"], "id" | "started_at">;
-        Update: Partial<Database["public"]["Tables"]["interviews"]["Insert"]>;
-      };
-      messages: {
-        Row: {
-          id: string;
-          interview_id: string;
-          role: "assistant" | "user";
-          content: string;
-          audio_url: string | null;
+          title: string | null;
+          exchange_count: number;
+          summary: Json | null;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["messages"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["messages"]["Insert"]>;
+        Insert: {
+          id: string;
+          user_id: string;
+          interviewer_id: string;
+          interviewer_name: string;
+          started_at: string;
+          completed_at?: string | null;
+          title?: string | null;
+          exchange_count?: number;
+          summary?: Json | null;
+        };
+        Update: {
+          completed_at?: string | null;
+          title?: string | null;
+          exchange_count?: number;
+          summary?: Json | null;
+        };
       };
-      people: {
+      interview_exchanges: {
         Row: {
           id: string;
-          profile_id: string;
-          name: string;
-          relationship: string | null;
-          description: string | null;
-          birth_year: number | null;
+          session_id: string;
+          user_id: string;
+          phase: string;
+          question: string;
+          answer: string;
+          memory: Json | null;
+          saved_at: string;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["people"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["people"]["Insert"]>;
-      };
-      places: {
-        Row: {
+        Insert: {
           id: string;
-          profile_id: string;
-          name: string;
-          place_type: string | null;
-          description: string | null;
-          years_lived: string | null;
-          significance: string | null;
-          created_at: string;
+          session_id: string;
+          user_id: string;
+          phase: string;
+          question: string;
+          answer: string;
+          memory?: Json | null;
+          saved_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["places"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["places"]["Insert"]>;
-      };
-      timeline_events: {
-        Row: {
-          id: string;
-          profile_id: string;
-          year: number | null;
-          date_description: string | null;
-          title: string;
-          description: string | null;
-          category: string | null;
-          created_at: string;
+        Update: {
+          memory?: Json | null;
+          answer?: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["timeline_events"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["timeline_events"]["Insert"]>;
-      };
-      life_lessons: {
-        Row: {
-          id: string;
-          profile_id: string;
-          lesson: string;
-          context: string | null;
-          category: string | null;
-          created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["life_lessons"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["life_lessons"]["Insert"]>;
-      };
-      biography_drafts: {
-        Row: {
-          id: string;
-          profile_id: string;
-          title: string;
-          content: string;
-          style: "narrative" | "chronological" | "thematic";
-          version: number;
-          created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["biography_drafts"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["biography_drafts"]["Insert"]>;
-      };
-      legacy_documents: {
-        Row: {
-          id: string;
-          profile_id: string;
-          doc_type: "letter" | "tribute" | "wishes" | "values" | "advice";
-          title: string;
-          content: string;
-          recipient: string | null;
-          created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["legacy_documents"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["legacy_documents"]["Insert"]>;
       };
     };
   };

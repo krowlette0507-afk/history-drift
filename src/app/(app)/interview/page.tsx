@@ -480,7 +480,7 @@ function SessionSummaryView({
         const data = await res.json();
         const s = data.summary || data;
         setSummary(s);
-        updateSession(sessionId, {
+        await updateSession(sessionId, {
           completedAt: new Date().toISOString(),
           title: s.title,
           summary: s,
@@ -816,7 +816,7 @@ function InterviewInner() {
 
   /* ── Start interview ── */
   const startInterview = useCallback(() => {
-    const session = createSession(selectedInterviewer.id, selectedInterviewer.name);
+    createSession(selectedInterviewer.id, selectedInterviewer.name).then((session) => {
     setSessionId(session.id);
     setInterviewState("active");
     setCurrentPhase("hook");
@@ -832,6 +832,7 @@ function InterviewInner() {
     setCurrentQuestion(opening);
     setLiveMessages([{ role: "assistant", content: opening }]);
     if (ttsEnabled) setTimeout(() => speak(opening, selectedInterviewer.gender, selectedInterviewer.voiceName), 300);
+    });
   }, [selectedInterviewer, ttsEnabled, speak]);
 
   /* ── Recording controls ── */
@@ -989,7 +990,7 @@ function InterviewInner() {
       setExchanges((prev) =>
         prev.map((ex) => ex.id === exchange.id ? { ...ex, memory, extracting: false } : ex)
       );
-      updateExchange(exchange.id, { memory });
+      await updateExchange(exchange.id, { memory });
     } catch {
       setExchanges((prev) =>
         prev.map((ex) => ex.id === exchange.id ? { ...ex, extracting: false } : ex)
@@ -1006,7 +1007,7 @@ function InterviewInner() {
     stopRecording();
 
     // Save to storage
-    const stored = saveExchange(sessionId, currentPhase, currentQuestion, answer);
+    const stored = await saveExchange(sessionId, currentPhase, currentQuestion, answer);
 
     const newExchange: ActiveExchange = {
       id: stored.id,
@@ -1068,7 +1069,7 @@ function InterviewInner() {
       prev.map((ex) => {
         if (ex.id !== id) return ex;
         const updated = { ...ex, answer: ex.editDraft || ex.answer, editing: false };
-        updateExchange(id, { answer: updated.answer });
+        updateExchange(id, { answer: updated.answer }).catch(console.error);
         // Re-extract memory with new answer
         setTimeout(() => extractMemory(updated), 500);
         return updated;
