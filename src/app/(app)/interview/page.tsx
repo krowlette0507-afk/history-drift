@@ -9,7 +9,7 @@ import { INTERVIEWERS, Interviewer } from "@/data/interviewers";
 import { INTERVIEW_PHASES, PhaseId } from "@/lib/interview-config";
 import {
   createSession, saveExchange, updateExchange, updateSession,
-  getExchanges, StoredExchange, StoredMemory
+  getExchanges, getSessions, StoredExchange, StoredMemory
 } from "@/lib/storage";
 import InterviewerPortrait from "@/components/home/InterviewerPortrait";
 import {
@@ -627,12 +627,23 @@ function InterviewInner() {
     [interviewerId]
   );
 
-  /* ── Auth ── */
+  /* ── Auth + resume ── */
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [resumeSession, setResumeSession] = useState<{ sessionId: string; phase: PhaseId; exchangeCount: number } | null>(null);
   useEffect(() => {
     import("@/lib/supabase").then(({ supabase }) => {
       supabase.auth.getSession().then(({ data }) => {
         setIsAuthenticated(!!data.session);
+        if (data.session) {
+          // Find most recent incomplete session
+          const sessions = getSessions().filter(s => !s.completedAt);
+          if (sessions.length > 0) {
+            const latest = sessions[0];
+            const exchanges = getExchanges(latest.id);
+            const lastPhase = exchanges.length > 0 ? exchanges[exchanges.length - 1].phase : "hook";
+            setResumeSession({ sessionId: latest.id, phase: lastPhase as PhaseId, exchangeCount: exchanges.length });
+          }
+        }
       });
     });
   }, []);
@@ -844,6 +855,29 @@ function InterviewInner() {
     if (ttsEnabled) setTimeout(() => speak(opening, selectedInterviewer.gender, selectedInterviewer.voiceName), 300);
     });
   }, [selectedInterviewer, ttsEnabled, speak]);
+
+  /* ── Resume session ── */
+  const resumeInterview = useCallback(() => {
+    if (!resumeSession) return;
+    const prevExchanges = getExchanges(resumeSession.sessionId);
+    setSessionId(resumeSession.sessionId);
+    setCurrentPhase(resumeSession.phase);
+    setPhaseQuestionCount(0);
+    setCompletedPhases(new Set(
+      INTERVIEW_PHASES.slice(0, INTERVIEW_PHASES.findIndex(p => p.id === resumeSession.phase)).map(p => p.id)
+    ));
+    setExchanges(prevExchanges.map(e => ({ id: e.id, question: e.question, answer: e.answer, phase: e.phase, memory: e.memory })));
+    const liveHistory: LiveMessage[] = [];
+    prevExchanges.forEach(e => {
+      liveHistory.push({ role: "assistant", content: e.question });
+      liveHistory.push({ role: "user", content: e.answer });
+    });
+    setLiveMessages(liveHistory);
+    setCurrentAnswer("");
+    setAccumulatedTranscript("");
+    setInterviewState("active");
+    fetchNextQuestion(resumeSession.phase, liveHistory, resumeSession.sessionId);
+  }, [resumeSession, fetchNextQuestion]);
 
   /* ── Recording controls ── */
   const startRecording = useCallback(() => {
@@ -1142,24 +1176,35 @@ function InterviewInner() {
             <InterviewerPortrait interviewer={selectedInterviewer} size={112} />
           </div>
           <h2 className="text-amber-200 font-serif font-bold text-2xl mb-2">
-            Ready when you are
+            {resumeSession ? "Welcome back" : "Ready when you are"}
           </h2>
           <p className="text-amber-700/60 font-serif italic text-sm mb-2">
-            {selectedInterviewer.name} will guide you through 9 chapters of your story.
+            {resumeSession
+              ? `You have an interview in progress — ${resumeSession.exchangeCount} answer${resumeSession.exchangeCount !== 1 ? "s" : ""} saved.`
+              : `${selectedInterviewer.name} will guide you through 9 chapters of your story.`}
           </p>
           <p className="text-amber-800/50 text-xs font-sans mb-8">
-            Find a quiet place. Speak naturally. There are no wrong answers.
+            {resumeSession ? "Pick up right where you left off." : "Find a quiet place. Speak naturally. There are no wrong answers."}
           </p>
-          <div className="flex gap-3">
-            <button onClick={() => setInterviewState("select")}
-              className="flex-1 py-3 rounded-xl font-serif text-sm text-amber-600 border border-amber-800/30 hover:bg-amber-900/20 transition-all">
-              Change Interviewer
-            </button>
-            <button onClick={startInterview}
-              className="flex-1 py-3 rounded-xl font-serif font-semibold text-amber-50 text-sm transition-all hover:scale-[1.02]"
-              style={{ background: `linear-gradient(135deg, ${selectedInterviewer.accentColor}, #c8843a)`, boxShadow: `0 4px 20px ${selectedInterviewer.accentColor}40` }}>
-              Begin Interview
-            </button>
+          <div className="flex flex-col gap-3">
+            {resumeSession && (
+              <button onClick={resumeInterview}
+                className="w-full py-3 rounded-xl font-serif font-semibold text-amber-50 text-sm transition-all hover:scale-[1.02]"
+                style={{ background: `linear-gradient(135deg, ${selectedInterviewer.accentColor}, #c8843a)`, boxShadow: `0 4px 20px ${selectedInterviewer.accentColor}40` }}>
+                Continue Interview
+              </button>
+            )}
+            <div className="flex gap-3">
+              <button onClick={() => setInterviewState("select")}
+                className="flex-1 py-3 rounded-xl font-serif text-sm text-amber-600 border border-amber-800/30 hover:bg-amber-900/20 transition-all">
+                Change Interviewer
+              </button>
+              <button onClick={startInterview}
+                className="flex-1 py-3 rounded-xl font-serif font-semibold text-amber-50 text-sm transition-all hover:scale-[1.02]"
+                style={{ background: resumeSession ? "rgba(80,50,20,0.5)" : `linear-gradient(135deg, ${selectedInterviewer.accentColor}, #c8843a)`, boxShadow: resumeSession ? "none" : `0 4px 20px ${selectedInterviewer.accentColor}40`, border: resumeSession ? "1px solid rgba(101,67,20,0.4)" : "none" }}>
+                {resumeSession ? "Start Fresh" : "Begin Interview"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
