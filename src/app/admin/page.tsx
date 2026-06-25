@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { type ReactNode, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -23,7 +23,7 @@ export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("overview");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<unknown>(null);
+  const [data, setData] = useState<object | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -63,6 +63,7 @@ export default function AdminPage() {
   ];
 
   const showLoader: boolean = loading && tab !== "payments";
+  const loaderEl: ReactNode = showLoader ? <div className="text-amber-700/50 text-center py-20 font-serif">Loading...</div> : null;
 
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 50%, #1a1006 100%)" }}>
@@ -88,7 +89,7 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {showLoader ? <div className="text-amber-700/50 text-center py-20 font-serif">Loading...</div> : null}
+        {loaderEl}
 
         {/* Overview */}
         {!loading && tab === "overview" && data && (
