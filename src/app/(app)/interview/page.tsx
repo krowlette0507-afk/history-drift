@@ -1315,7 +1315,7 @@ function InterviewInner() {
   }
 
   return (
-    <div className="flex h-full md:h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 60%, #110a04 100%)" }}>
+    <div className="flex h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 60%, #110a04 100%)" }}>
 
       {/* ── Left sidebar: Phase progress (desktop only) ── */}
       <div className="hidden md:flex w-52 flex-shrink-0 flex-col border-r border-amber-900/20 overflow-hidden">
