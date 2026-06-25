@@ -333,16 +333,49 @@ function InterviewerSelector({
   onStart: () => void;
 }) {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <div className="text-center mb-8">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-8">
+      <div className="text-center mb-6 md:mb-8">
         <div className="text-amber-600/50 text-xs font-sans uppercase tracking-[0.3em] mb-2">Interview Center</div>
-        <h1 className="text-amber-200 font-serif font-bold text-3xl mb-2">Choose Your Interviewer</h1>
+        <h1 className="text-amber-200 font-serif font-bold text-2xl md:text-3xl mb-2">Choose Your Interviewer</h1>
         <p className="text-amber-700/60 font-serif italic text-sm max-w-md mx-auto">
           Each interviewer brings a unique style and focus to your life story.
         </p>
       </div>
 
-      <div className="grid grid-cols-5 gap-3 mb-8">
+      {/* Mobile: horizontal scroll carousel | Desktop: 5-col grid */}
+      <div className="md:hidden flex gap-3 overflow-x-auto pb-3 mb-6 snap-x snap-mandatory px-1"
+        style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+        {INTERVIEWERS.map((iv) => {
+          const isSelected = selected.id === iv.id;
+          return (
+            <button
+              key={iv.id}
+              onClick={() => onSelect(iv)}
+              className="flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all text-left flex-shrink-0 snap-center"
+              style={{
+                width: "140px",
+                borderColor: isSelected ? `${iv.accentColor}70` : "rgba(90,52,20,0.25)",
+                background: isSelected ? `${iv.accentColor}12` : "rgba(15,10,4,0.5)",
+                boxShadow: isSelected ? `0 0 20px ${iv.accentColor}20` : "none",
+              }}
+            >
+              <div className="rounded-xl overflow-hidden w-full"
+                style={{ border: isSelected ? `1px solid ${iv.accentColor}50` : "1px solid rgba(90,52,20,0.2)" }}>
+                <InterviewerPortrait interviewer={iv} size={120} />
+              </div>
+              <div className="w-full">
+                <div className="text-[11px] font-serif font-bold leading-tight"
+                  style={{ color: isSelected ? iv.accentColor : "rgba(200,160,90,0.8)" }}>
+                  {iv.name.split(" ").slice(0, 2).join(" ")}
+                </div>
+                <div className="text-[9px] font-sans text-amber-800/50 leading-tight mt-0.5 line-clamp-2">{iv.bestFor}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="hidden md:grid grid-cols-5 gap-3 mb-8">
         {INTERVIEWERS.map((iv) => {
           const isSelected = selected.id === iv.id;
           return (
@@ -380,13 +413,13 @@ function InterviewerSelector({
 
       {/* Selected interviewer detail */}
       <div
-        className="rounded-2xl p-6 mb-6 flex gap-6"
+        className="rounded-2xl p-4 md:p-6 mb-6 flex flex-col md:flex-row gap-4 md:gap-6"
         style={{ background: "rgba(20,12,4,0.7)", border: `1px solid ${selected.accentColor}30` }}
       >
-        <div className="w-28 flex-shrink-0 rounded-xl overflow-hidden" style={{ border: `1px solid ${selected.accentColor}40` }}>
+        <div className="w-20 md:w-28 flex-shrink-0 rounded-xl overflow-hidden mx-auto md:mx-0" style={{ border: `1px solid ${selected.accentColor}40` }}>
           <InterviewerPortrait interviewer={selected} size={112} />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 text-center md:text-left">
           <div style={{ color: selected.accentColor }} className="text-xs font-sans uppercase tracking-widest mb-1">
             {selected.ethnicity} · Age {selected.age}
           </div>
@@ -1282,10 +1315,10 @@ function InterviewInner() {
   }
 
   return (
-    <div className="flex h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 60%, #110a04 100%)" }}>
+    <div className="flex h-full md:h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 60%, #110a04 100%)" }}>
 
-      {/* ── Left sidebar: Phase progress ── */}
-      <div className="w-52 flex-shrink-0 flex flex-col border-r border-amber-900/20 overflow-hidden">
+      {/* ── Left sidebar: Phase progress (desktop only) ── */}
+      <div className="hidden md:flex w-52 flex-shrink-0 flex-col border-r border-amber-900/20 overflow-hidden">
         <div className="px-3 py-3 border-b border-amber-900/20 flex items-center gap-2">
           <div className="w-6 h-6 rounded-full flex-shrink-0 overflow-hidden">
             <InterviewerPortrait interviewer={selectedInterviewer} size={24} />
@@ -1339,9 +1372,9 @@ function InterviewInner() {
       {/* ── Center: Conversation ── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header bar */}
-        <div className="flex items-center justify-between px-5 py-2.5 border-b border-amber-900/20 flex-shrink-0"
+        <div className="flex items-center justify-between px-4 md:px-5 py-2.5 border-b border-amber-900/20 flex-shrink-0"
           style={{ background: "rgba(10,6,2,0.6)" }}>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button onClick={() => router.push("/dashboard")} className="text-amber-800/60 hover:text-amber-500 transition-colors">
               <ArrowLeft size={15} />
             </button>
@@ -1352,7 +1385,7 @@ function InterviewInner() {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => { setTtsEnabled(!ttsEnabled); stopSpeaking(); }}
               className="text-amber-800/50 hover:text-amber-500 transition-colors"
@@ -1361,11 +1394,16 @@ function InterviewInner() {
               {ttsEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
             </button>
             <span className="text-amber-800/40 text-[10px] font-sans">{exchanges.length} saved</span>
+            {/* Mobile end session */}
+            <button onClick={endSession} disabled={exchanges.length === 0}
+              className="md:hidden text-[10px] font-sans text-amber-700/50 disabled:opacity-30 border border-amber-900/30 px-2 py-1 rounded-lg">
+              Done
+            </button>
           </div>
         </div>
 
         {/* Messages scroll area */}
-        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+        <div className="flex-1 overflow-y-auto px-3 md:px-5 py-4 md:py-5 space-y-4 md:space-y-5">
           {/* Past exchanges */}
           {exchanges.map((ex) => (
             <div key={ex.id} className="space-y-2">
@@ -1568,7 +1606,7 @@ function InterviewInner() {
         </div>
 
         {/* ── Input area ── */}
-        <div className="flex-shrink-0 px-5 py-3 border-t border-amber-900/20"
+        <div className="flex-shrink-0 px-3 md:px-5 py-3 border-t border-amber-900/20"
           style={{ background: "rgba(10,6,2,0.7)" }}>
 
           {/* Recording state display */}
@@ -1758,9 +1796,9 @@ function InterviewInner() {
         </div>
       </div>
 
-      {/* ── Right panel: Memories ── */}
+      {/* ── Right panel: Memories (desktop only) ── */}
       <div
-        className="flex-shrink-0 flex flex-col border-l border-amber-900/20 transition-all duration-300"
+        className="hidden md:flex flex-shrink-0 flex-col border-l border-amber-900/20 transition-all duration-300"
         style={{ width: memoriesOpen ? "260px" : "36px" }}
       >
         <button
