@@ -17,6 +17,7 @@ export interface StoredSession {
   title?: string;
   summary?: StoredSessionSummary;
   exchangeCount: number;
+  userName?: string;
 }
 
 export interface StoredSessionSummary {

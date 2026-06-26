@@ -10,6 +10,7 @@ export interface Interviewer {
   bestFor: string;
   quote: string;
   openingQuestion: string;
+  introduction: string;
   accentColor: string;
   // Portrait palette
   skinTone: string;
@@ -34,6 +35,7 @@ export const INTERVIEWERS: Interviewer[] = [
     focusAreas: ["Life Lessons", "Historical Perspective", "Values", "Defining Moments"],
     bestFor: "Deep reflections, legacy, life wisdom, historical context",
     quote: "Every life leaves a legacy. Let's make sure yours is remembered.",
+    introduction: "I'm Dr. James Carter — a historian who has spent forty years listening to the stories that don't make it into textbooks. I believe every life is a chapter in a much larger story, and I'm here to help you find yours. I'll ask you questions that might surprise you, and I'll listen the way historians do — for what matters, not just what happened.",
     openingQuestion: "When you look back on your life, what single moment do you believe defined who you became — and why does it still feel so important?",
     accentColor: "#8a5021",
     skinTone: "#3a1e0a",
@@ -55,6 +57,7 @@ export const INTERVIEWERS: Interviewer[] = [
     focusAreas: ["Family Stories", "Heritage", "Childhood Memories", "Generational Connections"],
     bestFor: "Exploring family history, relationships & meaningful life moments",
     quote: "Your story connects generations. Let's uncover it together.",
+    introduction: "I'm Professor Mei Lin. I've dedicated my career to family history and the way memory connects us across generations. I find that the most important stories are often the quiet ones — the ones we almost forgot to tell. I'll guide you gently, and I promise there are no wrong answers here.",
     openingQuestion: "Tell me about your earliest memory — not necessarily the oldest, but the one that still feels the most vivid and alive inside you. Where are you, and what do you feel?",
     accentColor: "#6e5518",
     skinTone: "#c4956a",
@@ -76,6 +79,7 @@ export const INTERVIEWERS: Interviewer[] = [
     focusAreas: ["Career Path", "Major Decisions", "Work Achievements", "Balancing Life & Family"],
     bestFor: "Career stories, major life transitions, accomplishments",
     quote: "Every chapter of your life has purpose. Let's capture it.",
+    introduction: "Hi, I'm Sarah Bennett. I've spent years helping people articulate the story behind their career and the choices that shaped their lives. I believe every path has a purpose — even the detours. I'm direct, I'm supportive, and I'm genuinely curious about what drove the decisions that made you who you are.",
     openingQuestion: "What was the most pivotal professional decision you ever made — the one where you felt the weight of it in your chest — and how did it turn out?",
     accentColor: "#7a4a20",
     skinTone: "#d4a87c",
@@ -97,6 +101,7 @@ export const INTERVIEWERS: Interviewer[] = [
     focusAreas: ["Relationships", "Challenges", "Adventures", "Turning Points", "Personal Growth"],
     bestFor: "Personal stories, relationships, challenges & life experiences",
     quote: "The best stories come from the heart. Let's talk.",
+    introduction: "Hey, I'm Miguel. I'm not interested in your résumé — I want to know what made you laugh, what broke your heart, and what you'd do all over again. I've been doing this long enough to know that the best stories always come from the moments people almost didn't mention. So don't hold back.",
     openingQuestion: "Tell me about a person who changed the direction of your life — someone who, if you'd never met them, you'd be a completely different person today.",
     accentColor: "#8a5a18",
     skinTone: "#a06830",
@@ -118,6 +123,7 @@ export const INTERVIEWERS: Interviewer[] = [
     focusAreas: ["Modern Life", "Passions", "Technology", "Future Legacy", "Personal Brand"],
     bestFor: "Younger generations, modern stories, creative expression",
     quote: "Your story. Your way. Let's make it amazing.",
+    introduction: "I'm Jordan Brooks — storyteller, creative, and genuinely obsessed with what makes people unique. I grew up believing everyone has a story worth sharing, and I'm here to help you find yours and make it unforgettable. I'll keep things real, keep things moving, and I promise this will be more fun than you expect.",
     openingQuestion: "If your life so far were a film, what would the opening scene look like? Set the stage — where are you, how old are you, and what is happening that tells us everything about you?",
     accentColor: "#6b4a14",
     skinTone: "#c09060",

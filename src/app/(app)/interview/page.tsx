@@ -46,23 +46,23 @@ const PHASE_ICONS: Record<PhaseId, React.ReactNode> = {
 
 const OPENING_QUESTIONS: Record<string, Record<PhaseId, string>> = {
   dr_james_carter: {
-    hook: "Thank you for sitting with me today. I'd like to begin not at the beginning — but at the heart. What is one story from your life that, when you tell it, people never seem to get tired of hearing?",
+    hook: "Before we begin, I'd love to know who I'm speaking with. Please share your name and tell me a little about yourself — where you're from, what stage of life you're in, whatever feels right. There's no wrong way to start.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   professor_mei_lin: {
-    hook: "I'm so glad we have this time. Rather than start from the beginning, let's start with what's vivid. If your life were a film, what scene would open it — the one that tells us immediately who you are?",
+    hook: "I'm so glad you're here. Before we dive in, I'd love to know your name and a little about who you are — your background, where you grew up, whatever comes to mind first. Let's start simply.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   sarah_bennett: {
-    hook: "Welcome — I'm so glad you're here. Let's start with something that matters more than dates and timelines. Who changed your life in a way you never expected, and how did they do it?",
+    hook: "Welcome — I'm really glad you're here. Let's start by getting to know each other a little. What's your name, and can you give me a quick sense of who you are and where you're at in life right now?",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   miguel_alvarez: {
-    hook: "Hey, really glad you're here. Let's skip past the boring stuff and go straight to the good part. Tell me — what moment, more than any other, made you who you are?",
+    hook: "Hey, really glad you're here. Before anything else — what's your name, and tell me a little about yourself. Where you're from, what your world looks like right now. Just talk to me.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   jordan_brooks: {
-    hook: "Okay, let's do this right. Forget chronological order — that's for textbooks. What is one story from your life that, when you tell it, the room goes quiet and everyone leans in?",
+    hook: "Okay, let's do this! First things first — what's your name, and give me the quick version of you. Where you're from, what your life looks like, whatever you want me to know going in.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
 };
@@ -649,6 +649,19 @@ function SessionSummaryView({
   );
 }
 
+/* ─── Name extraction helper ──────────────────────────────────────────── */
+function extractName(text: string): string | null {
+  const patterns = [
+    /(?:my name is|i'm|i am|call me|name's)\s+([A-Z][a-z]+)/i,
+    /^([A-Z][a-z]{1,})[,.\s!]/,
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m?.[1] && m[1].length > 1) return m[1];
+  }
+  return null;
+}
+
 /* ─── Main Interview Inner ────────────────────────────────────────────── */
 function InterviewInner() {
   const searchParams = useSearchParams();
@@ -662,7 +675,7 @@ function InterviewInner() {
 
   /* ── Auth + resume ── */
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [resumeSession, setResumeSession] = useState<{ sessionId: string; phase: PhaseId; exchangeCount: number } | null>(null);
+  const [resumeSession, setResumeSession] = useState<{ sessionId: string; phase: PhaseId; exchangeCount: number; userName?: string } | null>(null);
   useEffect(() => {
     import("@/lib/supabase").then(({ supabase }) => {
       supabase.auth.getSession().then(({ data }) => {
@@ -674,7 +687,7 @@ function InterviewInner() {
             const latest = sessions[0];
             const exchanges = getExchanges(latest.id);
             const lastPhase = exchanges.length > 0 ? exchanges[exchanges.length - 1].phase : "hook";
-            setResumeSession({ sessionId: latest.id, phase: lastPhase as PhaseId, exchangeCount: exchanges.length });
+            setResumeSession({ sessionId: latest.id, phase: lastPhase as PhaseId, exchangeCount: exchanges.length, userName: latest.userName });
           }
         }
       });
@@ -704,6 +717,7 @@ function InterviewInner() {
   const [ttsError, setTtsError]                   = useState(false);  // audio stuck / failed
   const [memoriesOpen, setMemoriesOpen] = useState(true);
   const [showTypeMode, setShowTypeMode] = useState(false);
+  const [userName, setUserName] = useState<string>("");
 
   /* ── Refs ── */
   const synthRef = useRef<SpeechSynthesis | null>(null); // unused — kept to avoid refactor
@@ -850,6 +864,7 @@ function InterviewInner() {
           profileContext: "",
           currentPhase: phase,
           askedQuestions: askedQuestionsRef.current,
+          userName: userName || undefined,
         }),
         signal: controller.signal,
       });
@@ -866,7 +881,7 @@ function InterviewInner() {
     } finally {
       setIsLoadingQuestion(false);
     }
-  }, [selectedInterviewer.id, ttsEnabled, speak]);
+  }, [selectedInterviewer.id, ttsEnabled, speak, userName]);
 
   /* ── Start interview ── */
   const startInterview = useCallback(() => {
@@ -893,6 +908,7 @@ function InterviewInner() {
   const resumeInterview = useCallback(() => {
     if (!resumeSession) return;
     const prevExchanges = getExchanges(resumeSession.sessionId);
+    if (resumeSession.userName) setUserName(resumeSession.userName);
     setSessionId(resumeSession.sessionId);
     setCurrentPhase(resumeSession.phase);
     setPhaseQuestionCount(0);
@@ -1120,6 +1136,15 @@ function InterviewInner() {
       setPhaseQuestionCount(nextCount);
     }
 
+    // Extract name from first answer
+    if (exchanges.length === 0 && !userName) {
+      const extracted = extractName(answer);
+      if (extracted) {
+        setUserName(extracted);
+        await updateSession(sessionId, { userName: extracted });
+      }
+    }
+
     // Extract memory in background
     extractMemory(newExchange);
 
@@ -1132,6 +1157,7 @@ function InterviewInner() {
   }, [
     currentAnswer, currentQuestion, sessionId, currentPhase, phaseQuestionCount,
     stopSpeaking, stopRecording, advancePhase, extractMemory, fetchNextQuestion, liveMessages,
+    userName, exchanges.length,
   ]);
 
   /* ── Edit exchange ── */
@@ -1209,13 +1235,24 @@ function InterviewInner() {
             <InterviewerPortrait interviewer={selectedInterviewer} size={112} />
           </div>
           <h2 className="text-amber-200 font-serif font-bold text-2xl mb-2">
-            {resumeSession ? "Welcome back" : "Ready when you are"}
+            {resumeSession
+              ? `Welcome back${resumeSession.userName ? `, ${resumeSession.userName}` : ""}`
+              : "Ready when you are"}
           </h2>
           <p className="text-amber-700/60 font-serif italic text-sm mb-2">
             {resumeSession
               ? `You have an interview in progress — ${resumeSession.exchangeCount} answer${resumeSession.exchangeCount !== 1 ? "s" : ""} saved.`
               : `${selectedInterviewer.name} will guide you through 9 chapters of your story.`}
           </p>
+          {/* Interviewer introduction — shown on first visit only */}
+          {!resumeSession && (
+            <div className="rounded-xl px-4 py-3 mb-4 text-left"
+              style={{ background: `${selectedInterviewer.accentColor}10`, border: `1px solid ${selectedInterviewer.accentColor}25` }}>
+              <p className="text-amber-400/80 font-serif italic text-xs leading-relaxed">
+                &ldquo;{selectedInterviewer.introduction}&rdquo;
+              </p>
+            </div>
+          )}
           <p className="text-amber-800/50 text-xs font-sans mb-8">
             {resumeSession ? "Pick up right where you left off." : "Find a quiet place. Speak naturally. There are no wrong answers."}
           </p>

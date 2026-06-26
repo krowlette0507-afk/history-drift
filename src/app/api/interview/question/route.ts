@@ -4,7 +4,7 @@ import { PhaseId } from "@/lib/interview-config";
 
 export async function POST(req: NextRequest) {
   try {
-    const { interviewerId, messages, profileContext, currentPhase, askedQuestions } = await req.json();
+    const { interviewerId, messages, profileContext, currentPhase, askedQuestions, userName } = await req.json();
 
     if (!interviewerId || !messages) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
       messages,
       profileContext || "",
       (currentPhase as PhaseId) || "hook",
-      Array.isArray(askedQuestions) ? askedQuestions : []
+      Array.isArray(askedQuestions) ? askedQuestions : [],
+      userName || undefined
     );
     return NextResponse.json({ question });
   } catch (error) {

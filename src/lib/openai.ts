@@ -127,12 +127,17 @@ export async function generateInterviewQuestion(
   conversationHistory: { role: "user" | "assistant"; content: string }[],
   profileContext: string,
   currentPhase: PhaseId = "hook",
-  askedQuestions: string[] = []
+  askedQuestions: string[] = [],
+  userName?: string
 ): Promise<string> {
   const systemPrompt = INTERVIEWER_SYSTEM_PROMPTS[interviewerId] || INTERVIEWER_SYSTEM_PROMPTS.dr_james_carter;
   // Use interviewer-specific phase guidance; fall back to default if not defined
   const interviewerGuides = INTERVIEWER_PHASE_GUIDANCE[interviewerId] ?? {};
   const phaseGuidance = interviewerGuides[currentPhase] ?? DEFAULT_PHASE_GUIDANCE[currentPhase];
+
+  const nameContext = userName
+    ? `\n\nPERSONALIZATION: The person's name is ${userName}. Use their name naturally and occasionally — roughly 2-3 times per 10 exchanges — to make the conversation feel warm and personal. Never overuse it.`
+    : "";
 
   const avoidBlock = askedQuestions.length > 0
     ? `\n\nQUESTIONS ALREADY ASKED — NEVER REPEAT OR CLOSELY PARAPHRASE ANY OF THESE. If you need more information on a topic already covered, approach it from a completely fresh angle:\n${askedQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n")}`
@@ -143,7 +148,7 @@ export async function generateInterviewQuestion(
     messages: [
       {
         role: "system",
-        content: `${systemPrompt}
+        content: `${systemPrompt}${nameContext}
 
 DOCUMENTARY FRAMEWORK GUIDANCE:
 ${phaseGuidance}
