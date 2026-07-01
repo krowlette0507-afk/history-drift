@@ -16,14 +16,9 @@ const PHOTO_MAP: Record<string, string> = {
   jordan_brooks:      "/images/interviewers/jordan-brooks.jpg",
 };
 
-// Per-interviewer crop position (default is "center top")
-const OBJECT_POSITION_MAP: Record<string, string> = {
-  sarah_bennett: "50% 15%",  // crop to head/shoulders — source image is full-figure
-};
-
 export default function InterviewerPortrait({ interviewer, size = 200 }: Props) {
   const photoSrc = PHOTO_MAP[interviewer.id];
-  const objectPosition = OBJECT_POSITION_MAP[interviewer.id] ?? "center top";
+  const objectPosition = "center top";
   const height = Math.round(size * 1.3);
 
   if (photoSrc) {
