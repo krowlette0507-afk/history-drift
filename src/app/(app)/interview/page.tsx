@@ -343,17 +343,17 @@ function InterviewerSelector({
       </div>
 
       {/* Mobile: horizontal scroll carousel | Desktop: 5-col grid */}
-      <div className="md:hidden flex gap-3 overflow-x-auto pb-3 mb-6 snap-x snap-mandatory px-1"
-        style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+      <div className="md:hidden flex gap-3 overflow-x-auto pb-3 mb-6 snap-x snap-mandatory"
+        style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch", paddingLeft: "1rem", paddingRight: "1rem" } as React.CSSProperties}>
         {INTERVIEWERS.map((iv) => {
           const isSelected = selected.id === iv.id;
           return (
             <button
               key={iv.id}
               onClick={() => onSelect(iv)}
-              className="flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all text-left flex-shrink-0 snap-center"
+              className="flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all text-left flex-shrink-0 snap-start"
               style={{
-                width: "140px",
+                width: "160px",
                 borderColor: isSelected ? `${iv.accentColor}70` : "rgba(90,52,20,0.25)",
                 background: isSelected ? `${iv.accentColor}12` : "rgba(15,10,4,0.5)",
                 boxShadow: isSelected ? `0 0 20px ${iv.accentColor}20` : "none",
@@ -1205,10 +1205,7 @@ function InterviewInner() {
   /* ─────────────────────────────────────────────────────────────────── */
   if (interviewState === "select") {
     return (
-      <div
-        className="min-h-screen overflow-y-auto"
-        style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 50%, #1a1006 100%)" }}
-      >
+      <div>
         <div className="sticky top-0 z-10 px-6 py-3 border-b border-amber-900/20 flex items-center gap-3"
           style={{ background: "rgba(10,6,2,0.9)", backdropFilter: "blur(8px)" }}>
           <button onClick={() => router.push("/dashboard")} className="text-amber-700 hover:text-amber-400 transition-colors">
