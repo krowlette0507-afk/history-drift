@@ -169,9 +169,93 @@ export default function HomePage() {
     <>
       {modalIv && <InterviewerModal interviewer={modalIv} onClose={() => setModalIv(null)} />}
 
+      {/* ── Mobile home page ─────────────────────────────────────────── */}
+      <div className="md:hidden flex flex-col min-h-screen" style={{ background: "#0a0602" }}>
+        {/* Hero */}
+        <div className="relative flex-1 flex flex-col overflow-hidden" style={{ minHeight: "60vh" }}>
+          <div className="absolute inset-0"
+            style={{
+              backgroundImage: "url('/images/homepage-scene.webp')",
+              backgroundSize: "cover",
+              backgroundPosition: "55% center",
+            }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(5,3,1,0.55) 0%, rgba(5,3,1,0.1) 40%, rgba(5,3,1,0.7) 80%, rgba(5,3,1,0.98) 100%)" }} />
+
+          {/* Header */}
+          <header className="relative z-10 flex items-center justify-between px-5 pt-5 pb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg,#7a4a12,#c07a2a)" }}>
+                <span className="text-amber-100 font-serif font-bold text-xs">HD</span>
+              </div>
+              <span className="text-amber-200 font-serif font-semibold text-base">History Drift</span>
+            </div>
+            <Link href="/sign-in" className="font-serif text-sm px-4 py-1.5 rounded-lg"
+              style={{ color: "rgba(200,160,80,.85)", border: "1px solid rgba(120,80,30,.4)" }}>
+              Sign In
+            </Link>
+          </header>
+
+          {/* Tagline */}
+          <div className="relative z-10 flex-1 flex flex-col items-center justify-end px-6 pb-8 text-center">
+            <h1 className="font-serif font-bold text-amber-100 leading-tight mb-3" style={{ fontSize: "2.2rem" }}>
+              Your Story.<br />Your Legacy.
+            </h1>
+            <p className="font-serif italic text-sm mb-6" style={{ color: "rgba(200,165,100,0.8)" }}>
+              Reflect on your past. Share your experiences.<br />Inspire future generations.
+            </p>
+            <Link href="/sign-up"
+              className="px-8 py-3.5 rounded-xl font-serif font-semibold text-amber-50 text-base"
+              style={{ background: "linear-gradient(135deg,#7a4a12,#c07a2a)", boxShadow: "0 4px 20px rgba(120,70,18,0.5)" }}>
+              Get Started Free
+            </Link>
+          </div>
+        </div>
+
+        {/* Interviewer strip */}
+        <div className="px-4 pt-5 pb-2">
+          <p className="text-amber-700/50 text-xs font-sans uppercase tracking-widest mb-3">Meet your interviewers</p>
+          <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+            {INTERVIEWERS.map((iv) => (
+              <Link key={iv.id} href="/sign-up"
+                className="flex-shrink-0 flex flex-col items-center gap-1.5 p-2 rounded-xl border"
+                style={{ width: 90, borderColor: "rgba(90,52,20,0.3)", background: "rgba(15,10,4,0.6)" }}>
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2" style={{ borderColor: `${iv.accentColor}50` }}>
+                  <img src={PHOTO_MAP[iv.id]} alt={iv.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }} />
+                </div>
+                <span className="text-[10px] font-serif text-center leading-tight" style={{ color: "rgba(200,160,90,0.9)" }}>
+                  {iv.name.split(" ")[0]}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Nav grid */}
+        <div className="px-4 pt-3 pb-8 grid grid-cols-2 gap-2">
+          {[
+            { label: "Interview Center", desc: "Start your story", href: "/interview", icon: "◎" },
+            { label: "Timeline",         desc: "Your life events",  href: "/timeline",  icon: "◷" },
+            { label: "Biography",        desc: "Your life story",   href: "/biography", icon: "◆" },
+            { label: "Family Vault",     desc: "Share with family", href: "/vault",     icon: "▣" },
+          ].map((item) => (
+            <Link key={item.href} href={item.href}
+              className="flex items-center gap-2.5 p-3 rounded-xl border"
+              style={{ borderColor: "rgba(90,52,20,0.25)", background: "rgba(15,10,4,0.5)" }}>
+              <span style={{ color: "rgba(180,130,50,0.7)", fontSize: 14 }}>{item.icon}</span>
+              <div>
+                <div className="text-[11px] font-sans font-semibold text-amber-300/80">{item.label}</div>
+                <div className="text-[9px] font-sans text-amber-800/50">{item.desc}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Desktop home page ─────────────────────────────────────────── */}
       <main
         ref={containerRef}
-        className="overflow-hidden"
+        className="hidden md:block overflow-hidden"
         style={{ height: "100dvh", minHeight: "600px", background: "#0a0602", position: "relative" }}
       >
         {/* ── Background photo ──────────────────────────────────── */}
