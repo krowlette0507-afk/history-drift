@@ -343,7 +343,7 @@ function InterviewerSelector({
       </div>
 
       {/* Mobile: horizontal scroll carousel | Desktop: 5-col grid */}
-      <div className="md:hidden flex gap-3 overflow-x-auto pb-3 mb-6 snap-x snap-mandatory"
+      <div className="md:hidden flex gap-3 overflow-x-auto pb-3 mb-6"
         style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch", paddingLeft: "1rem", paddingRight: "1rem" } as React.CSSProperties}>
         {INTERVIEWERS.map((iv) => {
           const isSelected = selected.id === iv.id;
@@ -351,7 +351,7 @@ function InterviewerSelector({
             <button
               key={iv.id}
               onClick={() => onSelect(iv)}
-              className="flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all text-left flex-shrink-0 snap-start"
+              className="flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all text-left flex-shrink-0"
               style={{
                 width: "160px",
                 borderColor: isSelected ? `${iv.accentColor}70` : "rgba(90,52,20,0.25)",

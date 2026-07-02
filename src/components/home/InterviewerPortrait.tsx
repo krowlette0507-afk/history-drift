@@ -18,7 +18,7 @@ const PHOTO_MAP: Record<string, string> = {
 
 export default function InterviewerPortrait({ interviewer, size = 200 }: Props) {
   const photoSrc = PHOTO_MAP[interviewer.id];
-  const objectPosition = "center top";
+  const objectPosition = "center 20%";
   const height = Math.round(size * 1.3);
 
   if (photoSrc) {
