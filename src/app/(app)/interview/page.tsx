@@ -12,7 +12,6 @@ import {
   getExchanges, getSessions, StoredExchange, StoredMemory
 } from "@/lib/storage";
 import InterviewerPortrait from "@/components/home/InterviewerPortrait";
-import AvatarVideo from "@/components/interview/AvatarVideo";
 import {
   Mic, MicOff, Square, Pause, Play, Volume2, VolumeX,
   Send, Edit3, Check, X, ChevronRight, ChevronDown,
@@ -719,7 +718,6 @@ function InterviewInner() {
   const [memoriesOpen, setMemoriesOpen] = useState(true);
   const [showTypeMode, setShowTypeMode] = useState(false);
   const [userName, setUserName] = useState<string>("");
-  const [heygenVideoId, setHeygenVideoId] = useState<string | null>(null);
 
   /* ── Refs ── */
   const synthRef = useRef<SpeechSynthesis | null>(null); // unused — kept to avoid refactor
@@ -877,17 +875,6 @@ function InterviewInner() {
       setCurrentQuestion(q);
       setLiveMessages((prev) => [...prev, { role: "assistant", content: q }]);
       if (ttsEnabled) speak(q, selectedInterviewer.gender, selectedInterviewer.voiceName);
-      // Pre-generate HeyGen video for animated interviewers
-      if (selectedInterviewer.heygenAvatarId && selectedInterviewer.heygenVoiceId) {
-        setHeygenVideoId(null);
-        fetch("/api/heygen/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: q, avatarId: selectedInterviewer.heygenAvatarId, voiceId: selectedInterviewer.heygenVoiceId }),
-        }).then((r) => r.json()).then((d) => {
-          if (d.videoId) setHeygenVideoId(d.videoId);
-        }).catch(() => {/* video unavailable — silent fallback */});
-      }
     } catch {
       clearTimeout(fetchTimeout);
       setQuestionError(true); // show Retry / Skip UI — don't silently repeat a canned phrase
@@ -1843,7 +1830,7 @@ function InterviewInner() {
         </div>
       </div>
 
-      {/* ── Right panel: Avatar video (animated) or Memories ── */}
+      {/* ── Right panel: Memories (desktop only) ── */}
       <div
         className="hidden md:flex flex-shrink-0 flex-col border-l border-amber-900/20 transition-all duration-300"
         style={{ width: memoriesOpen ? "260px" : "36px" }}
@@ -1856,10 +1843,8 @@ function InterviewInner() {
           {memoriesOpen ? (
             <>
               <div className="flex items-center gap-2">
-                {selectedInterviewer.heygenAvatarId
-                  ? <><span className="text-[10px]">🎬</span><span className="text-[10px] font-sans text-amber-600/60 uppercase tracking-wider">Live Avatar</span></>
-                  : <><Sparkles size={11} className="text-amber-600/60" /><span className="text-[10px] font-sans text-amber-600/60 uppercase tracking-wider">Memories</span></>
-                }
+                <Sparkles size={11} className="text-amber-600/60" />
+                <span className="text-[10px] font-sans text-amber-600/60 uppercase tracking-wider">Memories</span>
               </div>
               <ChevronRight size={11} className="text-amber-800/40" />
             </>
@@ -1870,13 +1855,7 @@ function InterviewInner() {
 
         {memoriesOpen && (
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {selectedInterviewer.heygenAvatarId ? (
-              <AvatarVideo
-                videoId={heygenVideoId}
-                accentColor={selectedInterviewer.accentColor}
-                interviewerName={selectedInterviewer.name.split(" ")[0]}
-              />
-            ) : exchanges.length === 0 ? (
+            {exchanges.length === 0 ? (
               <div className="text-center py-8 px-2">
                 <Sparkles size={20} className="text-amber-800/30 mx-auto mb-2" />
                 <p className="text-[10px] font-sans text-amber-800/40 leading-relaxed">

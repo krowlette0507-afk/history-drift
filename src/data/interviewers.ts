@@ -21,9 +21,6 @@ export interface Interviewer {
   gender: "male" | "female";
   /** OpenAI TTS voice to use for this interviewer */
   voiceName: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-  /** HeyGen animated avatar — if set, uses video instead of static photo + TTS */
-  heygenAvatarId?: string;
-  heygenVoiceId?: string;
 }
 
 export const INTERVIEWERS: Interviewer[] = [
@@ -136,54 +133,6 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: false,
     gender: "female",
     voiceName: "shimmer",  // bright, energetic female — modern and creative
-  },
-  {
-    id: "marcus_webb",
-    name: "Marcus Webb",
-    title: "Life Philosophy & Legacy Interviewer",
-    age: 52,
-    ethnicity: "Caucasian",
-    expertise: ["Life Philosophy", "Legacy", "Meaning & Purpose"],
-    style: ["Thoughtful", "Calm", "Philosophical"],
-    focusAreas: ["Life Meaning", "Values", "Legacy", "Wisdom", "What Matters Most"],
-    bestFor: "Deep reflection on meaning, values & the legacy you want to leave",
-    quote: "The stories we tell about our lives become the lives we live.",
-    introduction: "I'm Marcus Webb. I've spent my career sitting with people at the intersections of their lives — moments of transition, loss, and renewal. I'm not here to lead you anywhere. I'm here to listen carefully, ask the questions you haven't thought to ask yourself, and help you find the words for things you've always felt but never said.",
-    openingQuestion: "Before we begin, I'd love to know who I'm speaking with. What's your name, and if you had to describe where you are in your life right now — not your job or your role, but where you are — how would you put it?",
-    accentColor: "#5a7a5a",
-    skinTone: "#d4a87c",
-    hairColor: "#5a4a3a",
-    hairStyle: "short-neat",
-    clothingColor: "#2a3a2a",
-    hasGlasses: false,
-    gender: "male",
-    voiceName: "echo",
-    heygenAvatarId: "Artur_sitting_office_front",
-    heygenVoiceId: "453c20e1525a429080e2ad9e4b26f2cd",
-  },
-  {
-    id: "elena_vasquez",
-    name: "Elena Vasquez",
-    title: "Personal Stories & Emotions Interviewer",
-    age: 44,
-    ethnicity: "Latina",
-    expertise: ["Personal Stories", "Emotional Memory", "Identity"],
-    style: ["Warm", "Empathetic", "Intuitive"],
-    focusAreas: ["Emotional Stories", "Identity", "Relationships", "Turning Points", "Joy & Grief"],
-    bestFor: "Heartfelt personal stories, emotional memories & identity",
-    quote: "The most honest version of your story is the one that surprised even you.",
-    introduction: "I'm Elena Vasquez. I believe every person carries stories inside them that have never fully been told — not because they aren't important, but because no one ever asked the right question at the right moment. That's what I'm here for. I'll follow the feeling, not the timeline. We'll go wherever the story takes us.",
-    openingQuestion: "I'm really glad you're here. Before anything else — what's your name, and is there something on your mind today, even something small, that brought you to this moment?",
-    accentColor: "#8a4a6a",
-    skinTone: "#c08060",
-    hairColor: "#2a1a0a",
-    hairStyle: "medium-wavy",
-    clothingColor: "#1a1a2a",
-    hasGlasses: false,
-    gender: "female",
-    voiceName: "nova",
-    heygenAvatarId: "Amelia_sitting_business_training_front",
-    heygenVoiceId: "42d00d4aac5441279d8536cd6b52c53c",
   },
 ];
 
