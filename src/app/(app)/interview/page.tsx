@@ -781,9 +781,14 @@ function InterviewInner() {
     setIsSpeaking(true);
     setTtsError(false);
 
-    // Ensure AudioContext exists and is running
-    if (!ttsCtxRef.current) ttsCtxRef.current = new AudioContext();
-    const ctx = ttsCtxRef.current;
+    // Always create a fresh AudioContext per playback — reused contexts
+    // can silently fail on mobile after being suspended/interrupted
+    try { ttsCtxRef.current?.close(); } catch {}
+    const ctx = new AudioContext();
+    ttsCtxRef.current = ctx;
+
+    // Immediately resume — required on mobile where autoplay policy suspends new contexts
+    ctx.resume().catch(() => {});
 
     // 12-second fetch timeout — if TTS API hangs, fail gracefully
     const controller = new AbortController();
@@ -824,7 +829,6 @@ function InterviewInner() {
       })
       .catch((err) => {
         clearTimeout(fetchTimeout);
-        // Only show error UI if it's not a deliberate abort (e.g. user skipped)
         if (err?.name !== "AbortError") setTtsError(true);
         setIsSpeaking(false);
       });
@@ -1422,10 +1426,15 @@ function InterviewInner() {
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => { setTtsEnabled(!ttsEnabled); stopSpeaking(); }}
-              className="text-amber-800/50 hover:text-amber-500 transition-colors"
-              title={ttsEnabled ? "Mute" : "Unmute"}
+              className="relative flex items-center justify-center transition-colors"
+              title={ttsEnabled ? (isSpeaking ? "Speaking — click to mute" : "Mute") : "Unmute"}
+              style={{ color: isSpeaking ? phaseColor : ttsEnabled ? "rgba(160,110,50,0.6)" : "rgba(100,70,30,0.4)" }}
             >
               {ttsEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+              {isSpeaking && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse"
+                  style={{ background: phaseColor }} />
+              )}
             </button>
             <span className="text-amber-800/40 text-[10px] font-sans">{exchanges.length} saved</span>
             {/* Mobile end session */}
