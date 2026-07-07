@@ -369,6 +369,73 @@ export function getProfileTranscripts(): string[] {
   }).filter(Boolean);
 }
 
+/* ─── Sync from Supabase → localStorage (call on login) ──────────────── */
+export async function syncFromSupabase(): Promise<void> {
+  const userId = await getUserId();
+  if (!userId) return;
+
+  try {
+    // Fetch sessions
+    const { data: remoteSessions } = await db
+      .from("interview_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("started_at", { ascending: false });
+
+    if (remoteSessions && remoteSessions.length > 0) {
+      const local = getSessions();
+      const localIds = new Set(local.map((s) => s.id));
+      const merged: StoredSession[] = [...local];
+
+      for (const r of remoteSessions) {
+        if (!localIds.has(r.id)) {
+          merged.push({
+            id: r.id,
+            interviewerId: r.interviewer_id,
+            interviewerName: r.interviewer_name,
+            startedAt: r.started_at,
+            completedAt: r.completed_at ?? undefined,
+            title: r.title ?? undefined,
+            summary: r.summary ?? undefined,
+            exchangeCount: r.exchange_count ?? 0,
+          });
+        }
+      }
+      save(SESSIONS_KEY, merged);
+    }
+
+    // Fetch exchanges
+    const { data: remoteExchanges } = await db
+      .from("interview_exchanges")
+      .select("*")
+      .eq("user_id", userId)
+      .order("saved_at", { ascending: true });
+
+    if (remoteExchanges && remoteExchanges.length > 0) {
+      const local = load<StoredExchange>(EXCHANGES_KEY);
+      const localIds = new Set(local.map((e) => e.id));
+      const merged = [...local];
+
+      for (const r of remoteExchanges) {
+        if (!localIds.has(r.id)) {
+          merged.push({
+            id: r.id,
+            sessionId: r.session_id,
+            phase: r.phase as PhaseId,
+            question: r.question,
+            answer: r.answer,
+            memory: r.memory ?? undefined,
+            savedAt: r.saved_at,
+          });
+        }
+      }
+      save(EXCHANGES_KEY, merged);
+    }
+  } catch {
+    // Sync failure is silent — localStorage data still works
+  }
+}
+
 export function getStats() {
   const sessions = getSessions();
   const exchanges = getExchanges();

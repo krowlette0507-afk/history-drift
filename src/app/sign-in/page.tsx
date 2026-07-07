@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
+import { syncFromSupabase } from "@/lib/storage";
 import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
@@ -20,6 +21,7 @@ export default function SignInPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      await syncFromSupabase();
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Sign in failed");
