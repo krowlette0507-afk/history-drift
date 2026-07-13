@@ -41,17 +41,24 @@ export async function POST(req: NextRequest) {
     from: "History Drift <noreply@historydrift.com>",
     to: inviteeEmail,
     subject: `${senderName} is building their life story — share a memory`,
+    text: `${senderName} is capturing their life story on History Drift and would love to hear a memory from you.\n\n${message ? `"${message}"\n\n` : ""}Share your memory here:\n${link}\n\nNo account needed. Your memory will be shared only with ${senderName}.`,
     html: `
-      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1a1208;background:#fdf8f2;padding:40px 32px;border-radius:12px;">
+      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1a1208;background:#fdf8f2;padding:40px 32px;">
         <div style="font-size:13px;color:#8a6830;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">History Drift</div>
         <h1 style="font-size:26px;font-weight:bold;color:#2a1a06;margin:0 0 16px;">You've been invited to contribute</h1>
         <p style="font-size:16px;line-height:1.7;color:#3a2a10;margin:0 0 20px;">
           <strong>${senderName}</strong> is capturing their life story on History Drift and would love to hear a memory from you.
         </p>
         ${message ? `<blockquote style="border-left:3px solid #c8843a;padding:12px 16px;margin:0 0 24px;background:#fff8ee;color:#5a3a10;font-style:italic;">${message}</blockquote>` : ""}
-        <a href="${link}" style="display:inline-block;background:linear-gradient(135deg,#7a2d8a,#c84a9a);color:white;text-decoration:none;padding:14px 28px;border-radius:10px;font-family:Arial,sans-serif;font-size:15px;font-weight:600;margin-bottom:28px;">
-          Share Your Memory →
-        </a>
+        <table cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="background-color:#7a2d8a;border-radius:10px;padding:14px 28px;">
+              <a href="${link}" style="color:white;text-decoration:none;font-family:Arial,sans-serif;font-size:15px;font-weight:600;">Share Your Memory →</a>
+            </td>
+          </tr>
+        </table>
+        <p style="font-size:13px;color:#7a6040;margin:0 0 8px;">Or copy this link into your browser:</p>
+        <p style="font-size:13px;color:#7a2d8a;word-break:break-all;margin:0 0 24px;">${link}</p>
         <p style="font-size:12px;color:#9a7a50;line-height:1.6;border-top:1px solid #e8d8b8;padding-top:20px;margin:0;">
           This link is personal to you — no account needed. Your memory will be shared with ${senderName} and kept private to their History Drift story.
         </p>
