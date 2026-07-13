@@ -121,6 +121,74 @@ const INTERVIEWER_ZONES = [
   { id: "jordan_brooks",     x1: 75, y1: 50, x2: 96, y2: 92 },
 ];
 
+/* ─── Re-Live example stories ───────────────────────────────────── */
+const RELIVE_STORIES = [
+  {
+    id: "lost",
+    title: "Lost",
+    subtitle: "A Boy's Unexpected Adventure",
+    src: "/examples/lost.jpg",
+    panels: [
+      { n: 1,  caption: "Kelvin, 13, heads into the woods alone for a morning of fishing." },
+      { n: 2,  caption: "He follows a little creek deep into the forest, curious and carefree." },
+      { n: 3,  caption: "The creek comes to an end. Kelvin isn't sure which way to go." },
+      { n: 4,  caption: "The sun sets. Kelvin realizes with a sinking feeling — he is lost." },
+      { n: 5,  caption: "He tries to find his way back, but every path looks the same." },
+      { n: 6,  caption: "Night falls. Tired and scared, he sits against a tree and hopes." },
+      { n: 7,  caption: "Through the dark trees, he spots headlights moving in the distance." },
+      { n: 8,  caption: "He runs to the road, waving frantically. A kind man stops to help." },
+      { n: 9,  caption: "Safe in the car, Kelvin tells the man what happened. Relief floods in." },
+      { n: 10, caption: "They arrive home. His mother rushes out in tears, his father close behind." },
+      { n: 11, caption: "Kelvin is safe. His family pulls him into a hug that says everything." },
+      { n: 12, caption: "Years later, Kelvin shares the story — the one that taught him courage." },
+    ],
+  },
+  {
+    id: "bully",
+    title: "The Bully",
+    subtitle: "How Sammy Let His Actions Speak Louder",
+    src: "/examples/bully.jpg",
+    panels: [
+      { n: 1,  caption: "Sammy, 13, arrives in a new neighborhood — boxes outside, fresh start ahead." },
+      { n: 2,  caption: "He makes friends fast. Laughter, jokes, and finally a place to belong." },
+      { n: 3,  caption: "On the bus, Sammy sits next to Cathy. They talk about everything." },
+      { n: 4,  caption: "Kerry, a year older and bigger, looms over them — throwing things, sneering." },
+      { n: 5,  caption: "Sammy feels the anger rise, but holds it in. He won't give Kerry power." },
+      { n: 6,  caption: "Sammy walks into the wrestling room and signs up. A decision that changes everything." },
+      { n: 7,  caption: "Practice is hard. He learns, falls, gets back up. His coach sees the heart in him." },
+      { n: 8,  caption: "At the state tournament, Sammy earns third place. He stands tall and proud." },
+      { n: 9,  caption: "Back on the bus, Sammy stands up and faces Kerry — calm, steady, and confident." },
+      { n: 10, caption: "Kerry's smirk fades. For the first time, he backs down without a word." },
+      { n: 11, caption: "The tension breaks. The whole bus exhales. Respect is earned, not taken." },
+      { n: 12, caption: "Years later, Sammy carries that quiet strength into everything he does." },
+    ],
+  },
+  {
+    id: "stage",
+    title: "Passion for the Stage",
+    subtitle: "From the Background to the Spotlight",
+    src: "/examples/stage.jpg",
+    panels: [
+      { n: 1,  caption: "Jessica, 16, watches rehearsals from the seats — always in the background." },
+      { n: 2,  caption: "She helps with costumes, lines, and anything anyone needs. Quietly devoted." },
+      { n: 3,  caption: "She coaches others through their lines, never once expecting the spotlight herself." },
+      { n: 4,  caption: "The drama teacher pins the cast list. The lead actress name is crossed out." },
+      { n: 5,  caption: "The teacher turns to Jessica with a hopeful look. Just two weeks to go." },
+      { n: 6,  caption: "Jessica is shocked. She never imagined it could be her — not once." },
+      { n: 7,  caption: "Then the terror sets in. Can she really do this?" },
+      { n: 8,  caption: "She rehearses alone in her room, learning every line, every note, every breath." },
+      { n: 9,  caption: "Her family gathers around the table — running lines with her, believing when she doubts." },
+      { n: 10, caption: "Final dress rehearsal. Backstage, the nerves are almost too much to bear." },
+      { n: 11, caption: "The curtain rises. The spotlight finds her. Jessica is Annie." },
+      { n: 12, caption: "Mid-show, she finds her voice. The audience leans forward as one." },
+      { n: 13, caption: "The final bow. A standing ovation. Flowers fly. Tears fill the crowd." },
+      { n: 14, caption: "Overwhelmed with gratitude, Jessica hugs the flowers to her chest." },
+      { n: 15, caption: "Years later, still doing what she loves. Dreams really do come true." },
+      { n: 16, caption: "From the background to the spotlight — Jessica's story is just the beginning." },
+    ],
+  },
+];
+
 /* ─── Trust bar ──────────────────────────────────────────────────── */
 const TRUST_ITEMS = [
   {
@@ -140,8 +208,8 @@ const TRUST_ITEMS = [
     title: "Legacy Secure",  desc: "Your story is preserved today for tomorrow.",             href: "/legacy",
   },
   {
-    icon: <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 17 Q4 13 4 8 Q4 4 7 3 Q9 2 10 4 Q11 2 13 3 Q16 4 16 8 Q16 13 10 17Z" fill="rgba(212,160,23,0.2)" stroke="rgba(212,160,23,0.7)" strokeWidth="1.5" strokeLinejoin="round"/></svg>,
-    title: "Made With Care", desc: "Thoughtful technology for life's most important memories.", href: "/dashboard",
+    icon: <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 3 L11.5 7.5 L16 7.5 L12.5 10.5 L14 15 L10 12 L6 15 L7.5 10.5 L4 7.5 L8.5 7.5 Z" fill="rgba(160,80,200,0.3)" stroke="rgba(180,100,220,0.8)" strokeWidth="1.2" strokeLinejoin="round"/></svg>,
+    title: "Re-Live", desc: "Turn memories into illustrated storyboards.", href: "/relive",
   },
 ];
 

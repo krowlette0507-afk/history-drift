@@ -1060,6 +1060,12 @@ function InterviewInner() {
   const stopRecording = useCallback(() => {
     activelyRecordingRef.current = false;
     if (recordingTimerRef.current) clearTimeout(recordingTimerRef.current);
+    // Commit any interim transcript so it isn't lost when recognition stops
+    setCurrentAnswer((prev) => {
+      const committed = prev.trim();
+      if (committed) finalTextRef.current = committed;
+      return committed;
+    });
     try { recognitionRef.current?.stop(); } catch { /* ignore */ }
     recognitionRef.current = null;
     teardownAnalyser();
@@ -1722,7 +1728,7 @@ function InterviewInner() {
           )}
 
           {/* ── After stop: prominent Submit / Re-record row ── */}
-          {recordingState === "stopped" && !showTypeMode && currentAnswer.trim() && (
+          {recordingState === "stopped" && !showTypeMode && (
             <div className="flex items-center gap-2 mb-2.5">
               {/* Re-record — clears and starts fresh */}
               <button

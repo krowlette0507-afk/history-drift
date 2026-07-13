@@ -200,9 +200,12 @@ export default function LegacyPage() {
             <>
               <div className="text-[9px] font-sans uppercase tracking-widest text-amber-800/40 px-2 mt-3 mb-1">Saved documents</div>
               {documents.map((doc) => (
-                <button key={doc.id}
+                <div key={doc.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelected(doc)}
-                  className="w-full text-left p-3 rounded-xl border transition-all group"
+                  onKeyDown={(e) => e.key === "Enter" && setSelected(doc)}
+                  className="w-full text-left p-3 rounded-xl border transition-all group cursor-pointer"
                   style={{
                     borderColor: selected?.id === doc.id ? "rgba(120,80,30,0.5)" : "rgba(90,52,20,0.2)",
                     background: selected?.id === doc.id ? "rgba(40,24,8,0.6)" : "rgba(15,10,4,0.4)",
@@ -219,7 +222,7 @@ export default function LegacyPage() {
                       <Trash2 size={10} />
                     </button>
                   </div>
-                </button>
+                </div>
               ))}
             </>
           )}

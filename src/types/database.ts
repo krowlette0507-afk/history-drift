@@ -35,6 +35,46 @@ export interface Database {
           summary?: Json | null;
         };
       };
+      relive_storyboards: {
+        Row: {
+          id: string;
+          user_id: string;
+          session_id: string | null;
+          subject_name: string | null;
+          age_stage: string;
+          art_style: string;
+          panel_count: number;
+          title: string | null;
+          subtitle: string | null;
+          image_url: string | null;
+          character_profile: Json | null;
+          storyboard_plan: Json | null;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          session_id?: string | null;
+          subject_name?: string | null;
+          age_stage: string;
+          art_style: string;
+          panel_count: number;
+          title?: string | null;
+          subtitle?: string | null;
+          image_url?: string | null;
+          character_profile?: Json | null;
+          storyboard_plan?: Json | null;
+          status?: string;
+        };
+        Update: {
+          title?: string | null;
+          subtitle?: string | null;
+          image_url?: string | null;
+          status?: string;
+        };
+      };
       interview_exchanges: {
         Row: {
           id: string;
