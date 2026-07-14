@@ -32,7 +32,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createServerClient() as any;
 
-  const { contributorName, contributorEmail, relationship, story } = await req.json();
+  const { contributorName, contributorEmail, relationship, story, photoUrls } = await req.json();
   if (!contributorName || !story) {
     return NextResponse.json({ error: "contributorName and story are required" }, { status: 400 });
   }
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       contributor_email: contributorEmail ?? null,
       relationship: relationship ?? null,
       story,
+      photo_urls: photoUrls ?? [],
     });
 
   if (contribErr) return NextResponse.json({ error: contribErr.message }, { status: 500 });

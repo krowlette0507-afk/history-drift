@@ -18,6 +18,7 @@ interface Contribution {
   contributor_name: string;
   relationship: string | null;
   story: string;
+  photo_urls: string[];
   created_at: string;
 }
 
@@ -46,7 +47,7 @@ export default function FamilyPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: contribRows } = await (supabase as any)
       .from("family_contributions")
-      .select("id, invite_id, contributor_name, relationship, story, created_at")
+      .select("id, invite_id, contributor_name, relationship, story, photo_urls, created_at")
       .in("invite_id", inviteRows.map((i: Invite) => i.id));
 
     const withContribs = inviteRows.map((inv: Invite) => ({
@@ -208,9 +209,20 @@ export default function FamilyPage() {
                           {new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
                       </div>
-                      <p className="font-serif text-sm leading-relaxed" style={{ color: "rgba(220,190,130,0.85)" }}>
+                      <p className="font-serif text-sm leading-relaxed mb-3" style={{ color: "rgba(220,190,130,0.85)" }}>
                         {c.story}
                       </p>
+                      {c.photo_urls?.length > 0 && (
+                        <div className="flex gap-2 flex-wrap">
+                          {c.photo_urls.map((url, pi) => (
+                            <a key={pi} href={url} target="_blank" rel="noopener noreferrer"
+                              className="block rounded-lg overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity"
+                              style={{ width: 80, height: 80 }}>
+                              <img src={url} alt="" className="w-full h-full object-cover" />
+                            </a>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
