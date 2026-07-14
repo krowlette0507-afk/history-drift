@@ -214,6 +214,49 @@ export async function updateExchange(id: string, updates: Partial<StoredExchange
   }
 }
 
+/* ─── People name correction ──────────────────────────────────────────── */
+
+export async function correctPersonName(
+  oldName: string,
+  newName: string,
+  newRelationship?: string
+): Promise<number> {
+  const exchanges = load<StoredExchange>(EXCHANGES_KEY);
+  const oldKey = oldName.toLowerCase().trim();
+  let changed = 0;
+
+  const updated = exchanges.map((ex) => {
+    if (!ex.memory) return ex;
+    let patched = false;
+    const people = ex.memory.importantPeople.map((p) => {
+      if (p.name.toLowerCase().trim() === oldKey) {
+        patched = true;
+        return { name: newName, relationship: newRelationship ?? p.relationship };
+      }
+      return p;
+    });
+    if (!patched) return ex;
+    changed++;
+    return { ...ex, memory: { ...ex.memory, importantPeople: people } };
+  });
+
+  save(EXCHANGES_KEY, updated);
+
+  // Sync changed exchanges to Supabase
+  const userId = await getUserId();
+  if (userId) {
+    for (const ex of updated) {
+      if (!ex.memory) continue;
+      const hasName = ex.memory.importantPeople.some((p) => p.name === newName);
+      if (hasName) {
+        await db.from("interview_exchanges").update({ memory: ex.memory }).eq("id", ex.id);
+      }
+    }
+  }
+
+  return changed;
+}
+
 /* ─── Derived data for app sections ──────────────────────────────────── */
 
 export interface DerivedPerson {

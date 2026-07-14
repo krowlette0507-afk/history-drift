@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { supabase } from "@/lib/supabase";
 import { Mic, BookOpen, Clock, Users, MapPin, Lightbulb, Scroll, Lock, HelpCircle, LayoutDashboard, Settings, Bell, X, Menu, Sparkles, Heart } from "lucide-react";
+
+const NOTIF_KEY = "ls_notif_seen_at";
 
 const NAV_ITEMS: { href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; highlight?: boolean }[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -31,6 +34,31 @@ const BOTTOM_TABS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    async function checkNotifications() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const seenAt = localStorage.getItem(NOTIF_KEY) ?? "1970-01-01";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any;
+      // Get user's invite IDs first
+      const { data: invites } = await sb
+        .from("family_invites")
+        .select("id")
+        .eq("user_id", session.user.id);
+      if (!invites?.length) return;
+      const inviteIds = invites.map((i: { id: string }) => i.id);
+      const { count } = await sb
+        .from("family_contributions")
+        .select("id", { count: "exact", head: true })
+        .in("invite_id", inviteIds)
+        .gt("created_at", seenAt);
+      setUnreadCount(count ?? 0);
+    }
+    checkNotifications();
+  }, [pathname]);
 
   return (
     <>
@@ -80,8 +108,14 @@ export default function Navbar() {
           })}
         </div>
         <div className="border-t border-amber-900/30 p-4 flex gap-2">
-          <Link href="/notifications" className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-700 hover:text-amber-400 text-xs transition-colors">
-            <Bell size={14} /><span>Alerts</span>
+          <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
+            className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-700 hover:text-amber-400 text-xs transition-colors relative">
+            <Bell size={14} />
+            <span>Alerts</span>
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-3 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
+            )}
           </Link>
           <Link href="/settings" className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-700 hover:text-amber-400 text-xs transition-colors">
             <Settings size={14} /><span>Settings</span>
@@ -98,9 +132,19 @@ export default function Navbar() {
           </div>
           <span className="text-amber-200 font-serif font-semibold text-base">History Drift</span>
         </Link>
-        <button onClick={() => setMenuOpen(true)} className="text-amber-600 p-1">
-          <Menu size={22} />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
+            className="relative p-1 text-amber-600">
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-0 right-0 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
+            )}
+          </Link>
+          <button onClick={() => setMenuOpen(true)} className="text-amber-600 p-1">
+            <Menu size={22} />
+          </button>
+        </div>
       </div>
 
       {/* ── Mobile full-screen menu ── */}
