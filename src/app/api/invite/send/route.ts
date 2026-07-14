@@ -59,9 +59,14 @@ export async function POST(req: NextRequest) {
         </table>
         <p style="font-size:13px;color:#7a6040;margin:0 0 8px;">Or copy this link into your browser:</p>
         <p style="font-size:13px;color:#7a2d8a;word-break:break-all;margin:0 0 24px;">${link}</p>
-        <p style="font-size:12px;color:#9a7a50;line-height:1.6;border-top:1px solid #e8d8b8;padding-top:20px;margin:0;">
+        <p style="font-size:12px;color:#9a7a50;line-height:1.6;border-top:1px solid #e8d8b8;padding-top:20px;margin:0 0 20px;">
           This link is personal to you — no account needed. Your memory will be shared with ${senderName} and kept private to their History Drift story.
         </p>
+        <div style="background:#fff8ee;border:1px solid #e8d0a0;border-radius:10px;padding:20px;text-align:center;">
+          <p style="font-size:14px;font-weight:bold;color:#2a1a06;margin:0 0 6px;">Do you have a story worth preserving?</p>
+          <p style="font-size:13px;color:#5a3a10;line-height:1.6;margin:0 0 14px;">History Drift helps you capture your life story through guided interviews — then turns it into a biography, timeline, and illustrated storyboard your family will treasure.</p>
+          <a href="${APP_URL}/sign-up" style="display:inline-block;background-color:#7a2d8a;color:white;text-decoration:none;padding:10px 22px;border-radius:8px;font-family:Arial,sans-serif;font-size:13px;font-weight:600;">Start Your Story — It's Free</a>
+        </div>
       </div>
     `,
   });
