@@ -1,45 +1,184 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import { Settings, User, Bell, Lock, Palette } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { User, Lock, LogOut, Check, Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function SettingsPage() {
+  const [tab, setTab] = useState<"profile" | "password">("profile");
+
+  // Profile
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileMsg, setProfileMsg] = useState("");
+
+  // Password
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      setEmail(user.email ?? "");
+      setFullName(user.user_metadata?.full_name ?? "");
+    });
+  }, []);
+
+  async function saveProfile(e: React.FormEvent) {
+    e.preventDefault();
+    setProfileSaving(true);
+    setProfileMsg("");
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: fullName },
+    });
+    setProfileSaving(false);
+    setProfileMsg(error ? `Error: ${error.message}` : "Profile updated");
+    setTimeout(() => setProfileMsg(""), 3000);
+  }
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordMsg("");
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords don't match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
+      return;
+    }
+    setPasswordSaving(true);
+    // Re-authenticate then update
+    const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+    if (signInErr) {
+      setPasswordSaving(false);
+      setPasswordError("Current password is incorrect");
+      return;
+    }
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setPasswordSaving(false);
+    if (error) {
+      setPasswordError(error.message);
+    } else {
+      setPasswordMsg("Password updated successfully");
+      setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
+      setTimeout(() => setPasswordMsg(""), 3000);
+    }
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    window.location.href = "/sign-in";
+  }
+
+  const inputCls = "w-full rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-amber-700/50";
+  const inputStyle = { background: "rgba(15,10,4,0.8)", border: "1px solid rgba(101,67,20,0.4)", color: "#e8d4a0" };
+
   return (
-    <div className="p-8 max-w-2xl">
-      <div className="mb-8">
-        <div className="text-amber-600/60 uppercase tracking-[0.3em] text-xs font-serif mb-1">Preferences</div>
-        <h1 className="text-3xl font-serif font-bold text-amber-200">Settings</h1>
+    <div className="px-5 py-8 max-w-lg mx-auto">
+      <div className="mb-6">
+        <div className="text-[11px] font-sans uppercase tracking-widest mb-1" style={{ color: "rgba(150,100,40,0.6)" }}>Preferences</div>
+        <h1 className="font-serif font-bold text-2xl" style={{ color: "#f0d060" }}>Settings</h1>
       </div>
 
-      <div className="space-y-4">
-        {[
-          { icon: User, label: "Account & Profile", desc: "Manage your personal information" },
-          { icon: Bell, label: "Notifications", desc: "Email and in-app notification preferences" },
-          { icon: Lock, label: "Privacy & Security", desc: "Password, two-factor auth, data export" },
-          { icon: Palette, label: "Appearance", desc: "Theme and display preferences" },
-          { icon: Settings, label: "Interview Preferences", desc: "Default interviewer, language, voice settings" },
-        ].map(({ icon: Icon, label, desc }) => (
-          <div
-            key={label}
-            className="rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-amber-700/40 transition-colors"
-            style={{ background: "rgba(30,18,6,0.5)", border: "1px solid rgba(101,67,20,0.25)" }}
-          >
-            <div className="w-10 h-10 rounded-full bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-              <Icon size={16} className="text-amber-600/70" />
-            </div>
-            <div className="flex-1">
-              <div className="text-amber-200 font-serif font-semibold text-sm">{label}</div>
-              <div className="text-amber-700/60 text-xs font-sans">{desc}</div>
-            </div>
-            <div className="text-amber-800/40 text-lg">›</div>
-          </div>
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: "rgba(20,12,4,0.8)", border: "1px solid rgba(90,55,15,0.3)" }}>
+        {([["profile", User, "Profile"], ["password", Lock, "Password"]] as const).map(([key, Icon, label]) => (
+          <button key={key} onClick={() => setTab(key)}
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-serif transition-all"
+            style={{
+              background: tab === key ? "rgba(122,45,138,0.35)" : "transparent",
+              color: tab === key ? "#e0a0f0" : "rgba(180,130,60,0.6)",
+              border: tab === key ? "1px solid rgba(200,74,154,0.3)" : "1px solid transparent",
+            }}>
+            <Icon size={14} />{label}
+          </button>
         ))}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-amber-900/30">
-        <Button variant="ghost" size="sm" className="text-red-700/70 hover:text-red-500">
-          Sign Out
-        </Button>
+      {/* Profile tab */}
+      {tab === "profile" && (
+        <form onSubmit={saveProfile} className="space-y-4">
+          <div>
+            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+              Full name
+            </label>
+            <input value={fullName} onChange={(e) => setFullName(e.target.value)}
+              placeholder="Your full name" className={inputCls} style={inputStyle} />
+          </div>
+          <div>
+            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+              Email address
+            </label>
+            <input value={email} disabled
+              className={inputCls} style={{ ...inputStyle, opacity: 0.5, cursor: "not-allowed" }} />
+            <p className="text-[10px] font-sans mt-1" style={{ color: "rgba(120,80,30,0.5)" }}>
+              Email cannot be changed here — contact support
+            </p>
+          </div>
+          <button type="submit" disabled={profileSaving}
+            className="w-full py-3 rounded-xl font-serif font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+            style={{ background: "linear-gradient(135deg,#7a2d8a,#c84a9a)", color: "white" }}>
+            {profileSaving ? <Loader2 size={15} className="animate-spin" /> : profileMsg ? <><Check size={15} />{profileMsg}</> : "Save changes"}
+          </button>
+        </form>
+      )}
+
+      {/* Password tab */}
+      {tab === "password" && (
+        <form onSubmit={changePassword} className="space-y-4">
+          {passwordError && (
+            <div className="px-4 py-3 rounded-xl text-sm font-sans" style={{ background: "rgba(200,0,0,0.12)", border: "1px solid rgba(200,0,0,0.25)", color: "#f08080" }}>
+              {passwordError}
+            </div>
+          )}
+
+          {[
+            { label: "Current password", value: currentPassword, set: setCurrentPassword, show: showCurrent, toggle: () => setShowCurrent(v => !v) },
+            { label: "New password", value: newPassword, set: setNewPassword, show: showNew, toggle: () => setShowNew(v => !v) },
+            { label: "Confirm new password", value: confirmPassword, set: setConfirmPassword, show: showConfirm, toggle: () => setShowConfirm(v => !v) },
+          ].map(({ label, value, set, show, toggle }) => (
+            <div key={label}>
+              <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+                {label}
+              </label>
+              <div className="relative">
+                <input type={show ? "text" : "password"} value={value} onChange={(e) => set(e.target.value)}
+                  required placeholder="••••••••"
+                  className={inputCls + " pr-11"} style={inputStyle} />
+                <button type="button" onClick={toggle}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "rgba(160,110,50,0.6)" }}>
+                  {show ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <button type="submit" disabled={passwordSaving}
+            className="w-full py-3 rounded-xl font-serif font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+            style={{ background: "linear-gradient(135deg,#7a2d8a,#c84a9a)", color: "white" }}>
+            {passwordSaving ? <Loader2 size={15} className="animate-spin" /> : passwordMsg ? <><Check size={15} />{passwordMsg}</> : "Update password"}
+          </button>
+        </form>
+      )}
+
+      {/* Sign out */}
+      <div className="mt-10 pt-6" style={{ borderTop: "1px solid rgba(90,55,15,0.25)" }}>
+        <button onClick={signOut}
+          className="flex items-center gap-2 text-sm font-serif transition-all"
+          style={{ color: "rgba(200,80,80,0.7)" }}>
+          <LogOut size={14} /> Sign out
+        </button>
       </div>
     </div>
   );
