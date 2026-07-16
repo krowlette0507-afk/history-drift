@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Shield } from "lucide-react";
 
 const SECTIONS = [
   {
@@ -137,8 +138,24 @@ export default function PrivacyPage() {
           ))}
         </div>
 
+        {/* Security link */}
+        <div className="mt-8 px-5 py-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4"
+          style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(40,120,50,0.25)" }}>
+          <div className="flex items-center gap-2">
+            <Shield size={14} style={{ color: "rgba(80,200,120,0.7)" }} />
+            <p className="font-serif text-sm" style={{ color: "rgba(180,130,60,0.75)" }}>
+              Want the technical details?
+            </p>
+          </div>
+          <Link href="/security"
+            className="font-serif text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+            style={{ background: "rgba(20,80,40,0.4)", border: "1px solid rgba(40,160,80,0.3)", color: "rgba(80,200,120,0.9)" }}>
+            How we secure your data →
+          </Link>
+        </div>
+
         {/* Contact */}
-        <div className="mt-8 px-5 py-5 rounded-2xl text-center"
+        <div className="mt-4 px-5 py-5 rounded-2xl text-center"
           style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(80,50,15,0.25)" }}>
           <p className="font-serif text-sm" style={{ color: "rgba(180,130,60,0.75)" }}>
             Questions about this policy?{" "}
