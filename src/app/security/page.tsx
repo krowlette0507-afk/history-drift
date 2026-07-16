@@ -101,7 +101,7 @@ We do not retain deleted data in backups beyond our 7-day infrastructure backup 
 • Describe clearly what data was involved, the likely impact, and what we have done to address it
 • Report to relevant data protection authorities where required by law (e.g. GDPR Article 33)
 
-To report a security vulnerability, please email security@historydrift.com. We take all reports seriously and will respond within 24 hours.`,
+To report a security vulnerability, please email support@historydrift.com. We take all reports seriously and will respond within 24 hours.`,
   },
 ];
 
@@ -193,8 +193,8 @@ export default function SecurityPage() {
         >
           <p className="font-serif text-sm text-center sm:text-left" style={{ color: "rgba(180,130,60,0.75)" }}>
             Questions?{" "}
-            <a href="mailto:security@historydrift.com" className="underline" style={{ color: "#c8843a" }}>
-              security@historydrift.com
+            <a href="mailto:support@historydrift.com" className="underline" style={{ color: "#c8843a" }}>
+              support@historydrift.com
             </a>
           </p>
           <Link
