@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { User, Lock, LogOut, Check, Loader2, Eye, EyeOff } from "lucide-react";
+import { User, Lock, LogOut, Check, Loader2, Eye, EyeOff, Trash2 } from "lucide-react";
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<"profile" | "password">("profile");
@@ -12,6 +12,12 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
+
+  // Account deletion
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteScheduled, setDeleteScheduled] = useState("");
 
   // Password
   const [currentPassword, setCurrentPassword] = useState("");
@@ -78,6 +84,23 @@ export default function SettingsPage() {
   async function signOut() {
     await supabase.auth.signOut();
     window.location.href = "/sign-in";
+  }
+
+  async function requestDeletion() {
+    if (deleteConfirmText !== "DELETE") return;
+    setDeleting(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/account/delete", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+    });
+    const data = await res.json();
+    setDeleting(false);
+    if (data.ok) {
+      const d = new Date(data.scheduledFor).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      setDeleteScheduled(d);
+      setShowDeleteConfirm(false);
+    }
   }
 
   const inputCls = "w-full rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-amber-700/50";
@@ -173,12 +196,60 @@ export default function SettingsPage() {
       )}
 
       {/* Sign out */}
-      <div className="mt-10 pt-6" style={{ borderTop: "1px solid rgba(90,55,15,0.25)" }}>
+      <div className="mt-10 pt-6 space-y-6" style={{ borderTop: "1px solid rgba(90,55,15,0.25)" }}>
         <button onClick={signOut}
           className="flex items-center gap-2 text-sm font-serif transition-all"
           style={{ color: "rgba(200,80,80,0.7)" }}>
           <LogOut size={14} /> Sign out
         </button>
+
+        {/* Delete account */}
+        <div className="rounded-xl p-4" style={{ background: "rgba(80,10,10,0.2)", border: "1px solid rgba(160,40,40,0.25)" }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Trash2 size={13} style={{ color: "rgba(200,80,80,0.7)" }} />
+            <span className="font-serif font-semibold text-sm" style={{ color: "rgba(220,100,100,0.85)" }}>Delete my account</span>
+          </div>
+          {deleteScheduled ? (
+            <p className="text-xs font-sans leading-relaxed" style={{ color: "rgba(200,120,120,0.8)" }}>
+              Your account and all data is scheduled for permanent deletion on <strong>{deleteScheduled}</strong>. You'll receive a reminder email 14 days before. Contact <a href="mailto:support@historydrift.com" className="underline">support@historydrift.com</a> to cancel.
+            </p>
+          ) : (
+            <>
+              <p className="text-xs font-sans leading-relaxed mb-3" style={{ color: "rgba(180,100,100,0.75)" }}>
+                This will permanently delete all your interviews, storyboards, family memories, and account data after 30 days. You'll receive a warning email 14 days before deletion. This cannot be undone.
+              </p>
+              {!showDeleteConfirm ? (
+                <button onClick={() => setShowDeleteConfirm(true)}
+                  className="text-xs font-sans px-3 py-1.5 rounded-lg transition-all"
+                  style={{ border: "1px solid rgba(160,40,40,0.4)", color: "rgba(200,80,80,0.8)", background: "rgba(80,10,10,0.3)" }}>
+                  Request account deletion
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs font-sans" style={{ color: "rgba(220,120,120,0.9)" }}>
+                    Type <strong>DELETE</strong> to confirm:
+                  </p>
+                  <input value={deleteConfirmText} onChange={e => setDeleteConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                    className="w-full rounded-lg px-3 py-2 text-sm font-sans focus:outline-none"
+                    style={{ background: "rgba(40,5,5,0.8)", border: "1px solid rgba(160,40,40,0.4)", color: "#f0a0a0" }} />
+                  <div className="flex gap-2">
+                    <button onClick={requestDeletion} disabled={deleteConfirmText !== "DELETE" || deleting}
+                      className="px-3 py-1.5 rounded-lg text-xs font-sans font-semibold disabled:opacity-40 transition-all"
+                      style={{ background: "rgba(160,30,30,0.8)", color: "white" }}>
+                      {deleting ? <Loader2 size={12} className="animate-spin inline" /> : "Confirm deletion"}
+                    </button>
+                    <button onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+                      className="px-3 py-1.5 rounded-lg text-xs font-sans"
+                      style={{ color: "rgba(160,100,100,0.6)" }}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
