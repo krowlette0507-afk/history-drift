@@ -4,7 +4,7 @@ import { Shield } from "lucide-react";
 const SECTIONS = [
   {
     title: "Who we are",
-    body: `History Drift is a life story preservation platform operated by History Drift Ltd. We help individuals capture, preserve, and share their personal life stories through AI-guided interviews, illustrated storyboards, and family memory contributions.
+    body: `History Drift is a life story preservation platform operated by Act Earth Wise, LLC. We help individuals capture, preserve, and share their personal life stories through AI-guided interviews, illustrated storyboards, and family memory contributions.
 
 Contact: support@historydrift.com`,
   },
