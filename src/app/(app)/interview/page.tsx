@@ -496,6 +496,26 @@ function SessionSummaryView({
     suggestedFollowUps: string[];
   }>(null);
   const [loading, setLoading] = useState(true);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDesc, setEditingDesc] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
+  const [descDraft, setDescDraft] = useState("");
+
+  async function saveTitle() {
+    if (!summary) return;
+    const updated = { ...summary, title: titleDraft } as typeof summary;
+    setSummary(updated);
+    setEditingTitle(false);
+    await updateSession(sessionId, { title: titleDraft, summary: updated as Parameters<typeof updateSession>[1]["summary"] });
+  }
+
+  async function saveDesc() {
+    if (!summary) return;
+    const updated = { ...summary, summary: descDraft } as typeof summary;
+    setSummary(updated);
+    setEditingDesc(false);
+    await updateSession(sessionId, { summary: updated as Parameters<typeof updateSession>[1]["summary"] });
+  }
   const exchanges = getExchanges(sessionId);
 
   useEffect(() => {
@@ -550,13 +570,73 @@ function SessionSummaryView({
         <div className="space-y-5">
           {summary.title && (
             <div className="text-center">
-              <h2 className="text-amber-300 font-serif font-bold text-xl">&ldquo;{summary.title}&rdquo;</h2>
+              {editingTitle ? (
+                <div className="flex items-center gap-2 justify-center">
+                  <input
+                    value={titleDraft}
+                    onChange={e => setTitleDraft(e.target.value)}
+                    className="flex-1 max-w-sm rounded-xl px-4 py-2 font-serif font-bold text-lg text-center focus:outline-none focus:ring-1 focus:ring-amber-700/50"
+                    style={{ background: "rgba(15,10,4,0.8)", border: "1px solid rgba(101,67,20,0.5)", color: "#e8d4a0" }}
+                    autoFocus
+                    onKeyDown={e => { if (e.key === "Enter") saveTitle(); if (e.key === "Escape") setEditingTitle(false); }}
+                  />
+                  <button onClick={saveTitle} className="text-amber-400 hover:text-amber-200"><Check size={16} /></button>
+                  <button onClick={() => setEditingTitle(false)} className="text-amber-700/60 hover:text-amber-500"><X size={16} /></button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 justify-center group">
+                  <h2 className="text-amber-300 font-serif font-bold text-xl">&ldquo;{summary.title}&rdquo;</h2>
+                  <button
+                    onClick={() => { setTitleDraft(summary.title); setEditingTitle(true); }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ color: "rgba(180,130,60,0.6)" }}
+                    title="Edit title"
+                  >
+                    <Edit3 size={13} />
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
           <div className="rounded-xl p-5" style={{ background: "rgba(20,12,4,0.7)", border: "1px solid rgba(90,52,20,0.3)" }}>
-            <div className="text-amber-600/50 text-[10px] uppercase tracking-widest mb-3 font-sans">Session Summary</div>
-            <p className="text-amber-300/80 font-serif text-sm leading-relaxed">{summary.summary}</p>
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-amber-600/50 text-[10px] uppercase tracking-widest font-sans">Session Summary</div>
+              {!editingDesc && (
+                <button
+                  onClick={() => { setDescDraft(summary.summary); setEditingDesc(true); }}
+                  className="flex items-center gap-1 text-[10px] font-sans transition-opacity"
+                  style={{ color: "rgba(180,130,60,0.5)" }}
+                  title="Edit summary"
+                >
+                  <Edit3 size={11} /> Edit
+                </button>
+              )}
+            </div>
+            {editingDesc ? (
+              <div className="space-y-2">
+                <textarea
+                  value={descDraft}
+                  onChange={e => setDescDraft(e.target.value)}
+                  rows={5}
+                  className="w-full rounded-xl px-4 py-3 font-serif text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-amber-700/50 resize-none"
+                  style={{ background: "rgba(10,6,2,0.8)", border: "1px solid rgba(101,67,20,0.5)", color: "#e8d4a0" }}
+                  autoFocus
+                />
+                <div className="flex gap-2 justify-end">
+                  <button onClick={() => setEditingDesc(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-sans"
+                    style={{ color: "rgba(160,110,50,0.6)" }}>Cancel</button>
+                  <button onClick={saveDesc}
+                    className="px-3 py-1.5 rounded-lg text-xs font-sans font-semibold flex items-center gap-1"
+                    style={{ background: "linear-gradient(135deg,#5a3018,#c8843a)", color: "white" }}>
+                    <Check size={12} /> Save
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-amber-300/80 font-serif text-sm leading-relaxed">{summary.summary}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
