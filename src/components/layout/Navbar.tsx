@@ -22,6 +22,7 @@ const NAV_ITEMS: { href: string; label: string; icon: React.ComponentType<{ size
   { href: "/family", label: "Family Memories", icon: Heart },
   { href: "/vault", label: "Family Vault", icon: Lock },
   { href: "/ask", label: "Ask Me Anything", icon: HelpCircle },
+  { href: "/support", label: "Support & FAQs", icon: BookOpen },
 ];
 
 const BOTTOM_TABS = [
