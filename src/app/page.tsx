@@ -98,7 +98,7 @@ const NAV_PANELS: NavPanel[] = [
       { label: "Biography",            desc: "Create beautiful stories & memoirs",      href: "/biography", icon: "◎" },
       { label: "Legacy Documents",    desc: "Letters, tributes & important wishes",    href: "/legacy",    icon: "◈" },
       { label: "Ask Me Anything",     desc: "Ask questions about your story",          href: "/ask",       icon: "◉" },
-      { label: "Help & Support",      desc: "We're here to help",                      href: "/dashboard", icon: "?" },
+      { label: "Support & FAQs",       desc: "We're here to help",                      href: "/support",   icon: "?" },
     ],
   },
   {
@@ -193,7 +193,7 @@ const RELIVE_STORIES = [
 const TRUST_ITEMS = [
   {
     icon: <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 1 L18 5 L18 10 Q18 16 10 19 Q2 16 2 10 L2 5 Z" fill="none" stroke="rgba(212,160,23,0.7)" strokeWidth="1.5" strokeLinejoin="round"/><path d="M7 10 L9 12 L13 8" stroke="rgba(212,160,23,0.7)" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    title: "Privacy First",  desc: "Your story is private, secure & protected.",              href: "/vault",
+    title: "Privacy First",  desc: "Your story is private, secure & protected.",              href: "/security",
   },
   {
     icon: <svg viewBox="0 0 20 20" width="18" height="18"><circle cx="10" cy="8" r="4" fill="none" stroke="rgba(212,160,23,0.7)" strokeWidth="1.5"/><circle cx="4" cy="14" r="2.5" fill="none" stroke="rgba(212,160,23,0.5)" strokeWidth="1.5"/><circle cx="16" cy="14" r="2.5" fill="none" stroke="rgba(212,160,23,0.5)" strokeWidth="1.5"/><path d="M2 19 Q7 16 13 16 Q16 16 18 19" stroke="rgba(212,160,23,0.5)" strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>,
