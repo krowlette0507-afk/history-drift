@@ -855,7 +855,7 @@ function InterviewInner() {
     setIsSpeaking(false);
   }, []);
 
-  const speak = useCallback((text: string, _gender?: "male" | "female", voiceName?: string) => {
+  const speak = useCallback((text: string, _gender?: "male" | "female", voiceName?: string, voiceInstructions?: string) => {
     if (!ttsEnabled || !text.trim()) return;
     stopSpeaking();
     setIsSpeaking(true);
@@ -877,7 +877,7 @@ function InterviewInner() {
     fetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text.trim(), voice: voiceName ?? "alloy" }),
+      body: JSON.stringify({ text: text.trim(), voice: voiceName ?? "alloy", instructions: voiceInstructions }),
       signal: controller.signal,
     })
       .then((res) => {
@@ -958,7 +958,7 @@ function InterviewInner() {
       askedQuestionsRef.current = [...askedQuestionsRef.current, q];
       setCurrentQuestion(q);
       setLiveMessages((prev) => [...prev, { role: "assistant", content: q }]);
-      if (ttsEnabled) speak(q, selectedInterviewer.gender, selectedInterviewer.voiceName);
+      if (ttsEnabled) speak(q, selectedInterviewer.gender, selectedInterviewer.voiceName, selectedInterviewer.voiceInstructions);
     } catch {
       clearTimeout(fetchTimeout);
       setQuestionError(true); // show Retry / Skip UI â€” don't silently repeat a canned phrase
@@ -984,7 +984,7 @@ function InterviewInner() {
 
     setCurrentQuestion(opening);
     setLiveMessages([{ role: "assistant", content: opening }]);
-    if (ttsEnabled) setTimeout(() => speak(opening, selectedInterviewer.gender, selectedInterviewer.voiceName), 300);
+    if (ttsEnabled) setTimeout(() => speak(opening, selectedInterviewer.gender, selectedInterviewer.voiceName, selectedInterviewer.voiceInstructions), 300);
     });
   }, [selectedInterviewer, ttsEnabled, speak]);
 
@@ -1475,7 +1475,7 @@ function InterviewInner() {
 
         <div className="p-3 border-t border-amber-900/20 space-y-1.5">
           <button
-            onClick={() => { stopSpeaking(); if (isSpeaking) return; speak(currentQuestion, selectedInterviewer.gender, selectedInterviewer.voiceName); }}
+            onClick={() => { stopSpeaking(); if (isSpeaking) return; speak(currentQuestion, selectedInterviewer.gender, selectedInterviewer.voiceName, selectedInterviewer.voiceInstructions); }}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-sans transition-all"
             style={{ background: isSpeaking ? `${phaseColor}20` : "rgba(30,18,6,0.5)", color: isSpeaking ? phaseColor : "rgba(220,175,80,0.95)", border: `1px solid ${isSpeaking ? phaseColor + "40" : "rgba(90,52,20,0.2)"}` }}
           >
@@ -1743,7 +1743,7 @@ function InterviewInner() {
               <button
                 onClick={() => {
                   setTtsError(false);
-                  speak(currentQuestion, selectedInterviewer.gender, selectedInterviewer.voiceName);
+                  speak(currentQuestion, selectedInterviewer.gender, selectedInterviewer.voiceName, selectedInterviewer.voiceInstructions);
                 }}
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg font-sans text-[10px] font-semibold transition-all hover:opacity-90 flex-shrink-0"
                 style={{ background: `${phaseColor}25`, border: `1px solid ${phaseColor}40`, color: phaseColor }}

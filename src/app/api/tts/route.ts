@@ -8,7 +8,7 @@ const VALID_VOICES: OAIVoice[] = ["alloy", "echo", "fable", "onyx", "nova", "shi
 
 export async function POST(req: NextRequest) {
   try {
-    const { text, voice } = await req.json();
+    const { text, voice, instructions } = await req.json();
 
     if (!text?.trim()) {
       return NextResponse.json({ error: "No text provided" }, { status: 400 });
@@ -16,11 +16,12 @@ export async function POST(req: NextRequest) {
 
     const safeVoice: OAIVoice = VALID_VOICES.includes(voice) ? voice : "alloy";
 
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mp3 = await (openai.audio.speech.create as any)({
+      model: "gpt-4o-mini-tts",
       voice: safeVoice,
       input: text.slice(0, 4096),
-      speed: 0.92,
+      ...(instructions ? { instructions } : {}),
     });
 
     const buffer = Buffer.from(await mp3.arrayBuffer());

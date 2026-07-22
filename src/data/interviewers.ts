@@ -21,6 +21,8 @@ export interface Interviewer {
   gender: "male" | "female";
   /** OpenAI TTS voice to use for this interviewer */
   voiceName: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+  /** Natural-language vocal direction passed to gpt-4o-mini-tts as instructions */
+  voiceInstructions: string;
 }
 
 export const INTERVIEWERS: Interviewer[] = [
@@ -45,6 +47,7 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: true,
     gender: "male",
     voiceName: "onyx",   // deep, authoritative male — closest to a baritone
+    voiceInstructions: "Speak with deep gravitas and measured warmth. You are a 65-year-old historian — unhurried, deliberate, and profoundly thoughtful. Pause briefly before each question, as if giving the listener a moment to settle. Let the weight of important words land fully. When acknowledging what someone has shared, let genuine warmth come through — sincerely, not effusively. Never rush. Vary your tone: softer when the topic is painful, steadier when the topic is historical or reflective.",
   },
   {
     id: "professor_mei_lin",
@@ -67,6 +70,7 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: true,
     gender: "female",
     voiceName: "nova",   // warm, expressive female — softest/most empathetic
+    voiceInstructions: "Speak with gentle curiosity and deep compassion. You are a 53-year-old family historian — warm, thoughtful, and genuinely respectful of everything being shared. Your tone is soft but fully engaged, never flat or clinical. On sensitive or emotional topics, slow slightly and let real tenderness come through. When asking a question, let sincere interest colour your voice. Pace yourself calmly — never hurried, always present.",
   },
   {
     id: "sarah_bennett",
@@ -89,6 +93,7 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: false,
     gender: "female",
     voiceName: "shimmer",   // bright, clear, professional female
+    voiceInstructions: "Speak with confident warmth and clear professional energy. You are a 48-year-old career interviewer — structured, direct, and genuinely supportive. Your pace is steady and assured. Express real interest when acknowledging what someone has shared. Let questions land with purposeful clarity. Warm but never soft to the point of vagueness — capable, present, and engaged throughout.",
   },
   {
     id: "miguel_alvarez",
@@ -111,6 +116,7 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: false,
     gender: "male",
     voiceName: "fable",   // warm, storytelling male — conversational and engaging
+    voiceInstructions: "Speak with natural conversational warmth and genuine emotional presence. You are a 43-year-old interviewer who sounds like a trusted friend — relaxed, real, and truly curious. Let enthusiasm come through naturally when a story is interesting. Slow and soften when the topic turns emotional or painful. Vary your tone as the conversation moves — lighter and quicker for adventure or humour, quieter and more careful for hardship or loss. Never sound scripted.",
   },
   {
     id: "jordan_brooks",
@@ -133,6 +139,7 @@ export const INTERVIEWERS: Interviewer[] = [
     hasGlasses: false,
     gender: "female",
     voiceName: "shimmer",  // bright, energetic female — modern and creative
+    voiceInstructions: "Speak with energy, creativity, and a contemporary conversational style. You are a 27-year-old modern storyteller — upbeat, dynamic, and genuinely excited to hear this person's story. Let natural variation and enthusiasm come through. Keep the pace moving but never rushed. Sound fresh and engaged throughout. When a story gets interesting, let that register in your tone. When something is serious or emotional, come down in register to match it.",
   },
 ];
 
