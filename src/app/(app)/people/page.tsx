@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -80,7 +80,7 @@ function PersonCard({ person, onCorrected }: { person: DerivedPerson; onCorrecte
       {editing && (
         <div className="px-4 pb-4 border-t space-y-3" style={{ borderColor: "rgba(80,50,15,0.25)" }}>
           <p className="text-[10px] font-sans pt-3" style={{ color: "rgba(225,185,80,0.92)" }}>
-            Correct the name or relationship â€” this will update all interviews that mention this person.
+            Correct the name or relationship "" this will update all interviews that mention this person.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -100,7 +100,7 @@ function PersonCard({ person, onCorrected }: { person: DerivedPerson; onCorrecte
             <button onClick={handleSave} disabled={saving || !editName.trim()}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold disabled:opacity-40"
               style={{ background: "linear-gradient(135deg,#7a2d8a,#c84a9a)", color: "white" }}>
-              <Check size={12} />{saving ? "Savingâ€¦" : "Save correction"}
+              <Check size={12} />{saving ? "Saving..." : "Save correction"}
             </button>
             <button onClick={() => { setEditing(false); setEditName(person.name); setEditRel(person.relationship); }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans"
@@ -148,7 +148,7 @@ export default function PeoplePage() {
         <Users size={40} className="text-amber-800/30 mb-4" />
         <h1 className="text-amber-200 font-serif font-bold text-2xl mb-2">People Who Mattered</h1>
         <p className="text-amber-700/50 font-serif italic text-sm max-w-sm mb-6">
-          As you share your story, the people you mention â€” family, friends, mentors, and more â€” will appear here.
+          As you share your story, the people you mention "" family, friends, mentors, and more "" will appear here.
         </p>
         <Link href="/interview"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-serif text-amber-100 transition-all hover:scale-105"
@@ -167,14 +167,14 @@ export default function PeoplePage() {
           <div className="text-amber-600/50 text-xs font-sans uppercase tracking-[0.3em] mb-1">Your Story</div>
           <h1 className="text-amber-200 font-serif font-bold text-3xl">People Who Mattered</h1>
           <p className="text-amber-700/50 font-sans text-sm mt-1">
-            {people.length} people extracted from your interviews Â· tap <Pencil size={11} className="inline" /> to correct any name
+            {people.length} people extracted from your interviews · tap <Pencil size={11} className="inline" /> to correct any name
           </p>
         </div>
       </div>
 
       <div className="mb-5">
         <input value={filter} onChange={(e) => setFilter(e.target.value)}
-          placeholder="Search by name or relationshipâ€¦"
+          placeholder="Search by name or relationship..."
           className="w-full max-w-sm rounded-xl px-4 py-2.5 text-sm font-sans text-amber-200 placeholder-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-700/50"
           style={{ background: "rgba(20,12,4,0.8)", border: "1px solid rgba(90,52,20,0.35)" }} />
       </div>

@@ -110,7 +110,7 @@ export default function SignInPage() {
                     <input type={showPassword ? "text" : "password"} value={password}
                       onChange={(e) => setPassword(e.target.value)} required
                       className="w-full rounded-lg px-4 py-2.5 pr-11 text-sm font-sans placeholder-amber-800/50 focus:outline-none focus:ring-1 focus:ring-amber-700/50"
-                      style={inputStyle} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+                      style={inputStyle} placeholder="••••••••" />
                     <button type="button" onClick={() => setShowPassword(v => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2"
                       style={{ color: "rgba(220,175,80,0.92)" }}>
@@ -128,7 +128,7 @@ export default function SignInPage() {
 
               <Button type="submit" variant="gold" size="md"
                 disabled={loading || forgotLoading} className="w-full justify-center">
-                {forgotLoading ? "Sendingâ€¦" : loading ? "Signing inâ€¦" : forgotMode ? "Send reset link" : "Sign In"}
+                {forgotLoading ? "Sending..." : loading ? "Signing in..." : forgotMode ? "Send reset link" : "Sign In"}
               </Button>
 
               {forgotMode && (

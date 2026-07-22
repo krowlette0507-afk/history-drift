@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { getSessions, getExchanges, StoredSession } from "@/lib/storage";
@@ -25,20 +25,20 @@ type ArtStyle =
 type Tier = "free" | "premium";
 
 const AGE_STAGES: { id: AgeStage; emoji: string; desc: string }[] = [
-  { id: "Child (ages 5-12)", emoji: "ðŸ§’", desc: "Early childhood and wonder" },
-  { id: "Teenager (ages 13-17)", emoji: "ðŸ§‘", desc: "Coming of age" },
-  { id: "Young Adult (ages 18-29)", emoji: "ðŸ™‹", desc: "Finding your path" },
-  { id: "Adult (ages 30-45)", emoji: "ðŸ‘¤", desc: "Building & belonging" },
-  { id: "Middle Age (ages 46-60)", emoji: "ðŸ§‘â€ðŸ’¼", desc: "Peak wisdom & legacy" },
-  { id: "Elder (ages 61+)", emoji: "ðŸ§“", desc: "Reflection & heritage" },
+  { id: "Child (ages 5-12)", emoji: "🧒", desc: "Early childhood and wonder" },
+  { id: "Teenager (ages 13-17)", emoji: "🧑", desc: "Coming of age" },
+  { id: "Young Adult (ages 18-29)", emoji: "🙋", desc: "Finding your path" },
+  { id: "Adult (ages 30-45)", emoji: "👤", desc: "Building & belonging" },
+  { id: "Middle Age (ages 46-60)", emoji: "🧑‍💼", desc: "Peak wisdom & legacy" },
+  { id: "Elder (ages 61+)", emoji: "🧓", desc: "Reflection & heritage" },
 ];
 
 const ART_STYLES: { id: ArtStyle; preview: string; desc: string }[] = [
-  { id: "Illustrated Memoir", preview: "ðŸŽ¨", desc: "Watercolor & ink, soft textures, literary warmth" },
-  { id: "Graphic Novel", preview: "ðŸ“˜", desc: "Bold lines, high contrast, dynamic panels" },
-  { id: "Historical Documentary", preview: "ðŸ“œ", desc: "Sepia & gold tones, archival aesthetic" },
-  { id: "Warm Family Storybook", preview: "ðŸ“–", desc: "Pastel palette, cozy and inviting" },
-  { id: "Cinematic Concept Art", preview: "ðŸŽ¬", desc: "Dramatic lighting, filmic composition" },
+  { id: "Illustrated Memoir", preview: "🎨", desc: "Watercolor & ink, soft textures, literary warmth" },
+  { id: "Graphic Novel", preview: "📘", desc: "Bold lines, high contrast, dynamic panels" },
+  { id: "Historical Documentary", preview: "📜", desc: "Sepia & gold tones, archival aesthetic" },
+  { id: "Warm Family Storybook", preview: "📖", desc: "Pastel palette, cozy and inviting" },
+  { id: "Cinematic Concept Art", preview: "🎬", desc: "Dramatic lighting, filmic composition" },
 ];
 
 const PANEL_COUNTS = [12, 14, 16] as const;
@@ -135,7 +135,7 @@ export default function RelivePage() {
     return manualStory;
   }, [selectedSessionId, manualStory]);
 
-  // â”€â”€ Voice recording for story textarea â”€â”€
+  // â"€â"€ Voice recording for story textarea â"€â"€
   const startRecording = useCallback(() => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
@@ -171,7 +171,7 @@ export default function RelivePage() {
     setRecording(false);
   }, []);
 
-  // â”€â”€ Voice recording for question answers â”€â”€
+  // â"€â"€ Voice recording for question answers â"€â"€
   const startAnswerRecording = useCallback((idx: number) => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
@@ -205,7 +205,7 @@ export default function RelivePage() {
     setAnswerRecording(false);
   }, []);
 
-  // â”€â”€ AI refinement â”€â”€
+  // â"€â"€ AI refinement â"€â"€
   const handleRefine = useCallback(async () => {
     const raw = getStoryContent();
     if (raw.trim().length < 20) return;
@@ -262,7 +262,7 @@ export default function RelivePage() {
     }
     setError("");
     setGenerating(true);
-    setProgressMsg(tier === "premium" ? "Starting premium generationâ€¦" : "Starting generationâ€¦");
+    setProgressMsg(tier === "premium" ? "Starting premium generation..." : "Starting generation...");
     setPanelsDone(0);
     setTotalPanels(panelCount);
 
@@ -308,7 +308,7 @@ export default function RelivePage() {
               setProgressMsg(event.message ?? "");
             } else if (event.type === "panel_done") {
               setPanelsDone((n) => n + 1);
-              setProgressMsg(`Panel ${event.panelNumber} of ${event.total} completeâ€¦`);
+              setProgressMsg(`Panel ${event.panelNumber} of ${event.total} complete...`);
             } else if (event.type === "complete") {
               setResult(event);
               setStep(4);
@@ -344,7 +344,7 @@ export default function RelivePage() {
   return (
     <div className="min-h-screen px-4 py-6 md:px-8 md:py-8">
 
-      {/* â”€â”€ Lightbox â”€â”€ */}
+      {/* â"€â"€ Lightbox â"€â"€ */}
       {lightbox && (
         <div className="fixed inset-0 z-[200] flex flex-col" style={{ background: "rgba(4,2,0,0.97)" }}
           onClick={() => setLightbox(null)}>
@@ -400,7 +400,7 @@ export default function RelivePage() {
         )}
       </div>
 
-      {/* â”€â”€ Past storyboard lightbox â”€â”€ */}
+      {/* â"€â"€ Past storyboard lightbox â"€â"€ */}
       {pastLightbox && (
         <div className="fixed inset-0 z-[200] flex flex-col" style={{ background: "rgba(4,2,0,0.97)" }}
           onClick={() => setPastLightbox(null)}>
@@ -409,7 +409,7 @@ export default function RelivePage() {
             <div>
               <div className="font-serif font-bold text-amber-200 text-lg leading-tight">{pastLightbox.title}</div>
               <div className="font-serif italic text-xs mt-0.5" style={{ color: "rgba(190,145,70,0.75)" }}>
-                {pastLightbox.subtitle} Â· {new Date(pastLightbox.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                {pastLightbox.subtitle} · {new Date(pastLightbox.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -430,11 +430,11 @@ export default function RelivePage() {
         </div>
       )}
 
-      {/* â”€â”€ Your past storyboards (step 1 only) â”€â”€ */}
+      {/* â"€â"€ Your past storyboards (step 1 only) â"€â"€ */}
       {step === 1 && pastBoards.length > 0 && (
         <div className="mb-6">
           <p className="text-[11px] font-sans uppercase tracking-widest mb-3" style={{ color: "rgba(190,145,70,0.7)" }}>
-            âœ¦ Your storyboards â€” tap to view
+            âœ¦ Your storyboards "" tap to view
           </p>
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
             {pastBoards.map((board) => (
@@ -446,7 +446,7 @@ export default function RelivePage() {
                 <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5">
                   <div className="font-serif font-bold text-amber-200 text-xs leading-tight">{board.title}</div>
                   <div className="font-sans text-[9px] mt-0.5" style={{ color: "rgba(180,140,80,0.8)" }}>
-                    {new Date(board.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} Â· {board.panel_count} panels
+                    {new Date(board.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {board.panel_count} panels
                   </div>
                 </div>
                 <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-sans"
@@ -457,11 +457,11 @@ export default function RelivePage() {
         </div>
       )}
 
-      {/* â”€â”€ Example storyboards (step 1 only) â”€â”€ */}
+      {/* â"€â"€ Example storyboards (step 1 only) â"€â"€ */}
       {step === 1 && (
         <div className="mb-6">
           <p className="text-[11px] font-sans uppercase tracking-widest mb-3" style={{ color: "rgba(150,100,180,0.7)" }}>
-            âœ¦ Example Re-Live storyboards â€” tap to explore
+            âœ¦ Example Re-Live storyboards "" tap to explore
           </p>
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
             {RELIVE_EXAMPLES.map((story) => (
@@ -483,7 +483,7 @@ export default function RelivePage() {
       )}
 
 
-      {/* â”€â”€ Step 1: Story â”€â”€ */}
+      {/* â"€â"€ Step 1: Story â"€â"€ */}
       {step === 1 && (
         <div className="max-w-2xl">
           <h2 className="text-lg font-serif text-amber-200 mb-1">Choose your story</h2>
@@ -492,7 +492,7 @@ export default function RelivePage() {
           <div className="mb-4">
             <label className="text-xs uppercase tracking-wider font-serif text-amber-600/70 block mb-2">Subject's name (optional)</label>
             <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)}
-              placeholder="e.g. Margaret, Grandpa Joe, Momâ€¦"
+              placeholder="e.g. Margaret, Grandpa Joe, Mom..."
               className="w-full rounded-xl px-4 py-3 text-sm font-sans text-amber-200 placeholder-amber-800/40 focus:outline-none focus:ring-1 focus:ring-purple-700/50"
               style={{ background: "rgba(15,10,4,0.8)", border: "1px solid rgba(101,67,20,0.35)" }} />
           </div>
@@ -516,7 +516,7 @@ export default function RelivePage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-serif text-amber-200 truncate">{s.title || `Session with ${s.interviewerName.split(" ")[0]}`}</div>
-                        <div className="text-[10px] font-sans text-amber-800/50">{exchanges.length} exchanges Â· {new Date(s.startedAt).toLocaleDateString()}</div>
+                        <div className="text-[10px] font-sans text-amber-800/50">{exchanges.length} exchanges · {new Date(s.startedAt).toLocaleDateString()}</div>
                       </div>
                       {selectedSessionId === s.id && <Check size={14} style={{ color: "#c84a9a" }} />}
                     </button>
@@ -550,31 +550,31 @@ export default function RelivePage() {
               <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg"
                 style={{ background: "rgba(200,30,60,0.1)", border: "1px solid rgba(200,30,60,0.25)" }}>
                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-sans" style={{ color: "rgba(255,120,140,0.9)" }}>Listening â€” speak your storyâ€¦</span>
+                <span className="text-xs font-sans" style={{ color: "rgba(255,120,140,0.9)" }}>Listening "" speak your story...</span>
               </div>
             )}
             <textarea value={manualStory}
               onChange={(e) => { setManualStory(e.target.value); setSelectedSessionId(null); setRefineResult(null); }}
-              placeholder="Describe the memories, life events, places, people, and moments you want illustratedâ€¦ or press 'Speak your story' above."
+              placeholder="Describe the memories, life events, places, people, and moments you want illustrated... or press 'Speak your story' above."
               rows={7}
               className="w-full rounded-xl px-4 py-3 text-sm font-sans text-amber-200 placeholder-amber-800/40 resize-none focus:outline-none focus:ring-1 focus:ring-purple-700/50"
               style={{ background: "rgba(15,10,4,0.8)", border: "1px solid rgba(101,67,20,0.35)" }} />
             <div className="flex items-center justify-between mt-1">
               <div className="text-[10px] font-sans" style={{ color: "rgba(146,96,10,0.4)" }}>
-                {storyContent.trim().length} chars {hasStory ? <span style={{ color: "#c84a9a" }}>âœ“</span> : "(min 50)"}
+                {storyContent.trim().length} chars {hasStory ? <span style={{ color: "#c84a9a" }}>âœ"</span> : "(min 50)"}
               </div>
               {/* Refine button */}
               {!selectedSessionId && storyContent.trim().length >= 20 && (
                 <button onClick={handleRefine} disabled={refining}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all disabled:opacity-50"
                   style={{ background: "linear-gradient(135deg,rgba(122,45,138,0.35),rgba(200,74,154,0.25))", border: "1px solid rgba(200,74,154,0.4)", color: "rgba(220,160,240,0.95)" }}>
-                  {refining ? <><Loader2 size={11} className="animate-spin" /> Refiningâ€¦</> : <><Wand2 size={11} /> Refine with AI</>}
+                  {refining ? <><Loader2 size={11} className="animate-spin" /> Refining...</> : <><Wand2 size={11} /> Refine with AI</>}
                 </button>
               )}
             </div>
           </div>
 
-          {/* â”€â”€ AI Refinement results â”€â”€ */}
+          {/* â"€â"€ AI Refinement results â"€â"€ */}
           {refineResult && (
             <div className="mb-6 rounded-2xl overflow-hidden"
               style={{ border: "1px solid rgba(122,45,138,0.4)", background: "rgba(12,6,18,0.85)" }}>
@@ -602,7 +602,7 @@ export default function RelivePage() {
                           <textarea
                             value={questionAnswers[i] ?? ""}
                             onChange={(e) => setQuestionAnswers((qa) => { const n = [...qa]; n[i] = e.target.value; return n; })}
-                            placeholder="Type your answerâ€¦ or use the mic"
+                            placeholder="Type your answer... or use the mic"
                             rows={2}
                             className="flex-1 rounded-lg px-3 py-2 text-xs font-sans text-amber-200 placeholder-amber-800/40 resize-none focus:outline-none focus:ring-1 focus:ring-purple-700/50"
                             style={{ background: "rgba(10,5,15,0.8)", border: "1px solid rgba(80,30,100,0.4)" }}
@@ -670,7 +670,7 @@ export default function RelivePage() {
         </div>
       )}
 
-      {/* â”€â”€ Step 2: Reference Photo â”€â”€ */}
+      {/* â"€â"€ Step 2: Reference Photo â"€â"€ */}
       {step === 2 && (
         <div className="max-w-2xl">
           <h2 className="text-lg font-serif text-amber-200 mb-1">Reference photo</h2>
@@ -691,8 +691,8 @@ export default function RelivePage() {
                 </button>
                 <div className="absolute bottom-2 left-2 right-2 rounded-lg px-3 py-1.5 text-xs font-sans text-center"
                   style={{ background: "rgba(0,0,0,0.6)" }}>
-                  <span style={{ color: "#c84a9a" }}>âœ“ Photo uploaded</span>
-                  <span className="text-amber-800/60 ml-1">â€” tap to change</span>
+                  <span style={{ color: "#c84a9a" }}>âœ" Photo uploaded</span>
+                  <span className="text-amber-800/60 ml-1">"" tap to change</span>
                 </div>
               </>
             ) : (
@@ -703,7 +703,7 @@ export default function RelivePage() {
                 </div>
                 <div>
                   <div className="text-amber-200 font-serif text-sm font-semibold">Upload a reference photo</div>
-                  <div className="text-amber-800/50 font-sans text-xs mt-1">JPG, PNG, WEBP â€” used as character guide only</div>
+                  <div className="text-amber-800/50 font-sans text-xs mt-1">JPG, PNG, WEBP "" used as character guide only</div>
                 </div>
               </div>
             )}
@@ -712,7 +712,7 @@ export default function RelivePage() {
 
           <div className="rounded-xl px-4 py-3 mb-5 text-xs font-sans"
             style={{ background: "rgba(18,11,4,0.6)", border: "1px solid rgba(101,67,20,0.25)" }}>
-            <p className="text-amber-700/80">AI creates an illustrated interpretation â€” not a photorealistic or biometric copy. Intended for personal storytelling and family history.</p>
+            <p className="text-amber-700/80">AI creates an illustrated interpretation "" not a photorealistic or biometric copy. Intended for personal storytelling and family history.</p>
           </div>
 
           <div className="flex gap-3">
@@ -730,7 +730,7 @@ export default function RelivePage() {
         </div>
       )}
 
-      {/* â”€â”€ Step 3: Style, Tier & Generate â”€â”€ */}
+      {/* â"€â"€ Step 3: Style, Tier & Generate â"€â"€ */}
       {step === 3 && (
         <div className="max-w-2xl">
           <h2 className="text-lg font-serif text-amber-200 mb-1">Choose your style</h2>
@@ -742,10 +742,10 @@ export default function RelivePage() {
             <Crown size={16} className="flex-shrink-0 mt-0.5" style={{ color: "#e879c0" }} />
             <div>
               <div className="font-serif font-semibold text-sm" style={{ color: "#f0a0d8" }}>
-                Premium Access â€” Complimentary until Aug 11
+                Premium Access "" Complimentary until Aug 11
               </div>
               <div className="text-[11px] font-sans mt-0.5 leading-relaxed" style={{ color: "rgba(180,120,160,0.8)" }}>
-                Each panel is individually generated at full resolution for maximum quality and character consistency. Early testers get this free â€” thank you for helping shape the experience.
+                Each panel is individually generated at full resolution for maximum quality and character consistency. Early testers get this free "" thank you for helping shape the experience.
               </div>
             </div>
           </div>
@@ -771,14 +771,14 @@ export default function RelivePage() {
             </div>
           </div>
 
-          {/* Visual style â€” 3 options only */}
+          {/* Visual style "" 3 options only */}
           <div className="mb-5">
             <label className="text-xs uppercase tracking-wider font-serif text-amber-600/70 block mb-3">Visual Style</label>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { id: "Cinematic Concept Art" as ArtStyle, emoji: "ðŸŽ¬", label: "Cinematic",   desc: "Dramatic, filmic, lifelike" },
-                { id: "Illustrated Memoir"    as ArtStyle, emoji: "ðŸŽ¨", label: "Illustrated", desc: "Watercolor, warm textures" },
-                { id: "Graphic Novel"         as ArtStyle, emoji: "ðŸ“˜", label: "Graphic",     desc: "Bold lines, high contrast" },
+                { id: "Cinematic Concept Art" as ArtStyle, emoji: "🎬", label: "Cinematic",   desc: "Dramatic, filmic, lifelike" },
+                { id: "Illustrated Memoir"    as ArtStyle, emoji: "🎨", label: "Illustrated", desc: "Watercolor, warm textures" },
+                { id: "Graphic Novel"         as ArtStyle, emoji: "📘", label: "Graphic",     desc: "Bold lines, high contrast" },
               ].map((s) => (
                 <button key={s.id} onClick={() => setArtStyle(s.id)}
                   className="rounded-xl p-4 text-left transition-all"
@@ -794,7 +794,7 @@ export default function RelivePage() {
             </div>
           </div>
 
-          {/* Panel Count â€” 12 or 16 only */}
+          {/* Panel Count "" 12 or 16 only */}
           <div className="mb-6">
             <label className="text-xs uppercase tracking-wider font-serif text-amber-600/70 block mb-3">Number of Panels</label>
             <div className="flex gap-3">
@@ -811,7 +811,7 @@ export default function RelivePage() {
               ))}
             </div>
             <p className="text-[11px] font-sans text-amber-800/40 mt-2 text-center">
-              ~{Math.round(panelCount * 10 / 60)} min to generate Â· {panelCount} individual images composited
+              ~{Math.round(panelCount * 10 / 60)} min to generate · {panelCount} individual images composited
             </p>
           </div>
 
@@ -831,13 +831,13 @@ export default function RelivePage() {
             <button onClick={handleGenerate} disabled={generating}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-serif text-sm font-semibold transition-all disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #7a2d8a, #c84a9a)", color: "white" }}>
-              {generating ? <><Loader2 size={16} className="animate-spin" /> Generatingâ€¦</> : <><Sparkles size={16} /> Generate Re-Live Storyboard</>}
+              {generating ? <><Loader2 size={16} className="animate-spin" /> Generating...</> : <><Sparkles size={16} /> Generate Re-Live Storyboard</>}
             </button>
           </div>
         </div>
       )}
 
-      {/* â”€â”€ Loading overlay â”€â”€ */}
+      {/* â"€â"€ Loading overlay â"€â"€ */}
       {generating && (
         <div className="fixed inset-0 z-50 flex items-center justify-center"
           style={{ background: "rgba(8,5,2,0.94)", backdropFilter: "blur(8px)" }}>
@@ -886,13 +886,13 @@ export default function RelivePage() {
             )}
 
             <p className="text-[11px] font-sans text-amber-800/40">
-              {tier === "premium" ? `~${Math.round(panelCount * 10 / 60)} minutes` : "About 90 seconds"} Â· Do not close this tab
+              {tier === "premium" ? `~${Math.round(panelCount * 10 / 60)} minutes` : "About 90 seconds"} · Do not close this tab
             </p>
           </div>
         </div>
       )}
 
-      {/* â”€â”€ Step 4: Result â”€â”€ */}
+      {/* â"€â"€ Step 4: Result â"€â"€ */}
       {step === 4 && result && (
         <div className="max-w-5xl">
           <div className="flex items-start justify-between mb-5 gap-4 flex-wrap">
@@ -934,7 +934,7 @@ export default function RelivePage() {
 
           <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-sans text-amber-800/50">
             {[
-              tier === "premium" ? "Premium Â· Individual panels" : "Standard",
+              tier === "premium" ? "Premium · Individual panels" : "Standard",
               `${panelCount} panels`,
               artStyle,
               ageStage,
@@ -948,7 +948,7 @@ export default function RelivePage() {
             style={{ background: "rgba(18,11,4,0.6)", border: "1px solid rgba(101,67,20,0.2)" }}>
             <p className="text-amber-700/60">
               <span className="text-amber-600">AI-generated illustration.</span>{" "}
-              Artistic interpretation only â€” not a photorealistic or historically exact reconstruction.
+              Artistic interpretation only "" not a photorealistic or historically exact reconstruction.
               Intended for personal storytelling, family history, and memoir.
             </p>
           </div>

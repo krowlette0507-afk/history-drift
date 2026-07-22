@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -145,7 +145,7 @@ export default function SettingsPage() {
             <input value={email} disabled
               className={inputCls} style={{ ...inputStyle, opacity: 0.5, cursor: "not-allowed" }} />
             <p className="text-[10px] font-sans mt-1" style={{ color: "rgba(200,160,70,0.88)" }}>
-              Email cannot be changed here â€” contact support
+              Email cannot be changed here "" contact support
             </p>
           </div>
           <button type="submit" disabled={profileSaving}
@@ -176,7 +176,7 @@ export default function SettingsPage() {
               </label>
               <div className="relative">
                 <input type={show ? "text" : "password"} value={value} onChange={(e) => set(e.target.value)}
-                  required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  required placeholder="••••••••"
                   className={inputCls + " pr-11"} style={inputStyle} />
                 <button type="button" onClick={toggle}
                   className="absolute right-3 top-1/2 -translate-y-1/2"

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -30,13 +30,13 @@ const DOCUMENT_TEMPLATES = [
     id: "values-statement",
     title: "My Core Values",
     type: "Values Document",
-    prompt: "Write a personal values statement based on my life experiences â€” the principles I lived by, the things that mattered most, and the beliefs that guided my decisions.",
+    prompt: "Write a personal values statement based on my life experiences - the principles I lived by, the things that mattered most, and the beliefs that guided my decisions.",
   },
   {
     id: "family-wishes",
     title: "Wishes for My Family",
     type: "Legacy Wishes",
-    prompt: "Write a loving statement of my wishes for my family â€” not material wishes, but hopes, dreams, and guidance for how I'd like them to treat each other, face challenges, and find joy.",
+    prompt: "Write a loving statement of my wishes for my family - not material wishes, but hopes, dreams, and guidance for how I would like them to treat each other, face challenges, and find joy.",
   },
 ];
 
@@ -234,7 +234,7 @@ export default function LegacyPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full gap-4">
             <Loader2 size={28} className="animate-spin text-amber-600/60" />
-            <p className="text-amber-700/50 font-serif italic text-sm">Writing your legacy documentâ€¦</p>
+            <p className="text-amber-700/50 font-serif italic text-sm">Writing your legacy document...</p>
           </div>
         ) : selected ? (
           <>
@@ -243,7 +243,7 @@ export default function LegacyPage() {
               <div>
                 <h2 className="text-amber-200 font-serif font-semibold">{selected.title}</h2>
                 <div className="text-[9px] font-sans text-amber-800/40 mt-0.5">
-                  {selected.type} Â· {new Date(selected.createdAt).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+                  {selected.type} · {new Date(selected.createdAt).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
                 </div>
               </div>
               <button onClick={copy}

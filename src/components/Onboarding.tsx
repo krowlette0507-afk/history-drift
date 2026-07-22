@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -8,9 +8,9 @@ const ONBOARDING_KEY = "ls_onboarded_v1";
 
 const STEPS = [
   {
-    icon: "ðŸ“–",
+    icon: "📖",
     title: "Welcome to History Drift",
-    body: "This is your personal space to capture your life story â€” told in your own words, preserved for your family forever.",
+    body: "This is your personal space to capture your life story — told in your own words, preserved for your family forever.",
     cta: null,
   },
   {
@@ -18,7 +18,7 @@ const STEPS = [
     lucide: Mic,
     color: "#c8843a",
     title: "Start with an interview",
-    body: "An AI interviewer will guide you with thoughtful questions about your life â€” childhood, family, work, and the moments that shaped you. Just talk.",
+    body: "An AI interviewer will guide you with thoughtful questions about your life — childhood, family, work, and the moments that shaped you. Just talk.",
     cta: null,
   },
   {
@@ -26,7 +26,7 @@ const STEPS = [
     lucide: Sparkles,
     color: "#c84a9a",
     title: "Turn your story into art",
-    body: "Once you've shared your story, Re-Live transforms it into a beautiful illustrated storyboard â€” like a movie of your life.",
+    body: "Once you've shared your story, Re-Live transforms it into a beautiful illustrated storyboard — like a movie of your life.",
     cta: null,
   },
   {
@@ -34,7 +34,7 @@ const STEPS = [
     lucide: Heart,
     color: "#c84a4a",
     title: "Invite your family",
-    body: "Family members can contribute their own memories to your story â€” no account needed. Every voice makes the story richer.",
+    body: "Family members can contribute their own memories to your story — no account needed. Every voice makes the story richer.",
     cta: null,
   },
 ];

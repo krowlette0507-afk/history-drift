@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Shield } from "lucide-react";
 
 const SECTIONS = [
@@ -12,42 +12,42 @@ Contact: support@historydrift.com`,
     title: "What data we collect",
     body: `When you use History Drift, we collect:
 
-â€¢ Account information â€” your name and email address, provided at sign-up
-â€¢ Interview content â€” the questions asked and answers you record during interview sessions
-â€¢ Story content â€” any text you write or speak when creating Re-Live storyboards
-â€¢ Family contributions â€” memories and photos submitted by people you invite
-â€¢ Usage data â€” session timestamps, feature usage, and error logs for improving the service
+• Account information "" your name and email address, provided at sign-up
+• Interview content "" the questions asked and answers you record during interview sessions
+• Story content "" any text you write or speak when creating Re-Live storyboards
+• Family contributions "" memories and photos submitted by people you invite
+• Usage data "" session timestamps, feature usage, and error logs for improving the service
 
-We do not collect payment card details directly â€” payments are handled by Stripe, who have their own privacy policy.`,
+We do not collect payment card details directly "" payments are handled by Stripe, who have their own privacy policy.`,
   },
   {
     title: "How we use your data",
     body: `Your data is used exclusively to provide the History Drift service:
 
-â€¢ Interview answers are used to generate your biography, timeline, people index, and life lessons
-â€¢ Story content is used to generate Re-Live storyboards
-â€¢ Your email is used to send service notifications, family invite emails, and important account alerts
-â€¢ We do not sell, rent, or share your personal data with third parties for marketing purposes
-â€¢ We do not use your story content to train AI models`,
+• Interview answers are used to generate your biography, timeline, people index, and life lessons
+• Story content is used to generate Re-Live storyboards
+• Your email is used to send service notifications, family invite emails, and important account alerts
+• We do not sell, rent, or share your personal data with third parties for marketing purposes
+• We do not use your story content to train AI models`,
   },
   {
     title: "How your data is secured",
-    body: `Security is fundamental to what we do â€” your life story deserves the highest protection.
+    body: `Security is fundamental to what we do "" your life story deserves the highest protection.
 
-â€¢ All data is stored in Supabase (AWS infrastructure) with encryption at rest and in transit (TLS/HTTPS)
-â€¢ Row Level Security (RLS) is enforced at the database level â€” your data is only accessible to your authenticated account, even if someone attempted to access the database directly
-â€¢ API keys and service credentials are stored as environment variables and never exposed to the client
-â€¢ Family invite links are single-use, tokenised, and private â€” contributors can only submit, not read your story
-â€¢ We conduct regular reviews of access controls and security policies`,
+• All data is stored in Supabase (AWS infrastructure) with encryption at rest and in transit (TLS/HTTPS)
+• Row Level Security (RLS) is enforced at the database level "" your data is only accessible to your authenticated account, even if someone attempted to access the database directly
+• API keys and service credentials are stored as environment variables and never exposed to the client
+• Family invite links are single-use, tokenised, and private "" contributors can only submit, not read your story
+• We conduct regular reviews of access controls and security policies`,
   },
   {
     title: "Data retention and deletion",
     body: `We retain your data for as long as your account is active or your subscription is current.
 
 When your subscription ends:
-â€¢ Your data remains accessible for 30 days
-â€¢ You will receive a warning email 14 days before permanent deletion
-â€¢ After 30 days, all your data is permanently and irreversibly deleted from our servers â€” including interviews, storyboards, family memories, biography content, and account information
+• Your data remains accessible for 30 days
+• You will receive a warning email 14 days before permanent deletion
+• After 30 days, all your data is permanently and irreversibly deleted from our servers "" including interviews, storyboards, family memories, biography content, and account information
 
 You may also request immediate account deletion at any time from Settings â†’ Delete my account. This schedules deletion within 30 days, with a 14-day warning email sent at the midpoint. To cancel a deletion request, contact support@historydrift.com before the deletion date.
 
@@ -57,11 +57,11 @@ We do not retain backup copies of deleted accounts beyond our standard 7-day inf
     title: "Your rights",
     body: `You have the right to:
 
-â€¢ Access â€” request a copy of all personal data we hold about you
-â€¢ Correction â€” correct inaccurate data (use the People page edit feature or contact us)
-â€¢ Deletion â€” request permanent deletion of your account and all associated data
-â€¢ Portability â€” request your data in a machine-readable format
-â€¢ Objection â€” object to how we process your data
+• Access "" request a copy of all personal data we hold about you
+• Correction "" correct inaccurate data (use the People page edit feature or contact us)
+• Deletion "" request permanent deletion of your account and all associated data
+• Portability "" request your data in a machine-readable format
+• Objection "" object to how we process your data
 
 To exercise any of these rights, contact us at support@historydrift.com. We will respond within 30 days.`,
   },
@@ -73,11 +73,11 @@ To exercise any of these rights, contact us at support@historydrift.com. We will
     title: "Third-party services",
     body: `We use the following third-party services to operate History Drift:
 
-â€¢ Supabase â€” database and authentication (data stored on AWS, us-west-2)
-â€¢ OpenAI â€” AI interview questions, story analysis, and image generation (your content is sent to OpenAI's API; OpenAI's data usage policy applies)
-â€¢ Resend â€” transactional email delivery
-â€¢ Vercel â€” application hosting and deployment
-â€¢ Stripe â€” subscription billing and payment processing
+• Supabase "" database and authentication (data stored on AWS, us-west-2)
+• OpenAI "" AI interview questions, story analysis, and image generation (your content is sent to OpenAI's API; OpenAI's data usage policy applies)
+• Resend "" transactional email delivery
+• Vercel "" application hosting and deployment
+• Stripe "" subscription billing and payment processing
 
 Each of these services has its own privacy policy. We select providers who meet high data protection standards.`,
   },
@@ -127,8 +127,8 @@ export default function PrivacyPage() {
                 {section.body.split("\n").map((line, j) => (
                   line.trim() ? (
                     <p key={j}
-                      className={`font-serif text-sm leading-relaxed ${line.startsWith("â€¢") ? "pl-3" : ""}`}
-                      style={{ color: line.startsWith("â€¢") ? "rgba(230,195,110,0.95)" : "rgba(235,205,120,0.97)" }}>
+                      className={`font-serif text-sm leading-relaxed ${line.startsWith("•") ? "pl-3" : ""}`}
+                      style={{ color: line.startsWith("•") ? "rgba(230,195,110,0.95)" : "rgba(235,205,120,0.97)" }}>
                       {line}
                     </p>
                   ) : <div key={j} className="h-1" />
@@ -166,7 +166,7 @@ export default function PrivacyPage() {
         </div>
 
         <p className="text-center text-[11px] font-sans mt-8" style={{ color: "rgba(190,155,65,0.80)" }}>
-          Â© {new Date().getFullYear()} History Drift. All rights reserved.
+          © {new Date().getFullYear()} History Drift. All rights reserved.
         </p>
       </div>
     </div>

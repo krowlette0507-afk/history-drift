@@ -138,7 +138,7 @@ export default function FamilyPage() {
             <label className="block text-[10px] font-sans uppercase tracking-wider mb-1.5"
               style={{ color: "rgba(180,130,60,0.55)" }}>Personal message (optional)</label>
             <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
-              placeholder="Ask them to share a specific memoryâ€¦"
+              placeholder="Ask them to share a specific memory..."
               className="w-full rounded-xl px-3 py-2.5 text-sm font-sans resize-none focus:outline-none"
               style={{ background: "rgba(10,6,2,0.9)", border: "1px solid rgba(100,65,20,0.35)", color: "#e8d4a0" }} />
           </div>
@@ -175,7 +175,7 @@ export default function FamilyPage() {
                     {inv.invitee_name ?? inv.invitee_email}
                   </div>
                   <div className="text-[10px] font-sans truncate" style={{ color: "rgba(220,175,80,0.92)" }}>
-                    {inv.invitee_name ? inv.invitee_email + " Â· " : ""}
+                    {inv.invitee_name ? inv.invitee_email + " · " : ""}
                     {new Date(inv.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export default function FamilyPage() {
               {expanded === inv.id && inv.contributions.length === 0 && (
                 <div className="px-4 pb-4 pt-2 border-t" style={{ borderColor: "rgba(80,50,15,0.2)" }}>
                   <p className="font-serif italic text-xs" style={{ color: "rgba(140,100,40,0.5)" }}>
-                    Waiting for their responseâ€¦
+                    Waiting for their response...
                   </p>
                 </div>
               )}
