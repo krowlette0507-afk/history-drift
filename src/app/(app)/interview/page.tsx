@@ -291,18 +291,18 @@ function PhaseSidebar({
               borderLeft: isActive ? `2px solid ${color}` : "2px solid transparent",
             }}
           >
-            <div style={{ color: isDone ? "#6a9a6a" : isActive ? color : "rgba(120,80,30,0.6)" }}>
+            <div style={{ color: isDone ? "#6a9a6a" : isActive ? color : "rgba(185,130,50,0.80)" }}>
               {isDone ? <CheckCircle size={12} /> : isActive ? <Circle size={12} style={{ fill: `${color}30` }} /> : <Circle size={12} />}
             </div>
             <div className="flex-1 min-w-0">
               <div
                 className="text-[11px] font-sans font-semibold leading-tight truncate"
-                style={{ color: isActive ? color : isDone ? "rgba(160,200,120,0.7)" : "rgba(140,90,30,0.55)" }}
+                style={{ color: isActive ? color : isDone ? "rgba(160,200,120,0.85)" : "rgba(205,155,65,0.85)" }}
               >
                 {phase.name}
               </div>
               {isActive && (
-                <div className="text-[9px] font-sans text-amber-800/50 leading-tight truncate mt-0.5">
+                <div className="text-[9px] font-sans leading-tight truncate mt-0.5" style={{ color: "rgba(200,155,65,0.80)" }}>
                   {phase.description}
                 </div>
               )}
@@ -1448,17 +1448,17 @@ function InterviewInner() {
             <InterviewerPortrait interviewer={selectedInterviewer} size={24} />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-sans font-semibold text-amber-400/80 truncate">
+            <div className="text-[10px] font-sans font-semibold truncate" style={{ color: "rgba(240,195,80,0.95)" }}>
               {selectedInterviewer.name.split(" ")[0]}
             </div>
-            <div className="text-[8px] font-sans text-amber-800/50 truncate">
+            <div className="text-[8px] font-sans truncate" style={{ color: "rgba(200,155,65,0.80)" }}>
               {exchanges.length} saved
             </div>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3 px-1">
-          <div className="text-[9px] uppercase tracking-widest text-amber-800/40 font-sans px-3 mb-2">Progress</div>
+          <div className="text-[9px] uppercase tracking-widest font-sans px-3 mb-2" style={{ color: "rgba(200,155,70,0.75)" }}>Progress</div>
           <PhaseSidebar
             currentPhase={currentPhase}
             completedPhases={completedPhases}
