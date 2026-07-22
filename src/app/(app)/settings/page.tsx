@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -109,7 +109,7 @@ export default function SettingsPage() {
   return (
     <div className="px-5 py-8 max-w-lg mx-auto">
       <div className="mb-6">
-        <div className="text-[11px] font-sans uppercase tracking-widest mb-1" style={{ color: "rgba(150,100,40,0.6)" }}>Preferences</div>
+        <div className="text-[11px] font-sans uppercase tracking-widest mb-1" style={{ color: "rgba(215,170,75,0.92)" }}>Preferences</div>
         <h1 className="font-serif font-bold text-2xl" style={{ color: "#f0d060" }}>Settings</h1>
       </div>
 
@@ -120,7 +120,7 @@ export default function SettingsPage() {
             className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-serif transition-all"
             style={{
               background: tab === key ? "rgba(122,45,138,0.35)" : "transparent",
-              color: tab === key ? "#e0a0f0" : "rgba(180,130,60,0.6)",
+              color: tab === key ? "#e0a0f0" : "rgba(225,185,80,0.92)",
               border: tab === key ? "1px solid rgba(200,74,154,0.3)" : "1px solid transparent",
             }}>
             <Icon size={14} />{label}
@@ -132,20 +132,20 @@ export default function SettingsPage() {
       {tab === "profile" && (
         <form onSubmit={saveProfile} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(225,185,80,0.92)" }}>
               Full name
             </label>
             <input value={fullName} onChange={(e) => setFullName(e.target.value)}
               placeholder="Your full name" className={inputCls} style={inputStyle} />
           </div>
           <div>
-            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+            <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(225,185,80,0.92)" }}>
               Email address
             </label>
             <input value={email} disabled
               className={inputCls} style={{ ...inputStyle, opacity: 0.5, cursor: "not-allowed" }} />
-            <p className="text-[10px] font-sans mt-1" style={{ color: "rgba(120,80,30,0.5)" }}>
-              Email cannot be changed here — contact support
+            <p className="text-[10px] font-sans mt-1" style={{ color: "rgba(200,160,70,0.88)" }}>
+              Email cannot be changed here â€” contact support
             </p>
           </div>
           <button type="submit" disabled={profileSaving}
@@ -171,16 +171,16 @@ export default function SettingsPage() {
             { label: "Confirm new password", value: confirmPassword, set: setConfirmPassword, show: showConfirm, toggle: () => setShowConfirm(v => !v) },
           ].map(({ label, value, set, show, toggle }) => (
             <div key={label}>
-              <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(180,130,60,0.6)" }}>
+              <label className="block text-[11px] font-sans uppercase tracking-wider mb-1.5" style={{ color: "rgba(225,185,80,0.92)" }}>
                 {label}
               </label>
               <div className="relative">
                 <input type={show ? "text" : "password"} value={value} onChange={(e) => set(e.target.value)}
-                  required placeholder="••••••••"
+                  required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className={inputCls + " pr-11"} style={inputStyle} />
                 <button type="button" onClick={toggle}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "rgba(160,110,50,0.6)" }}>
+                  style={{ color: "rgba(220,175,80,0.92)" }}>
                   {show ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>

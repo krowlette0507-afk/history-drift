@@ -199,7 +199,7 @@ export default function Navbar() {
           return (
             <Link key={href} href={href}
               className="flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors"
-              style={{ color: active ? "#d4a017" : "rgba(146,96,10,0.6)" }}>
+              style={{ color: active ? "#d4a017" : "rgba(210,165,60,0.75)" }}>
               <Icon size={20} />
               <span className="text-[10px] font-sans">{label}</span>
             </Link>
@@ -207,7 +207,7 @@ export default function Navbar() {
         })}
         <button onClick={() => setMenuOpen(true)}
           className="flex-1 flex flex-col items-center justify-center py-3 gap-1"
-          style={{ color: "rgba(146,96,10,0.6)" }}>
+          style={{ color: "rgba(210,165,60,0.75)" }}>
           <Menu size={20} />
           <span className="text-[10px] font-sans">More</span>
         </button>

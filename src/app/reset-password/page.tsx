@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -67,12 +67,12 @@ export default function ResetPasswordPage() {
                 <Check size={24} color="white" />
               </div>
               <p className="text-amber-200 font-serif">Password updated!</p>
-              <p className="text-amber-700/60 text-xs font-sans">Redirecting to your dashboard…</p>
+              <p className="text-amber-700/60 text-xs font-sans">Redirecting to your dashboardâ€¦</p>
             </div>
           ) : !ready ? (
             <div className="text-center py-6 space-y-3">
               <Loader2 size={24} className="animate-spin mx-auto" style={{ color: "#c8843a" }} />
-              <p className="text-amber-700/60 text-sm font-sans">Verifying your reset link…</p>
+              <p className="text-amber-700/60 text-sm font-sans">Verifying your reset linkâ€¦</p>
             </div>
           ) : (
             <form onSubmit={handleReset} className="space-y-4">
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
                       style={inputStyle} />
                     <button type="button" onClick={toggle}
                       className="absolute right-3 top-1/2 -translate-y-1/2"
-                      style={{ color: "rgba(160,110,50,0.6)" }}>
+                      style={{ color: "rgba(220,175,80,0.92)" }}>
                       {show ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -8,9 +8,9 @@ const ONBOARDING_KEY = "ls_onboarded_v1";
 
 const STEPS = [
   {
-    icon: "📖",
+    icon: "ðŸ“–",
     title: "Welcome to History Drift",
-    body: "This is your personal space to capture your life story — told in your own words, preserved for your family forever.",
+    body: "This is your personal space to capture your life story â€” told in your own words, preserved for your family forever.",
     cta: null,
   },
   {
@@ -18,7 +18,7 @@ const STEPS = [
     lucide: Mic,
     color: "#c8843a",
     title: "Start with an interview",
-    body: "An AI interviewer will guide you with thoughtful questions about your life — childhood, family, work, and the moments that shaped you. Just talk.",
+    body: "An AI interviewer will guide you with thoughtful questions about your life â€” childhood, family, work, and the moments that shaped you. Just talk.",
     cta: null,
   },
   {
@@ -26,7 +26,7 @@ const STEPS = [
     lucide: Sparkles,
     color: "#c84a9a",
     title: "Turn your story into art",
-    body: "Once you've shared your story, Re-Live transforms it into a beautiful illustrated storyboard — like a movie of your life.",
+    body: "Once you've shared your story, Re-Live transforms it into a beautiful illustrated storyboard â€” like a movie of your life.",
     cta: null,
   },
   {
@@ -34,7 +34,7 @@ const STEPS = [
     lucide: Heart,
     color: "#c84a4a",
     title: "Invite your family",
-    body: "Family members can contribute their own memories to your story — no account needed. Every voice makes the story richer.",
+    body: "Family members can contribute their own memories to your story â€” no account needed. Every voice makes the story richer.",
     cta: null,
   },
 ];
@@ -110,7 +110,7 @@ export default function Onboarding() {
           </div>
           <button onClick={dismiss}
             className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-            style={{ background: "rgba(40,24,8,0.8)", color: "rgba(160,110,50,0.7)" }}>
+            style={{ background: "rgba(40,24,8,0.8)", color: "rgba(220,175,80,0.95)" }}>
             <X size={15} />
           </button>
         </div>
@@ -151,7 +151,7 @@ export default function Onboarding() {
               </button>
               <button onClick={dismiss}
                 className="w-full py-3 rounded-2xl font-serif text-sm transition-all"
-                style={{ color: "rgba(160,110,50,0.6)" }}>
+                style={{ color: "rgba(220,175,80,0.92)" }}>
                 I'll explore on my own
               </button>
             </>
@@ -164,7 +164,7 @@ export default function Onboarding() {
               </button>
               <button onClick={dismiss}
                 className="w-full py-3 rounded-2xl font-serif text-sm transition-all"
-                style={{ color: "rgba(160,110,50,0.5)" }}>
+                style={{ color: "rgba(220,175,80,0.88)" }}>
                 Skip intro
               </button>
             </>
@@ -177,7 +177,7 @@ export default function Onboarding() {
 
       {/* Desktop: also show a quick-start tip */}
       <div className="hidden md:flex items-center gap-2 mt-4 text-xs font-sans"
-        style={{ color: "rgba(120,80,30,0.5)" }}>
+        style={{ color: "rgba(200,160,70,0.88)" }}>
         <ArrowRight size={12} /> Press Esc or click outside to skip
       </div>
     </div>

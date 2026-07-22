@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useState, useEffect, useRef, useCallback, Suspense, useMemo
@@ -20,7 +20,7 @@ import {
   CheckCircle, Circle
 } from "lucide-react";
 
-/* ─── Phase config ────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Phase config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PHASE_QUESTIONS_PER: Record<PhaseId, number> = {
   hook: 3, character: 4, journey: 6, people: 5,
   places: 4, adventures: 4, challenges: 4, wisdom: 4, legacy: 3,
@@ -46,28 +46,28 @@ const PHASE_ICONS: Record<PhaseId, React.ReactNode> = {
 
 const OPENING_QUESTIONS: Record<string, Record<PhaseId, string>> = {
   dr_james_carter: {
-    hook: "Before we begin, I'd love to know who I'm speaking with. Please share your name and tell me a little about yourself — where you're from, what stage of life you're in, whatever feels right. There's no wrong way to start.",
+    hook: "Before we begin, I'd love to know who I'm speaking with. Please share your name and tell me a little about yourself â€” where you're from, what stage of life you're in, whatever feels right. There's no wrong way to start.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   professor_mei_lin: {
-    hook: "I'm so glad you're here. Before we dive in, I'd love to know your name and a little about who you are — your background, where you grew up, whatever comes to mind first. Let's start simply.",
+    hook: "I'm so glad you're here. Before we dive in, I'd love to know your name and a little about who you are â€” your background, where you grew up, whatever comes to mind first. Let's start simply.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   sarah_bennett: {
-    hook: "Welcome — I'm really glad you're here. Let's start by getting to know each other a little. What's your name, and can you give me a quick sense of who you are and where you're at in life right now?",
+    hook: "Welcome â€” I'm really glad you're here. Let's start by getting to know each other a little. What's your name, and can you give me a quick sense of who you are and where you're at in life right now?",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   miguel_alvarez: {
-    hook: "Hey, really glad you're here. Before anything else — what's your name, and tell me a little about yourself. Where you're from, what your world looks like right now. Just talk to me.",
+    hook: "Hey, really glad you're here. Before anything else â€” what's your name, and tell me a little about yourself. Where you're from, what your world looks like right now. Just talk to me.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   jordan_brooks: {
-    hook: "Okay, let's do this! First things first — what's your name, and give me the quick version of you. Where you're from, what your life looks like, whatever you want me to know going in.",
+    hook: "Okay, let's do this! First things first â€” what's your name, and give me the quick version of you. Where you're from, what your life looks like, whatever you want me to know going in.",
     character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
 };
 
-/* ─── Types ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 type RecordingState = "idle" | "recording" | "paused" | "stopped";
 type InterviewState = "select" | "ready" | "active" | "summary";
 
@@ -87,7 +87,7 @@ interface ActiveExchange {
   editDraft?: string;
 }
 
-/* ─── Waveform animation ──────────────────────────────────────────────── */
+/* â”€â”€â”€ Waveform animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaveBar({ delay, active }: { delay: number; active: boolean }) {
   return (
     <div
@@ -131,7 +131,7 @@ function RecordingWave({
           Array.from({ length: BARS }, (_, i) => {
             const slice = data.slice(i * binSize, (i + 1) * binSize);
             const avg = slice.reduce((a, b) => a + b, 0) / slice.length;
-            return 4 + (avg / 255) * 30; // 4 – 34 px
+            return 4 + (avg / 255) * 30; // 4 â€“ 34 px
           })
         );
       } else {
@@ -165,7 +165,7 @@ function RecordingWave({
   );
 }
 
-/* ─── Memory Card ─────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Memory Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MemoryCard({ memory }: { memory: StoredMemory }) {
   const [open, setOpen] = useState(false);
   const color = PHASE_COLORS[memory.phase] || "#8a5021";
@@ -206,7 +206,7 @@ function MemoryCard({ memory }: { memory: StoredMemory }) {
               {memory.importantPeople.map((p, i) => (
                 <div key={i} className="text-[10px] font-sans text-amber-500/70">
                   <span className="text-amber-300/80">{p.name}</span>
-                  {p.relationship && <span className="text-amber-700/50"> · {p.relationship}</span>}
+                  {p.relationship && <span className="text-amber-700/50"> Â· {p.relationship}</span>}
                 </div>
               ))}
             </div>
@@ -218,7 +218,7 @@ function MemoryCard({ memory }: { memory: StoredMemory }) {
               {memory.importantPlaces.map((p, i) => (
                 <div key={i} className="text-[10px] font-sans text-amber-500/70">
                   <span className="text-amber-300/80">{p.name}</span>
-                  {p.type && <span className="text-amber-700/50"> · {p.type}</span>}
+                  {p.type && <span className="text-amber-700/50"> Â· {p.type}</span>}
                 </div>
               ))}
             </div>
@@ -251,7 +251,7 @@ function MemoryCard({ memory }: { memory: StoredMemory }) {
             <div>
               <div className="text-[9px] uppercase tracking-widest text-amber-700/50 mb-1 font-sans">Follow-ups</div>
               {memory.followUpQuestions.slice(0, 2).map((q, i) => (
-                <p key={i} className="text-[9.5px] font-sans text-amber-600/60 leading-relaxed">· {q}</p>
+                <p key={i} className="text-[9.5px] font-sans text-amber-600/60 leading-relaxed">Â· {q}</p>
               ))}
             </div>
           )}
@@ -261,7 +261,7 @@ function MemoryCard({ memory }: { memory: StoredMemory }) {
   );
 }
 
-/* ─── Phase Sidebar ───────────────────────────────────────────────────── */
+/* â”€â”€â”€ Phase Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PhaseSidebar({
   currentPhase,
   completedPhases,
@@ -322,7 +322,7 @@ function PhaseSidebar({
   );
 }
 
-/* ─── Interviewer Selector ────────────────────────────────────────────── */
+/* â”€â”€â”€ Interviewer Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function InterviewerSelector({
   selected,
   onSelect,
@@ -421,7 +421,7 @@ function InterviewerSelector({
         </div>
         <div className="flex-1 text-center md:text-left">
           <div style={{ color: selected.accentColor }} className="text-xs font-sans uppercase tracking-widest mb-1">
-            {selected.ethnicity} · Age {selected.age}
+            {selected.ethnicity} Â· Age {selected.age}
           </div>
           <h2 className="text-amber-100 font-serif font-bold text-xl mb-1">{selected.name}</h2>
           <p className="text-amber-700/70 text-sm font-sans mb-3">{selected.title}</p>
@@ -444,7 +444,7 @@ function InterviewerSelector({
 
       {/* Phase overview */}
       <div className="mb-6">
-        <div className="text-amber-700/50 text-xs font-sans uppercase tracking-widest mb-3">Interview Framework — 9 Phases</div>
+        <div className="text-amber-700/50 text-xs font-sans uppercase tracking-widest mb-3">Interview Framework â€” 9 Phases</div>
         <div className="grid grid-cols-3 gap-2">
           {INTERVIEW_PHASES.map((phase) => (
             <div
@@ -478,7 +478,7 @@ function InterviewerSelector({
   );
 }
 
-/* ─── Session Summary ─────────────────────────────────────────────────── */
+/* â”€â”€â”€ Session Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SessionSummaryView({
   sessionId,
   interviewer,
@@ -557,14 +557,14 @@ function SessionSummaryView({
         </div>
         <h1 className="text-amber-200 font-serif font-bold text-3xl mb-2">Session Complete</h1>
         <p className="text-amber-700/60 font-serif italic text-sm">
-          {exchanges.length} exchange{exchanges.length !== 1 ? "s" : ""} captured · {interviewer.name}
+          {exchanges.length} exchange{exchanges.length !== 1 ? "s" : ""} captured Â· {interviewer.name}
         </p>
       </div>
 
       {loading ? (
         <div className="text-center py-16">
           <Loader2 size={32} className="text-amber-600 animate-spin mx-auto mb-4" />
-          <p className="text-amber-700/60 font-serif italic text-sm">Generating your session summary…</p>
+          <p className="text-amber-700/60 font-serif italic text-sm">Generating your session summaryâ€¦</p>
         </div>
       ) : summary ? (
         <div className="space-y-5">
@@ -589,7 +589,7 @@ function SessionSummaryView({
                   <button
                     onClick={() => { setTitleDraft(summary.title); setEditingTitle(true); }}
                     className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ color: "rgba(180,130,60,0.6)" }}
+                    style={{ color: "rgba(225,185,80,0.92)" }}
                     title="Edit title"
                   >
                     <Edit3 size={13} />
@@ -606,7 +606,7 @@ function SessionSummaryView({
                 <button
                   onClick={() => { setDescDraft(summary.summary); setEditingDesc(true); }}
                   className="flex items-center gap-1 text-[10px] font-sans transition-opacity"
-                  style={{ color: "rgba(180,130,60,0.5)" }}
+                  style={{ color: "rgba(225,185,80,0.88)" }}
                   title="Edit summary"
                 >
                   <Edit3 size={11} /> Edit
@@ -626,7 +626,7 @@ function SessionSummaryView({
                 <div className="flex gap-2 justify-end">
                   <button onClick={() => setEditingDesc(false)}
                     className="px-3 py-1.5 rounded-lg text-xs font-sans"
-                    style={{ color: "rgba(160,110,50,0.6)" }}>Cancel</button>
+                    style={{ color: "rgba(220,175,80,0.92)" }}>Cancel</button>
                   <button onClick={saveDesc}
                     className="px-3 py-1.5 rounded-lg text-xs font-sans font-semibold flex items-center gap-1"
                     style={{ background: "linear-gradient(135deg,#5a3018,#c8843a)", color: "white" }}>
@@ -647,7 +647,7 @@ function SessionSummaryView({
                   <div className="text-[10px] uppercase tracking-widest text-amber-700/50 font-sans">People Mentioned</div>
                 </div>
                 {summary.keyPeople.map((p, i) => (
-                  <div key={i} className="text-xs font-sans text-amber-400/70 py-0.5">· {p}</div>
+                  <div key={i} className="text-xs font-sans text-amber-400/70 py-0.5">Â· {p}</div>
                 ))}
               </div>
             )}
@@ -658,7 +658,7 @@ function SessionSummaryView({
                   <div className="text-[10px] uppercase tracking-widest text-amber-700/50 font-sans">Places Mentioned</div>
                 </div>
                 {summary.keyPlaces.map((p, i) => (
-                  <div key={i} className="text-xs font-sans text-amber-400/70 py-0.5">· {p}</div>
+                  <div key={i} className="text-xs font-sans text-amber-400/70 py-0.5">Â· {p}</div>
                 ))}
               </div>
             )}
@@ -671,7 +671,7 @@ function SessionSummaryView({
                 <div className="text-[10px] uppercase tracking-widest text-amber-700/50 font-sans">Life Lessons</div>
               </div>
               {summary.lifeLessons.map((l, i) => (
-                <div key={i} className="text-xs font-serif italic text-amber-400/70 py-0.5">· {l}</div>
+                <div key={i} className="text-xs font-serif italic text-amber-400/70 py-0.5">Â· {l}</div>
               ))}
             </div>
           )}
@@ -697,14 +697,14 @@ function SessionSummaryView({
                 <div className="text-[10px] uppercase tracking-widest text-amber-700/50 font-sans">Suggested Follow-ups for Next Session</div>
               </div>
               {summary.suggestedFollowUps.map((q, i) => (
-                <div key={i} className="text-xs font-sans text-amber-500/70 py-0.5">· {q}</div>
+                <div key={i} className="text-xs font-sans text-amber-500/70 py-0.5">Â· {q}</div>
               ))}
             </div>
           )}
         </div>
       ) : (
         <div className="text-center py-8 text-amber-700/50 font-serif italic text-sm">
-          Summary could not be generated — your answers have been saved.
+          Summary could not be generated â€” your answers have been saved.
         </div>
       )}
 
@@ -729,7 +729,7 @@ function SessionSummaryView({
   );
 }
 
-/* ─── Name extraction helper ──────────────────────────────────────────── */
+/* â”€â”€â”€ Name extraction helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function extractName(text: string): string | null {
   const patterns = [
     /(?:my name is|i'm|i am|call me|name's)\s+([A-Z][a-z]+)/i,
@@ -742,7 +742,7 @@ function extractName(text: string): string | null {
   return null;
 }
 
-/* ─── Main Interview Inner ────────────────────────────────────────────── */
+/* â”€â”€â”€ Main Interview Inner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function InterviewInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -753,7 +753,7 @@ function InterviewInner() {
     [interviewerId]
   );
 
-  /* ── Auth + resume ── */
+  /* â”€â”€ Auth + resume â”€â”€ */
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [resumeSession, setResumeSession] = useState<{ sessionId: string; phase: PhaseId; exchangeCount: number; userName?: string } | null>(null);
   useEffect(() => {
@@ -774,7 +774,7 @@ function InterviewInner() {
     });
   }, []);
 
-  /* ── State ── */
+  /* â”€â”€ State â”€â”€ */
   const [selectedInterviewer, setSelectedInterviewer] = useState<Interviewer>(interviewer);
   const [interviewState, setInterviewState] = useState<InterviewState>(
     searchParams.get("interviewer") ? "ready" : "select"
@@ -799,8 +799,8 @@ function InterviewInner() {
   const [showTypeMode, setShowTypeMode] = useState(false);
   const [userName, setUserName] = useState<string>("");
 
-  /* ── Refs ── */
-  const synthRef = useRef<SpeechSynthesis | null>(null); // unused — kept to avoid refactor
+  /* â”€â”€ Refs â”€â”€ */
+  const synthRef = useRef<SpeechSynthesis | null>(null); // unused â€” kept to avoid refactor
   const ttsCtxRef    = useRef<AudioContext | null>(null);       // shared AudioContext for TTS
   const ttsSourceRef = useRef<AudioBufferSourceNode | null>(null); // current playing node
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -813,7 +813,7 @@ function InterviewInner() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
-  // All questions asked so far — AI never repeats these
+  // All questions asked so far â€” AI never repeats these
   const askedQuestionsRef = useRef<string[]>([]);
   // 7-minute auto-stop timer
   const recordingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -825,11 +825,11 @@ function InterviewInner() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [exchanges, currentQuestion]);
 
-  /* ── TTS via OpenAI + AudioContext ────────────────────────────────────
+  /* â”€â”€ TTS via OpenAI + AudioContext â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      AudioContext, once resumed after a user gesture, stays running and can
-     play audio from async callbacks — unlike new Audio() which loses the
+     play audio from async callbacks â€” unlike new Audio() which loses the
      gesture context after ~1 second.
-  ───────────────────────────────────────────────────────────────────── */
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
   // Unlock / resume AudioContext on first user interaction so async plays work
   useEffect(() => {
@@ -861,16 +861,16 @@ function InterviewInner() {
     setIsSpeaking(true);
     setTtsError(false);
 
-    // Always create a fresh AudioContext per playback — reused contexts
+    // Always create a fresh AudioContext per playback â€” reused contexts
     // can silently fail on mobile after being suspended/interrupted
     try { ttsCtxRef.current?.close(); } catch {}
     const ctx = new AudioContext();
     ttsCtxRef.current = ctx;
 
-    // Immediately resume — required on mobile where autoplay policy suspends new contexts
+    // Immediately resume â€” required on mobile where autoplay policy suspends new contexts
     ctx.resume().catch(() => {});
 
-    // 12-second fetch timeout — if TTS API hangs, fail gracefully
+    // 12-second fetch timeout â€” if TTS API hangs, fail gracefully
     const controller = new AbortController();
     const fetchTimeout = setTimeout(() => controller.abort(), 12_000);
 
@@ -914,14 +914,14 @@ function InterviewInner() {
       });
   }, [ttsEnabled, stopSpeaking]);
 
-  /* ── Phase advancement ── */
+  /* â”€â”€ Phase advancement â”€â”€ */
   const advancePhase = useCallback((current: PhaseId): PhaseId => {
     const idx = INTERVIEW_PHASES.findIndex((p) => p.id === current);
     if (idx < INTERVIEW_PHASES.length - 1) return INTERVIEW_PHASES[idx + 1].id;
     return current;
   }, []);
 
-  /* ── Fetch next question ── */
+  /* â”€â”€ Fetch next question â”€â”€ */
   // Snapshot of last fetch args so the Retry button can replay the call
   const lastFetchArgsRef = useRef<{ phase: PhaseId; history: LiveMessage[]; sid: string } | null>(null);
 
@@ -934,7 +934,7 @@ function InterviewInner() {
     setIsLoadingQuestion(true);
     setQuestionError(false);
 
-    // 15-second hard timeout — surface retry UI if OpenAI hangs
+    // 15-second hard timeout â€” surface retry UI if OpenAI hangs
     const controller = new AbortController();
     const fetchTimeout = setTimeout(() => controller.abort(), 15_000);
 
@@ -961,13 +961,13 @@ function InterviewInner() {
       if (ttsEnabled) speak(q, selectedInterviewer.gender, selectedInterviewer.voiceName);
     } catch {
       clearTimeout(fetchTimeout);
-      setQuestionError(true); // show Retry / Skip UI — don't silently repeat a canned phrase
+      setQuestionError(true); // show Retry / Skip UI â€” don't silently repeat a canned phrase
     } finally {
       setIsLoadingQuestion(false);
     }
   }, [selectedInterviewer.id, ttsEnabled, speak, userName]);
 
-  /* ── Start interview ── */
+  /* â”€â”€ Start interview â”€â”€ */
   const startInterview = useCallback(() => {
     createSession(selectedInterviewer.id, selectedInterviewer.name).then((session) => {
     setSessionId(session.id);
@@ -988,7 +988,7 @@ function InterviewInner() {
     });
   }, [selectedInterviewer, ttsEnabled, speak]);
 
-  /* ── Resume session ── */
+  /* â”€â”€ Resume session â”€â”€ */
   const resumeInterview = useCallback(() => {
     if (!resumeSession) return;
     const prevExchanges = getExchanges(resumeSession.sessionId);
@@ -1012,7 +1012,7 @@ function InterviewInner() {
     fetchNextQuestion(resumeSession.phase, liveHistory, resumeSession.sessionId);
   }, [resumeSession, fetchNextQuestion]);
 
-  /* ── Recording controls ── */
+  /* â”€â”€ Recording controls â”€â”€ */
   const startRecording = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -1061,7 +1061,7 @@ function InterviewInner() {
         );
       };
 
-      // Chrome stops recognition after silence or a timeout — restart it
+      // Chrome stops recognition after silence or a timeout â€” restart it
       // automatically as long as we still want to be recording.
       r.onend = () => {
         if (activelyRecordingRef.current) {
@@ -1083,7 +1083,7 @@ function InterviewInner() {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       r.onerror = (event: any) => {
-        // These are non-fatal — onend fires next and will restart
+        // These are non-fatal â€” onend fires next and will restart
         if (["no-speech", "aborted", "network"].includes(event.error)) return;
         // Fatal errors (not-allowed, service-not-allowed, etc.)
         activelyRecordingRef.current = false;
@@ -1113,7 +1113,7 @@ function InterviewInner() {
         source.connect(analyser);
         analyserRef.current = analyser;
       })
-      .catch(() => { /* analyser unavailable — waveform falls back to animation */ });
+      .catch(() => { /* analyser unavailable â€” waveform falls back to animation */ });
   }, [currentAnswer, stopSpeaking, MAX_RECORD_MS]);
 
   /** Tear down the audio analyser and mic stream */
@@ -1152,7 +1152,7 @@ function InterviewInner() {
     setRecordingState("stopped");
   }, [teardownAnalyser]);
 
-  /* ── Extract memory ── */
+  /* â”€â”€ Extract memory â”€â”€ */
   const extractMemory = useCallback(async (exchange: ActiveExchange) => {
     setExchanges((prev) =>
       prev.map((ex) => ex.id === exchange.id ? { ...ex, extracting: true } : ex)
@@ -1181,7 +1181,7 @@ function InterviewInner() {
     }
   }, []);
 
-  /* ── Save answer ── */
+  /* â”€â”€ Save answer â”€â”€ */
   const saveAnswer = useCallback(async () => {
     const answer = currentAnswer.trim();
     if (!answer || !currentQuestion) return;
@@ -1213,7 +1213,7 @@ function InterviewInner() {
     let nextPhase = currentPhase;
     if (nextCount >= PHASE_QUESTIONS_PER[currentPhase]) {
       setCompletedPhases((prev) => new Set([...prev, currentPhase]));
-      // Freemium gate — after Story Hook phase, prompt sign up
+      // Freemium gate â€” after Story Hook phase, prompt sign up
       if (currentPhase === "hook" && !isAuthenticated) {
         stopSpeaking();
         setShowFreemiumGate(true);
@@ -1250,7 +1250,7 @@ function InterviewInner() {
     userName, exchanges.length,
   ]);
 
-  /* ── Edit exchange ── */
+  /* â”€â”€ Edit exchange â”€â”€ */
   const startEdit = useCallback((id: string) => {
     setExchanges((prev) =>
       prev.map((ex) => ex.id === id ? { ...ex, editing: true, editDraft: ex.answer } : ex)
@@ -1276,14 +1276,14 @@ function InterviewInner() {
     );
   }, []);
 
-  /* ── End session ── */
+  /* â”€â”€ End session â”€â”€ */
   const endSession = useCallback(() => {
     stopSpeaking();
     stopRecording();
     setInterviewState("summary");
   }, [stopSpeaking, stopRecording]);
 
-  /* ── Exchange count by phase ── */
+  /* â”€â”€ Exchange count by phase â”€â”€ */
   const exchangesByPhase = useMemo(() => {
     const map: Record<string, number> = {};
     for (const ex of exchanges) {
@@ -1292,7 +1292,7 @@ function InterviewInner() {
     return map;
   }, [exchanges]);
 
-  /* ─────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   if (interviewState === "select") {
     return (
       <div>
@@ -1328,10 +1328,10 @@ function InterviewInner() {
           </h2>
           <p className="text-amber-700/60 font-serif italic text-sm mb-2">
             {resumeSession
-              ? `You have an interview in progress — ${resumeSession.exchangeCount} answer${resumeSession.exchangeCount !== 1 ? "s" : ""} saved.`
+              ? `You have an interview in progress â€” ${resumeSession.exchangeCount} answer${resumeSession.exchangeCount !== 1 ? "s" : ""} saved.`
               : `${selectedInterviewer.name} will guide you through 9 chapters of your story.`}
           </p>
-          {/* Interviewer introduction — shown on first visit only */}
+          {/* Interviewer introduction â€” shown on first visit only */}
           {!resumeSession && (
             <div className="rounded-xl px-4 py-3 mb-4 text-left"
               style={{ background: `${selectedInterviewer.accentColor}10`, border: `1px solid ${selectedInterviewer.accentColor}25` }}>
@@ -1386,12 +1386,12 @@ function InterviewInner() {
     );
   }
 
-  /* ── Active interview layout ── */
+  /* â”€â”€ Active interview layout â”€â”€ */
   const phaseColor = PHASE_COLORS[currentPhase];
   const hasAnswer = currentAnswer.trim().length > 0;
   const canSave = hasAnswer && !isLoadingQuestion;
 
-  /* ── Freemium gate modal ── */
+  /* â”€â”€ Freemium gate modal â”€â”€ */
   if (showFreemiumGate) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4"
@@ -1401,19 +1401,19 @@ function InterviewInner() {
           {/* Icon */}
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center"
             style={{ background: "linear-gradient(135deg,#7a4a12,#c8843a)" }}>
-            <span className="text-2xl">📖</span>
+            <span className="text-2xl">ðŸ“–</span>
           </div>
           <h2 className="text-amber-100 font-serif font-bold text-2xl mb-2">Your Story Has Begun</h2>
           <p className="text-amber-300/70 font-serif italic text-sm mb-4">
             &ldquo;Every life has a story worth preserving.&rdquo;
           </p>
           <p className="text-amber-700/80 font-sans text-sm mb-6 leading-relaxed">
-            You&apos;ve completed the Story Hook — the heart of your interview. Sign up to unlock all 9 interview phases, save your memories, and build your legacy story.
+            You&apos;ve completed the Story Hook â€” the heart of your interview. Sign up to unlock all 9 interview phases, save your memories, and build your legacy story.
           </p>
           <div className="space-y-3 mb-6">
             {["9 full interview phases", "AI-powered memory extraction", "Biography & legacy documents", "Private family sharing vault"].map((f) => (
               <div key={f} className="flex items-center gap-2 text-sm font-sans text-amber-300/80">
-                <span style={{ color: "#c8843a" }}>✓</span> {f}
+                <span style={{ color: "#c8843a" }}>âœ“</span> {f}
               </div>
             ))}
           </div>
@@ -1431,7 +1431,7 @@ function InterviewInner() {
               fetchNextQuestion(nextPhase, liveMessages, sessionId);
             }}
             className="block w-full py-2.5 rounded-xl font-sans text-xs text-amber-700/60 hover:text-amber-600/80 transition-colors">
-            Continue without saving →
+            Continue without saving â†’
           </button>
         </div>
       </div>
@@ -1441,7 +1441,7 @@ function InterviewInner() {
   return (
     <div className="flex h-[calc(100vh-8.5rem)] md:h-screen" style={{ background: "linear-gradient(160deg, #0f0a04 0%, #1c1208 60%, #110a04 100%)" }}>
 
-      {/* ── Left sidebar: Phase progress (desktop only) ── */}
+      {/* â”€â”€ Left sidebar: Phase progress (desktop only) â”€â”€ */}
       <div className="hidden md:flex w-52 flex-shrink-0 flex-col border-r border-amber-900/20 overflow-hidden">
         <div className="px-3 py-3 border-b border-amber-900/20 flex items-center gap-2">
           <div className="w-6 h-6 rounded-full flex-shrink-0 overflow-hidden">
@@ -1477,7 +1477,7 @@ function InterviewInner() {
           <button
             onClick={() => { stopSpeaking(); if (isSpeaking) return; speak(currentQuestion, selectedInterviewer.gender, selectedInterviewer.voiceName); }}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-sans transition-all"
-            style={{ background: isSpeaking ? `${phaseColor}20` : "rgba(30,18,6,0.5)", color: isSpeaking ? phaseColor : "rgba(160,110,50,0.7)", border: `1px solid ${isSpeaking ? phaseColor + "40" : "rgba(90,52,20,0.2)"}` }}
+            style={{ background: isSpeaking ? `${phaseColor}20` : "rgba(30,18,6,0.5)", color: isSpeaking ? phaseColor : "rgba(220,175,80,0.95)", border: `1px solid ${isSpeaking ? phaseColor + "40" : "rgba(90,52,20,0.2)"}` }}
           >
             {isSpeaking ? <VolumeX size={11} /> : <Volume2 size={11} />}
             {isSpeaking ? "Stop playback" : "Replay question"}
@@ -1493,7 +1493,7 @@ function InterviewInner() {
         </div>
       </div>
 
-      {/* ── Center: Conversation ── */}
+      {/* â”€â”€ Center: Conversation â”€â”€ */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header bar */}
         <div className="flex items-center justify-between px-4 md:px-5 py-2.5 border-b border-amber-900/20 flex-shrink-0"
@@ -1513,8 +1513,8 @@ function InterviewInner() {
             <button
               onClick={() => { setTtsEnabled(!ttsEnabled); stopSpeaking(); }}
               className="relative flex items-center justify-center transition-colors"
-              title={ttsEnabled ? (isSpeaking ? "Speaking — click to mute" : "Mute") : "Unmute"}
-              style={{ color: isSpeaking ? phaseColor : ttsEnabled ? "rgba(160,110,50,0.6)" : "rgba(100,70,30,0.4)" }}
+              title={ttsEnabled ? (isSpeaking ? "Speaking â€” click to mute" : "Mute") : "Unmute"}
+              style={{ color: isSpeaking ? phaseColor : ttsEnabled ? "rgba(220,175,80,0.92)" : "rgba(100,70,30,0.4)" }}
             >
               {ttsEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
               {isSpeaking && (
@@ -1603,7 +1603,7 @@ function InterviewInner() {
               {ex.extracting && (
                 <div className="flex items-center gap-2 pl-10">
                   <Loader2 size={10} className="text-amber-700/50 animate-spin" />
-                  <span className="text-[9px] font-sans text-amber-800/50">Extracting memories…</span>
+                  <span className="text-[9px] font-sans text-amber-800/50">Extracting memoriesâ€¦</span>
                 </div>
               )}
               {ex.memory && !ex.extracting && (
@@ -1611,9 +1611,9 @@ function InterviewInner() {
                   <div className="flex items-center gap-1.5">
                     <Sparkles size={9} style={{ color: phaseColor }} />
                     <span className="text-[9px] font-sans" style={{ color: `${phaseColor}99` }}>
-                      {ex.memory.importantPeople.length > 0 && `${ex.memory.importantPeople.length} people · `}
-                      {ex.memory.importantPlaces.length > 0 && `${ex.memory.importantPlaces.length} places · `}
-                      {ex.memory.lifeLesson && "1 lesson · "}
+                      {ex.memory.importantPeople.length > 0 && `${ex.memory.importantPeople.length} people Â· `}
+                      {ex.memory.importantPlaces.length > 0 && `${ex.memory.importantPlaces.length} places Â· `}
+                      {ex.memory.lifeLesson && "1 lesson Â· "}
                       {ex.memory.emotionalTone}
                     </span>
                   </div>
@@ -1641,7 +1641,7 @@ function InterviewInner() {
                 {isSpeaking && (
                   <div className="flex items-center gap-2 mb-2 pb-2 border-b" style={{ borderColor: `${phaseColor}20` }}>
                     <RecordingWave active={true} analyserRef={analyserRef} />
-                    <span className="text-[9px] font-sans" style={{ color: `${phaseColor}90` }}>Speaking…</span>
+                    <span className="text-[9px] font-sans" style={{ color: `${phaseColor}90` }}>Speakingâ€¦</span>
                   </div>
                 )}
                 {currentQuestion}
@@ -1668,7 +1668,7 @@ function InterviewInner() {
             </div>
           )}
 
-          {/* Question fetch failed — Retry / Skip */}
+          {/* Question fetch failed â€” Retry / Skip */}
           {questionError && !isLoadingQuestion && (
             <div className="flex items-start gap-3">
               <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-serif font-bold text-amber-100"
@@ -1695,14 +1695,14 @@ function InterviewInner() {
                   </button>
                   <button
                     onClick={() => {
-                      // Skip — use a short neutral prompt so the interview can continue
-                      const skip = "Take your time — what would you like to share next?";
+                      // Skip â€” use a short neutral prompt so the interview can continue
+                      const skip = "Take your time â€” what would you like to share next?";
                       setQuestionError(false);
                       setCurrentQuestion(skip);
                       setLiveMessages((prev) => [...prev, { role: "assistant", content: skip }]);
                     }}
                     className="px-3 py-1.5 rounded-lg font-sans text-xs border transition-all hover:opacity-80"
-                    style={{ borderColor: "rgba(90,52,20,0.4)", color: "rgba(160,110,50,0.7)" }}
+                    style={{ borderColor: "rgba(90,52,20,0.4)", color: "rgba(220,175,80,0.95)" }}
                   >
                     Skip
                   </button>
@@ -1711,12 +1711,12 @@ function InterviewInner() {
             </div>
           )}
 
-          {/* TTS audio error — gentle notice + replay button */}
+          {/* TTS audio error â€” gentle notice + replay button */}
           {ttsError && !isSpeaking && currentQuestion && (
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl mx-1 mb-1"
               style={{ background: "rgba(30,14,4,0.85)", border: "1px solid rgba(150,80,20,0.3)" }}>
               <span className="font-sans text-[10px] flex-1" style={{ color: "rgba(180,130,70,0.8)" }}>
-                Audio couldn&apos;t load — you can still read the question above.
+                Audio couldn&apos;t load â€” you can still read the question above.
               </span>
               <button
                 onClick={() => {
@@ -1734,7 +1734,7 @@ function InterviewInner() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* ── Input area ── */}
+        {/* â”€â”€ Input area â”€â”€ */}
         <div className="flex-shrink-0 px-3 md:px-5 py-3 border-t border-amber-900/20"
           style={{ background: "rgba(10,6,2,0.7)" }}>
 
@@ -1788,7 +1788,7 @@ function InterviewInner() {
                   setCurrentAnswer(e.target.value);
                   setAccumulatedTranscript(e.target.value);
                 }}
-                placeholder={recordingState === "recording" ? "Speaking — transcript appears here…" : "Type or speak your answer…"}
+                placeholder={recordingState === "recording" ? "Speaking â€” transcript appears hereâ€¦" : "Type or speak your answerâ€¦"}
                 className="w-full rounded-xl px-4 py-3 text-sm font-sans text-amber-200 placeholder-amber-900/40 resize-none focus:outline-none focus:ring-1"
                 style={{
                   background: "rgba(20,12,4,0.8)",
@@ -1807,10 +1807,10 @@ function InterviewInner() {
             </div>
           )}
 
-          {/* ── After stop: prominent Submit / Re-record row ── */}
+          {/* â”€â”€ After stop: prominent Submit / Re-record row â”€â”€ */}
           {recordingState === "stopped" && !showTypeMode && (
             <div className="flex items-center gap-2 mb-2.5">
-              {/* Re-record — clears and starts fresh */}
+              {/* Re-record â€” clears and starts fresh */}
               <button
                 onClick={() => {
                   setCurrentAnswer("");
@@ -1824,14 +1824,14 @@ function InterviewInner() {
                 <RotateCcw size={12} /> Re-record
               </button>
 
-              {/* Submit — saves the answer */}
+              {/* Submit â€” saves the answer */}
               <button
                 onClick={saveAnswer}
                 disabled={!canSave}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-sans text-xs font-semibold flex-1 justify-center transition-all disabled:opacity-40"
                 style={{
                   background: canSave ? `linear-gradient(135deg, ${phaseColor}, #c8843a)` : "rgba(40,24,8,0.5)",
-                  color: canSave ? "rgba(255,240,210,0.95)" : "rgba(120,80,30,0.5)",
+                  color: canSave ? "rgba(255,240,210,0.95)" : "rgba(200,160,70,0.88)",
                   boxShadow: canSave ? `0 2px 16px ${phaseColor}40` : "none",
                 }}
               >
@@ -1842,7 +1842,7 @@ function InterviewInner() {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
-            {/* Voice controls — hide when stopped (Submit/Re-record row handles that) */}
+            {/* Voice controls â€” hide when stopped (Submit/Re-record row handles that) */}
             {!showTypeMode && recordingState !== "stopped" && (
               <>
                 {recordingState === "idle" ? (
@@ -1900,7 +1900,7 @@ function InterviewInner() {
 
             <div className="flex-1" />
 
-            {/* Save button — shown for typed answers or when not in stopped state */}
+            {/* Save button â€” shown for typed answers or when not in stopped state */}
             {(showTypeMode || recordingState !== "stopped") && (
               <button
                 onClick={saveAnswer}
@@ -1908,7 +1908,7 @@ function InterviewInner() {
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: canSave ? `linear-gradient(135deg, ${phaseColor}, #c8843a)` : "rgba(40,24,8,0.5)",
-                  color: canSave ? "#ffffff" : "rgba(120,80,30,0.5)",
+                  color: canSave ? "#ffffff" : "rgba(200,160,70,0.88)",
                   boxShadow: canSave ? `0 2px 12px ${phaseColor}30` : "none",
                 }}
               >
@@ -1921,13 +1921,13 @@ function InterviewInner() {
           {/* Hints */}
           <div className="flex items-center gap-3 mt-1.5 px-1">
             <span className="text-[9px] font-sans text-amber-900/40">
-              {recordingState === "stopped" ? "Choose to submit or re-record your response" : "Enter to save · Shift+Enter for newline"}
+              {recordingState === "stopped" ? "Choose to submit or re-record your response" : "Enter to save Â· Shift+Enter for newline"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Right panel: Memories (desktop only) ── */}
+      {/* â”€â”€ Right panel: Memories (desktop only) â”€â”€ */}
       <div
         className="hidden md:flex flex-shrink-0 flex-col border-l border-amber-900/20 transition-all duration-300"
         style={{ width: memoriesOpen ? "260px" : "36px" }}
@@ -1966,7 +1966,7 @@ function InterviewInner() {
                 ) : ex.extracting ? (
                   <div key={ex.id} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-amber-900/20">
                     <Loader2 size={10} className="text-amber-700/50 animate-spin" />
-                    <span className="text-[9px] font-sans text-amber-800/50">Extracting…</span>
+                    <span className="text-[9px] font-sans text-amber-800/50">Extractingâ€¦</span>
                   </div>
                 ) : null
               ))
@@ -1983,7 +1983,7 @@ export default function InterviewPage() {
     <Suspense fallback={
       <div className="flex items-center justify-center h-screen text-amber-700/50 font-serif">
         <Loader2 size={24} className="animate-spin mr-3" />
-        Loading interview…
+        Loading interviewâ€¦
       </div>
     }>
       <InterviewInner />

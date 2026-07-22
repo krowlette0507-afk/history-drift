@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
@@ -113,7 +113,7 @@ export default function FamilyPage() {
           <div className="flex items-center justify-between mb-1">
             <span className="font-serif font-semibold text-sm" style={{ color: "#e8d080" }}>New invite</span>
             <button type="button" onClick={() => setShowForm(false)}>
-              <X size={14} style={{ color: "rgba(180,130,60,0.5)" }} />
+              <X size={14} style={{ color: "rgba(225,185,80,0.88)" }} />
             </button>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -138,7 +138,7 @@ export default function FamilyPage() {
             <label className="block text-[10px] font-sans uppercase tracking-wider mb-1.5"
               style={{ color: "rgba(180,130,60,0.55)" }}>Personal message (optional)</label>
             <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
-              placeholder="Ask them to share a specific memory…"
+              placeholder="Ask them to share a specific memoryâ€¦"
               className="w-full rounded-xl px-3 py-2.5 text-sm font-sans resize-none focus:outline-none"
               style={{ background: "rgba(10,6,2,0.9)", border: "1px solid rgba(100,65,20,0.35)", color: "#e8d4a0" }} />
           </div>
@@ -154,7 +154,7 @@ export default function FamilyPage() {
       {invites.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Users size={36} style={{ color: "rgba(150,100,40,0.3)" }} className="mb-4" />
-          <p className="font-serif italic text-sm" style={{ color: "rgba(180,130,60,0.5)" }}>
+          <p className="font-serif italic text-sm" style={{ color: "rgba(225,185,80,0.88)" }}>
             No invites yet. Invite a family member or friend to share a memory.
           </p>
         </div>
@@ -174,8 +174,8 @@ export default function FamilyPage() {
                   <div className="font-serif text-sm font-semibold truncate" style={{ color: "#e8d080" }}>
                     {inv.invitee_name ?? inv.invitee_email}
                   </div>
-                  <div className="text-[10px] font-sans truncate" style={{ color: "rgba(160,110,50,0.6)" }}>
-                    {inv.invitee_name ? inv.invitee_email + " · " : ""}
+                  <div className="text-[10px] font-sans truncate" style={{ color: "rgba(220,175,80,0.92)" }}>
+                    {inv.invitee_name ? inv.invitee_email + " Â· " : ""}
                     {new Date(inv.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </div>
                 </div>
@@ -183,12 +183,12 @@ export default function FamilyPage() {
                   <span className="px-2 py-0.5 rounded-full text-[9px] font-sans font-semibold uppercase"
                     style={{
                       background: inv.contributions.length > 0 ? "rgba(40,120,40,0.25)" : "rgba(60,40,10,0.5)",
-                      color: inv.contributions.length > 0 ? "rgba(100,200,100,0.9)" : "rgba(160,110,50,0.7)",
+                      color: inv.contributions.length > 0 ? "rgba(100,200,100,0.9)" : "rgba(220,175,80,0.95)",
                     }}>
                     {inv.contributions.length > 0 ? `${inv.contributions.length} memory` : "pending"}
                   </span>
-                  {expanded === inv.id ? <ChevronUp size={12} style={{ color: "rgba(160,110,50,0.5)" }} />
-                    : <ChevronDown size={12} style={{ color: "rgba(160,110,50,0.5)" }} />}
+                  {expanded === inv.id ? <ChevronUp size={12} style={{ color: "rgba(220,175,80,0.88)" }} />
+                    : <ChevronDown size={12} style={{ color: "rgba(220,175,80,0.88)" }} />}
                 </div>
               </button>
 
@@ -201,7 +201,7 @@ export default function FamilyPage() {
                         <span className="font-serif font-semibold text-xs" style={{ color: "#c8a050" }}>{c.contributor_name}</span>
                         {c.relationship && (
                           <span className="text-[9px] font-sans px-1.5 py-0.5 rounded"
-                            style={{ background: "rgba(60,35,8,0.6)", color: "rgba(180,130,60,0.7)" }}>
+                            style={{ background: "rgba(60,35,8,0.6)", color: "rgba(225,185,80,0.95)" }}>
                             {c.relationship}
                           </span>
                         )}
@@ -231,7 +231,7 @@ export default function FamilyPage() {
               {expanded === inv.id && inv.contributions.length === 0 && (
                 <div className="px-4 pb-4 pt-2 border-t" style={{ borderColor: "rgba(80,50,15,0.2)" }}>
                   <p className="font-serif italic text-xs" style={{ color: "rgba(140,100,40,0.5)" }}>
-                    Waiting for their response…
+                    Waiting for their responseâ€¦
                   </p>
                 </div>
               )}
