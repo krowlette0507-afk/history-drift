@@ -80,7 +80,7 @@ function PersonCard({ person, onCorrected }: { person: DerivedPerson; onCorrecte
       {editing && (
         <div className="px-4 pb-4 border-t space-y-3" style={{ borderColor: "rgba(80,50,15,0.25)" }}>
           <p className="text-[10px] font-sans pt-3" style={{ color: "rgba(225,185,80,0.92)" }}>
-            Correct the name or relationship "" this will update all interviews that mention this person.
+            Correct the name or relationship — this will update all interviews that mention this person.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -148,7 +148,7 @@ export default function PeoplePage() {
         <Users size={40} className="text-amber-800/30 mb-4" />
         <h1 className="text-amber-200 font-serif font-bold text-2xl mb-2">People Who Mattered</h1>
         <p className="text-amber-700/50 font-serif italic text-sm max-w-sm mb-6">
-          As you share your story, the people you mention "" family, friends, mentors, and more "" will appear here.
+          As you share your story, the people you mention — family, friends, mentors, and more — will appear here.
         </p>
         <Link href="/interview"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-serif text-amber-100 transition-all hover:scale-105"

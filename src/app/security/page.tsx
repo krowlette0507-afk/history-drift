@@ -5,17 +5,17 @@ const SECTIONS = [
   {
     icon: Shield,
     title: "Our security commitment",
-    body: `History Drift stores some of the most personal content a person can share "" their life story, memories, and family history. We treat that responsibility with the utmost seriousness.
+    body: `History Drift stores some of the most personal content a person can share — their life story, memories, and family history. We treat that responsibility with the utmost seriousness.
 
 Every architectural decision we make starts with the question: is this as secure as it can be? We do not cut corners on data protection, and we will never sell or share your personal data.`,
   },
   {
     icon: Server,
     title: "Infrastructure and data storage",
-    body: `All data is stored on Supabase, which runs on Amazon Web Services (AWS) infrastructure "" one of the most secure and audited cloud platforms in the world.
+    body: `All data is stored on Supabase, which runs on Amazon Web Services (AWS) infrastructure — one of the most secure and audited cloud platforms in the world.
 
 • Data at rest is encrypted using AES-256, the same standard used by banks and governments
-• All data in transit is encrypted via TLS 1.2+ (HTTPS) "" it is never sent over an unencrypted connection
+• All data in transit is encrypted via TLS 1.2+ (HTTPS) — it is never sent over an unencrypted connection
 • Supabase data centres are SOC 2 Type II certified and GDPR compliant
 • Database backups are taken daily and retained for 7 days, also encrypted at rest`,
   },
@@ -24,14 +24,14 @@ Every architectural decision we make starts with the question: is this as secure
     title: "Row Level Security (RLS)",
     body: `This is the most important security layer we use, and it is worth explaining clearly.
 
-Row Level Security is a database-level policy that makes it impossible for one user to read another user's data "" even if there were a bug in our application code, or if someone gained unauthorised access to our server.
+Row Level Security is a database-level policy that makes it impossible for one user to read another user's data — even if there were a bug in our application code, or if someone gained unauthorised access to our server.
 
 Every table in our database has RLS enabled. The rules are:
-• Your interview sessions, exchanges, storyboards, biography, and people data can only be read or modified by you "" authenticated as you
-• Family invite tokens are write-only for contributors "" they can submit, but cannot read your story
-• Deletion schedules and internal admin tables are restricted to our service role only "" no user or API route can access them
+• Your interview sessions, exchanges, storyboards, biography, and people data can only be read or modified by you — authenticated as you
+• Family invite tokens are write-only for contributors — they can submit, but cannot read your story
+• Deletion schedules and internal admin tables are restricted to our service role only — no user or API route can access them
 
-RLS means your data is protected at the lowest possible level "" the database itself "" not just at the application layer.`,
+RLS means your data is protected at the lowest possible level — the database itself — not just at the application layer.`,
   },
   {
     icon: Key,
@@ -42,17 +42,17 @@ Here is exactly what happens when you create a password:
 
 1. You enter your password in the browser
 2. Supabase Auth receives it over an encrypted HTTPS connection
-3. It is immediately hashed using bcrypt "" a one-way cryptographic function with a work factor that makes brute-force attacks computationally infeasible
-4. Only the hash is stored "" the original password is discarded and cannot be recovered by anyone, including us
+3. It is immediately hashed using bcrypt — a one-way cryptographic function with a work factor that makes brute-force attacks computationally infeasible
+4. Only the hash is stored — the original password is discarded and cannot be recovered by anyone, including us
 
 When you log in:
 • Your entered password is hashed using the same algorithm and compared to the stored hash
-• If they match, you are authenticated "" your actual password is never stored or logged at any point
+• If they match, you are authenticated — your actual password is never stored or logged at any point
 
 Additional protections:
 • Passwords must be at least 8 characters
 • You can change your password at any time from Settings
-• If you forget your password, a secure reset link is sent to your email "" the link expires after 1 hour and can only be used once
+• If you forget your password, a secure reset link is sent to your email — the link expires after 1 hour and can only be used once
 • We use Supabase's built-in rate limiting to block repeated failed login attempts`,
   },
   {
@@ -60,24 +60,24 @@ Additional protections:
     title: "Who can access your data",
     body: `Only you can access your story data. Within History Drift:
 
-• Our application server can read your data only when you are authenticated and making a request "" it cannot access data belonging to other users
+• Our application server can read your data only when you are authenticated and making a request — it cannot access data belonging to other users
 • Our service role (used for admin operations like deletion processing) accesses data only for the specific operation being performed, never browsing or retaining content
 • No History Drift employee has a routine pathway to read your interview content or story data
-• OpenAI receives your content only when you explicitly trigger an AI feature (generating a biography, creating a storyboard, etc.) "" it is not stored by OpenAI beyond the immediate API call under our zero data retention agreement
+• OpenAI receives your content only when you explicitly trigger an AI feature (generating a biography, creating a storyboard, etc.) — it is not stored by OpenAI beyond the immediate API call under our zero data retention agreement
 
 Family contributions:
-• People you invite via the Family Memories feature can only submit their own story "" they cannot access any of your interviews, storyboards, or personal data
-• Each invite link is a unique cryptographic token "" guessing someone else's token is computationally infeasible`,
+• People you invite via the Family Memories feature can only submit their own story — they cannot access any of your interviews, storyboards, or personal data
+• Each invite link is a unique cryptographic token — guessing someone else's token is computationally infeasible`,
   },
   {
     icon: Database,
     title: "API and credential security",
-    body: `All API keys, database credentials, and service secrets are stored as server-side environment variables "" they are never included in client-side code or exposed in the browser.
+    body: `All API keys, database credentials, and service secrets are stored as server-side environment variables — they are never included in client-side code or exposed in the browser.
 
 • Supabase service role key (which has elevated database access) is only used in server-side API routes, never on the client
-• API routes that perform sensitive operations (account deletion, cron jobs) require a valid Bearer token "" they cannot be called anonymously
+• API routes that perform sensitive operations (account deletion, cron jobs) require a valid Bearer token — they cannot be called anonymously
 • The Vercel Cron Job endpoint is protected by a secret key known only to Vercel and our server
-• Our codebase is version-controlled and reviewed "" credentials are explicitly excluded from git via .gitignore`,
+• Our codebase is version-controlled and reviewed — credentials are explicitly excluded from git via .gitignore`,
   },
   {
     icon: RefreshCw,

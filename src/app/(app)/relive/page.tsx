@@ -434,7 +434,7 @@ export default function RelivePage() {
       {step === 1 && pastBoards.length > 0 && (
         <div className="mb-6">
           <p className="text-[11px] font-sans uppercase tracking-widest mb-3" style={{ color: "rgba(190,145,70,0.7)" }}>
-            âœ¦ Your storyboards "" tap to view
+            ✦ Your storyboards — tap to view
           </p>
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
             {pastBoards.map((board) => (
@@ -461,7 +461,7 @@ export default function RelivePage() {
       {step === 1 && (
         <div className="mb-6">
           <p className="text-[11px] font-sans uppercase tracking-widest mb-3" style={{ color: "rgba(150,100,180,0.7)" }}>
-            âœ¦ Example Re-Live storyboards "" tap to explore
+            ✦ Example Re-Live storyboards — tap to explore
           </p>
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
             {RELIVE_EXAMPLES.map((story) => (
@@ -550,7 +550,7 @@ export default function RelivePage() {
               <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg"
                 style={{ background: "rgba(200,30,60,0.1)", border: "1px solid rgba(200,30,60,0.25)" }}>
                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-sans" style={{ color: "rgba(255,120,140,0.9)" }}>Listening "" speak your story...</span>
+                <span className="text-xs font-sans" style={{ color: "rgba(255,120,140,0.9)" }}>Listening — speak your story...</span>
               </div>
             )}
             <textarea value={manualStory}
@@ -561,7 +561,7 @@ export default function RelivePage() {
               style={{ background: "rgba(15,10,4,0.8)", border: "1px solid rgba(101,67,20,0.35)" }} />
             <div className="flex items-center justify-between mt-1">
               <div className="text-[10px] font-sans" style={{ color: "rgba(146,96,10,0.4)" }}>
-                {storyContent.trim().length} chars {hasStory ? <span style={{ color: "#c84a9a" }}>âœ"</span> : "(min 50)"}
+                {storyContent.trim().length} chars {hasStory ? <span style={{ color: "#c84a9a" }}>✓</span> : "(min 50)"}
               </div>
               {/* Refine button */}
               {!selectedSessionId && storyContent.trim().length >= 20 && (
@@ -691,7 +691,7 @@ export default function RelivePage() {
                 </button>
                 <div className="absolute bottom-2 left-2 right-2 rounded-lg px-3 py-1.5 text-xs font-sans text-center"
                   style={{ background: "rgba(0,0,0,0.6)" }}>
-                  <span style={{ color: "#c84a9a" }}>âœ" Photo uploaded</span>
+                  <span style={{ color: "#c84a9a" }}>✓ Photo uploaded</span>
                   <span className="text-amber-800/60 ml-1">"" tap to change</span>
                 </div>
               </>
@@ -703,7 +703,7 @@ export default function RelivePage() {
                 </div>
                 <div>
                   <div className="text-amber-200 font-serif text-sm font-semibold">Upload a reference photo</div>
-                  <div className="text-amber-800/50 font-sans text-xs mt-1">JPG, PNG, WEBP "" used as character guide only</div>
+                  <div className="text-amber-800/50 font-sans text-xs mt-1">JPG, PNG, WEBP — used as character guide only</div>
                 </div>
               </div>
             )}
@@ -712,7 +712,7 @@ export default function RelivePage() {
 
           <div className="rounded-xl px-4 py-3 mb-5 text-xs font-sans"
             style={{ background: "rgba(18,11,4,0.6)", border: "1px solid rgba(101,67,20,0.25)" }}>
-            <p className="text-amber-700/80">AI creates an illustrated interpretation "" not a photorealistic or biometric copy. Intended for personal storytelling and family history.</p>
+            <p className="text-amber-700/80">AI creates an illustrated interpretation — not a photorealistic or biometric copy. Intended for personal storytelling and family history.</p>
           </div>
 
           <div className="flex gap-3">
@@ -742,10 +742,10 @@ export default function RelivePage() {
             <Crown size={16} className="flex-shrink-0 mt-0.5" style={{ color: "#e879c0" }} />
             <div>
               <div className="font-serif font-semibold text-sm" style={{ color: "#f0a0d8" }}>
-                Premium Access "" Complimentary until Aug 11
+                Premium Access — Complimentary until Aug 11
               </div>
               <div className="text-[11px] font-sans mt-0.5 leading-relaxed" style={{ color: "rgba(180,120,160,0.8)" }}>
-                Each panel is individually generated at full resolution for maximum quality and character consistency. Early testers get this free "" thank you for helping shape the experience.
+                Each panel is individually generated at full resolution for maximum quality and character consistency. Early testers get this free — thank you for helping shape the experience.
               </div>
             </div>
           </div>
@@ -771,7 +771,7 @@ export default function RelivePage() {
             </div>
           </div>
 
-          {/* Visual style "" 3 options only */}
+          {/* Visual style — 3 options only */}
           <div className="mb-5">
             <label className="text-xs uppercase tracking-wider font-serif text-amber-600/70 block mb-3">Visual Style</label>
             <div className="grid grid-cols-3 gap-3">
@@ -794,7 +794,7 @@ export default function RelivePage() {
             </div>
           </div>
 
-          {/* Panel Count "" 12 or 16 only */}
+          {/* Panel Count — 12 or 16 only */}
           <div className="mb-6">
             <label className="text-xs uppercase tracking-wider font-serif text-amber-600/70 block mb-3">Number of Panels</label>
             <div className="flex gap-3">
@@ -948,7 +948,7 @@ export default function RelivePage() {
             style={{ background: "rgba(18,11,4,0.6)", border: "1px solid rgba(101,67,20,0.2)" }}>
             <p className="text-amber-700/60">
               <span className="text-amber-600">AI-generated illustration.</span>{" "}
-              Artistic interpretation only "" not a photorealistic or historically exact reconstruction.
+              Artistic interpretation only — not a photorealistic or historically exact reconstruction.
               Intended for personal storytelling, family history, and memoir.
             </p>
           </div>

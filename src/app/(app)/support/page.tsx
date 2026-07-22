@@ -81,7 +81,7 @@ How it works:
 • Tap a card to expand it and see what you said
 
 Correcting a name:
-• If the AI got a name wrong (e.g. "DB" instead of "Bebe"), tap the pencil âœ icon on the person's card
+• If the AI got a name wrong (e.g. "DB" instead of "Bebe"), tap the pencil ✏ icon on the person's card
 • Enter the correct name and relationship, then tap Save correction
 • This automatically updates every interview exchange that mentions that person — in your device and in the cloud`,
   },
@@ -183,7 +183,7 @@ Coming soon — full upload, tagging, and sharing features are planned for a fut
 const FAQS = [
   { q: "Is my story private?", a: "Yes. Your interviews and story are private to your account by default. Only you can see them. Family members you invite via the Family Memories feature can submit a memory, but they cannot read your interviews or other content." },
   { q: "Can I delete an interview or answer?", a: "Yes. To delete a full interview session, use the session menu (â‹¯) on the interview screen. To edit a specific answer, find the exchange in your session and tap to edit the text. Edited answers automatically update your People, Places, Timeline, and other sections." },
-  { q: "What happens if the AI gets a name wrong?", a: "Go to the People section and tap the pencil âœ icon on the incorrectly named person. Enter the correct name and relationship and tap Save — this updates every interview that mentioned that name." },
+  { q: "What happens if the AI gets a name wrong?", a: "Go to the People section and tap the pencil ✏ icon on the incorrectly named person. Enter the correct name and relationship and tap Save — this updates every interview that mentioned that name." },
   { q: "How do I activate my account after signing up?", a: "After you sign up, History Drift sends a confirmation email to the address you registered with. Open the email and tap the 'Confirm your email' button or link. You'll be taken straight into the app. If you don't see the email within a few minutes, check your spam or junk folder. If it's still not there, go back to the sign-in screen and tap 'Resend confirmation email'." },
   { q: "How do I reset my password?", a: "On the sign-in screen, tap 'Forgot password?' below the password field and enter your email address. You'll receive a password reset email within a few minutes — check your spam folder if it doesn't arrive. Tap the link in the email (it expires after 1 hour), enter your new password twice, and you'll be signed in automatically. You can also change your password at any time when signed in via Settings â†’ Password tab." },
   { q: "Can family members use the app without an account?", a: "Yes — for contributing memories only. When you send a Family Memories invite, the recipient receives a personal link. They can submit a memory and photos without creating an account. To use the full app (interviews, Re-Live, etc.) an account is required." },

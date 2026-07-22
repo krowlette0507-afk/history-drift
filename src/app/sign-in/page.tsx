@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -72,7 +72,7 @@ export default function SignInPage() {
         <div className="rounded-2xl p-6" style={{ background: "rgba(30,18,6,0.8)", border: "1px solid rgba(101,67,20,0.3)" }}>
           {forgotSent ? (
             <div className="text-center py-4 space-y-3">
-              <div className="text-3xl">âœ‰ï¸</div>
+              <div className="text-3xl">✉️</div>
               <p className="text-amber-200 font-serif text-sm">Password reset email sent!</p>
               <p className="text-amber-700/60 text-xs font-sans">Check your inbox and follow the link to reset your password.</p>
               <button onClick={() => { setForgotSent(false); setForgotMode(false); }}

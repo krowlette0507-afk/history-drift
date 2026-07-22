@@ -12,13 +12,13 @@ Contact: support@historydrift.com`,
     title: "What data we collect",
     body: `When you use History Drift, we collect:
 
-• Account information "" your name and email address, provided at sign-up
-• Interview content "" the questions asked and answers you record during interview sessions
-• Story content "" any text you write or speak when creating Re-Live storyboards
-• Family contributions "" memories and photos submitted by people you invite
-• Usage data "" session timestamps, feature usage, and error logs for improving the service
+• Account information — your name and email address, provided at sign-up
+• Interview content — the questions asked and answers you record during interview sessions
+• Story content — any text you write or speak when creating Re-Live storyboards
+• Family contributions — memories and photos submitted by people you invite
+• Usage data — session timestamps, feature usage, and error logs for improving the service
 
-We do not collect payment card details directly "" payments are handled by Stripe, who have their own privacy policy.`,
+We do not collect payment card details directly — payments are handled by Stripe, who have their own privacy policy.`,
   },
   {
     title: "How we use your data",
@@ -32,12 +32,12 @@ We do not collect payment card details directly "" payments are handled by Strip
   },
   {
     title: "How your data is secured",
-    body: `Security is fundamental to what we do "" your life story deserves the highest protection.
+    body: `Security is fundamental to what we do — your life story deserves the highest protection.
 
 • All data is stored in Supabase (AWS infrastructure) with encryption at rest and in transit (TLS/HTTPS)
-• Row Level Security (RLS) is enforced at the database level "" your data is only accessible to your authenticated account, even if someone attempted to access the database directly
+• Row Level Security (RLS) is enforced at the database level — your data is only accessible to your authenticated account, even if someone attempted to access the database directly
 • API keys and service credentials are stored as environment variables and never exposed to the client
-• Family invite links are single-use, tokenised, and private "" contributors can only submit, not read your story
+• Family invite links are single-use, tokenised, and private — contributors can only submit, not read your story
 • We conduct regular reviews of access controls and security policies`,
   },
   {
@@ -47,7 +47,7 @@ We do not collect payment card details directly "" payments are handled by Strip
 When your subscription ends:
 • Your data remains accessible for 30 days
 • You will receive a warning email 14 days before permanent deletion
-• After 30 days, all your data is permanently and irreversibly deleted from our servers "" including interviews, storyboards, family memories, biography content, and account information
+• After 30 days, all your data is permanently and irreversibly deleted from our servers — including interviews, storyboards, family memories, biography content, and account information
 
 You may also request immediate account deletion at any time from Settings â†’ Delete my account. This schedules deletion within 30 days, with a 14-day warning email sent at the midpoint. To cancel a deletion request, contact support@historydrift.com before the deletion date.
 
@@ -57,11 +57,11 @@ We do not retain backup copies of deleted accounts beyond our standard 7-day inf
     title: "Your rights",
     body: `You have the right to:
 
-• Access "" request a copy of all personal data we hold about you
-• Correction "" correct inaccurate data (use the People page edit feature or contact us)
-• Deletion "" request permanent deletion of your account and all associated data
-• Portability "" request your data in a machine-readable format
-• Objection "" object to how we process your data
+• Access — request a copy of all personal data we hold about you
+• Correction — correct inaccurate data (use the People page edit feature or contact us)
+• Deletion — request permanent deletion of your account and all associated data
+• Portability — request your data in a machine-readable format
+• Objection — object to how we process your data
 
 To exercise any of these rights, contact us at support@historydrift.com. We will respond within 30 days.`,
   },
@@ -73,11 +73,11 @@ To exercise any of these rights, contact us at support@historydrift.com. We will
     title: "Third-party services",
     body: `We use the following third-party services to operate History Drift:
 
-• Supabase "" database and authentication (data stored on AWS, us-west-2)
-• OpenAI "" AI interview questions, story analysis, and image generation (your content is sent to OpenAI's API; OpenAI's data usage policy applies)
-• Resend "" transactional email delivery
-• Vercel "" application hosting and deployment
-• Stripe "" subscription billing and payment processing
+• Supabase — database and authentication (data stored on AWS, us-west-2)
+• OpenAI — AI interview questions, story analysis, and image generation (your content is sent to OpenAI's API; OpenAI's data usage policy applies)
+• Resend — transactional email delivery
+• Vercel — application hosting and deployment
+• Stripe — subscription billing and payment processing
 
 Each of these services has its own privacy policy. We select providers who meet high data protection standards.`,
   },

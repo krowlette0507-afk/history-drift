@@ -145,7 +145,7 @@ export default function SettingsPage() {
             <input value={email} disabled
               className={inputCls} style={{ ...inputStyle, opacity: 0.5, cursor: "not-allowed" }} />
             <p className="text-[10px] font-sans mt-1" style={{ color: "rgba(200,160,70,0.88)" }}>
-              Email cannot be changed here "" contact support
+              Email cannot be changed here — contact support
             </p>
           </div>
           <button type="submit" disabled={profileSaving}

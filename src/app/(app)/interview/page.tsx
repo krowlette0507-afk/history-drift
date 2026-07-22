@@ -131,7 +131,7 @@ function RecordingWave({
           Array.from({ length: BARS }, (_, i) => {
             const slice = data.slice(i * binSize, (i + 1) * binSize);
             const avg = slice.reduce((a, b) => a + b, 0) / slice.length;
-            return 4 + (avg / 255) * 30; // 4 "" 34 px
+            return 4 + (avg / 255) * 30; // 4 — 34 px
           })
         );
       } else {
@@ -1401,7 +1401,7 @@ function InterviewInner() {
           {/* Icon */}
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center"
             style={{ background: "linear-gradient(135deg,#7a4a12,#c8843a)" }}>
-            <span className="text-2xl">ðŸ"–</span>
+            <span className="text-2xl">📖</span>
           </div>
           <h2 className="text-amber-100 font-serif font-bold text-2xl mb-2">Your Story Has Begun</h2>
           <p className="text-amber-300/70 font-serif italic text-sm mb-4">
@@ -1413,7 +1413,7 @@ function InterviewInner() {
           <div className="space-y-3 mb-6">
             {["9 full interview phases", "AI-powered memory extraction", "Biography & legacy documents", "Private family sharing vault"].map((f) => (
               <div key={f} className="flex items-center gap-2 text-sm font-sans text-amber-300/80">
-                <span style={{ color: "#c8843a" }}>âœ"</span> {f}
+                <span style={{ color: "#c8843a" }}>✓</span> {f}
               </div>
             ))}
           </div>
