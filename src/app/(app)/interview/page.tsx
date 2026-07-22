@@ -1745,7 +1745,7 @@ function InterviewInner() {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full animate-pulse"
                   style={{ background: recordingState === "recording" ? "#e55" : phaseColor }} />
-                <span className="text-[10px] font-sans" style={{ color: `${phaseColor}cc` }}>
+                <span className="text-sm font-sans font-semibold" style={{ color: "#fff8e8" }}>
                   {recordingState === "recording" ? "Recording" : recordingState === "paused" ? "Paused" : "Stopped"}
                 </span>
                 <RecordingWave active={recordingState === "recording"} analyserRef={analyserRef} />
@@ -1849,29 +1849,30 @@ function InterviewInner() {
                   <button
                     onClick={startRecording}
                     disabled={isLoadingQuestion}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-sans text-xs font-semibold transition-all disabled:opacity-40"
-                    style={{ background: `${phaseColor}25`, border: `1px solid ${phaseColor}40`, color: phaseColor }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all disabled:opacity-40"
+                    style={{ background: `${phaseColor}40`, border: `1px solid ${phaseColor}80`, color: "#fff8e8" }}
                   >
-                    <Mic size={13} /> Record answer
+                    <Mic size={15} /> Record answer
                   </button>
                 ) : (
                   <div className="flex items-center gap-1.5">
                     {recordingState === "recording" ? (
                       <button onClick={pauseRecording}
-                        className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-xs border transition-all"
-                        style={{ background: `${phaseColor}20`, borderColor: `${phaseColor}40`, color: phaseColor }}>
-                        <Pause size={12} /> Pause
+                        className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-sm font-semibold border transition-all"
+                        style={{ background: `${phaseColor}30`, borderColor: `${phaseColor}70`, color: "#fff8e8" }}>
+                        <Pause size={14} /> Pause
                       </button>
                     ) : (
                       <button onClick={resumeRecording}
-                        className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-xs border transition-all"
-                        style={{ background: `${phaseColor}20`, borderColor: `${phaseColor}40`, color: phaseColor }}>
-                        <Play size={12} /> Resume
+                        className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-sm font-semibold border transition-all"
+                        style={{ background: `${phaseColor}30`, borderColor: `${phaseColor}70`, color: "#fff8e8" }}>
+                        <Play size={14} /> Resume
                       </button>
                     )}
                     <button onClick={stopRecording}
-                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-xs border border-red-800/40 text-red-500/70 hover:text-red-400 transition-all">
-                      <MicOff size={12} /> Stop
+                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-sm font-semibold border border-red-700/60 transition-all"
+                      style={{ color: "#ff9090" }}>
+                      <MicOff size={14} /> Stop
                     </button>
                   </div>
                 )}
@@ -1881,18 +1882,19 @@ function InterviewInner() {
             {/* Re-record small button when stopped but no text yet */}
             {!showTypeMode && recordingState === "stopped" && !currentAnswer.trim() && (
               <button onClick={startRecording}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-sans text-xs font-semibold transition-all"
-                style={{ background: `${phaseColor}25`, border: `1px solid ${phaseColor}40`, color: phaseColor }}>
-                <Mic size={13} /> Record answer
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all"
+                style={{ background: `${phaseColor}40`, border: `1px solid ${phaseColor}80`, color: "#fff8e8" }}>
+                <Mic size={15} /> Record answer
               </button>
             )}
 
             {/* Toggle type mode */}
             <button
               onClick={() => setShowTypeMode(!showTypeMode)}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-xs border border-amber-900/20 text-amber-800/50 hover:text-amber-600 hover:border-amber-800/40 transition-all"
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-sans text-sm font-semibold border transition-all"
+              style={{ borderColor: "rgba(180,130,60,0.4)", color: "#e8c87a" }}
             >
-              <Edit3 size={11} />
+              <Edit3 size={13} />
               {showTypeMode ? "Use voice" : "Type instead"}
             </button>
 
@@ -1903,14 +1905,14 @@ function InterviewInner() {
               <button
                 onClick={saveAnswer}
                 disabled={!canSave}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-sans text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: canSave ? `linear-gradient(135deg, ${phaseColor}, #c8843a)` : "rgba(40,24,8,0.5)",
-                  color: canSave ? "rgba(255,240,210,0.95)" : "rgba(120,80,30,0.5)",
+                  color: canSave ? "#ffffff" : "rgba(120,80,30,0.5)",
                   boxShadow: canSave ? `0 2px 12px ${phaseColor}30` : "none",
                 }}
               >
-                <Send size={13} />
+                <Send size={15} />
                 {showTypeMode ? "Submit Answer" : "Save answer"}
               </button>
             )}
