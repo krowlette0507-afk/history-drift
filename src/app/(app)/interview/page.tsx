@@ -1483,6 +1483,17 @@ function InterviewInner() {
             {isSpeaking ? "Stop playback" : "Replay question"}
           </button>
           <button
+            onClick={() => {
+              const skipMsg = "Please move on to a completely different topic or a new line of questioning — I'm ready for something new.";
+              setCurrentAnswer(skipMsg);
+            }}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-sans transition-all"
+            style={{ background: "rgba(30,18,6,0.5)", color: "rgba(220,175,80,0.95)", border: "1px solid rgba(90,52,20,0.2)" }}
+          >
+            <ChevronRight size={11} />
+            New topic / Skip question
+          </button>
+          <button
             onClick={endSession}
             disabled={exchanges.length === 0}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-sans text-amber-700/60 hover:text-amber-500/80 border border-amber-900/20 hover:border-amber-800/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
@@ -1523,11 +1534,22 @@ function InterviewInner() {
               )}
             </button>
             <span className="text-amber-800/40 text-[10px] font-sans">{exchanges.length} saved</span>
-            {/* Mobile end session */}
-            <button onClick={endSession} disabled={exchanges.length === 0}
-              className="md:hidden text-[10px] font-sans text-amber-700/50 disabled:opacity-30 border border-amber-900/30 px-2 py-1 rounded-lg">
-              Done
-            </button>
+            {/* Mobile controls */}
+            <div className="md:hidden flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const skipMsg = "Please move on to a completely different topic or a new line of questioning — I'm ready for something new.";
+                  setCurrentAnswer(skipMsg);
+                }}
+                className="text-[10px] font-sans border px-2 py-1 rounded-lg"
+                style={{ color: "rgba(220,175,80,0.9)", borderColor: "rgba(90,52,20,0.4)" }}>
+                New topic
+              </button>
+              <button onClick={endSession} disabled={exchanges.length === 0}
+                className="text-[10px] font-sans text-amber-700/50 disabled:opacity-30 border border-amber-900/30 px-2 py-1 rounded-lg">
+                Done
+              </button>
+            </div>
           </div>
         </div>
 

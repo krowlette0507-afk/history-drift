@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { supabase } from "@/lib/supabase";
+import { getSessions } from "@/lib/storage";
 import { Mic, BookOpen, Clock, Users, MapPin, Lightbulb, Scroll, Lock, HelpCircle, LayoutDashboard, Settings, Bell, X, Menu, Sparkles, Heart } from "lucide-react";
 
 const NOTIF_KEY = "ls_notif_seen_at";
@@ -36,6 +37,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hasActiveSession, setHasActiveSession] = useState(false);
+
+  useEffect(() => {
+    const sessions = getSessions();
+    const incomplete = sessions.find(s => !s.completedAt);
+    setHasActiveSession(!!incomplete);
+  }, [pathname]);
 
   useEffect(() => {
     async function checkNotifications() {
@@ -125,27 +133,49 @@ export default function Navbar() {
       </nav>
 
       {/* ── Mobile top bar ── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3"
-        style={{ background: "rgba(10,6,2,0.95)", borderBottom: "1px solid rgba(101,67,20,0.3)", backdropFilter: "blur(8px)" }}>
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center">
-            <span className="text-amber-100 font-serif font-bold text-xs">HD</span>
-          </div>
-          <span className="text-amber-200 font-serif font-semibold text-base">History Drift</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
-            className="relative p-1 text-amber-600">
-            <Bell size={20} />
-            {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
-                style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
-            )}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex flex-col"
+        style={{ background: "rgba(10,6,2,0.97)", borderBottom: "1px solid rgba(101,67,20,0.3)", backdropFilter: "blur(8px)" }}>
+        {/* Row 1: logo + icons */}
+        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center">
+              <span className="text-amber-100 font-serif font-bold text-xs">HD</span>
+            </div>
+            <span className="text-amber-200 font-serif font-semibold text-base">History Drift</span>
           </Link>
-          <button onClick={() => setMenuOpen(true)} className="text-amber-600 p-1">
-            <Menu size={22} />
-          </button>
+          <div className="flex items-center gap-2">
+            <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
+              className="relative p-1 text-amber-600">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                  style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
+              )}
+            </Link>
+            <button onClick={() => setMenuOpen(true)} className="text-amber-600 p-1">
+              <Menu size={22} />
+            </button>
+          </div>
         </div>
+        {/* Row 2: Interview CTA — hidden on the interview page itself */}
+        {pathname !== "/interview" && (
+          <div className="px-4 pb-3">
+            <Link href="/interview"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl font-serif font-bold text-base transition-all active:scale-95"
+              style={{
+                background: hasActiveSession
+                  ? "linear-gradient(135deg, #5a8a20, #8ac030)"
+                  : "linear-gradient(135deg, #8a5021, #c8843a)",
+                color: "white",
+                boxShadow: hasActiveSession
+                  ? "0 4px 20px rgba(100,180,30,0.35)"
+                  : "0 4px 20px rgba(180,100,30,0.35)",
+              }}>
+              <Mic size={18} />
+              {hasActiveSession ? "Continue Interview →" : "Start Interview →"}
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* ── Mobile full-screen menu ── */}

@@ -275,7 +275,7 @@ function GuideItem({ section }: { section: typeof GUIDE_SECTIONS[0] }) {
 // â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function SupportPage() {
-  const [tab, setTab] = useState<"guide" | "faq" | "chat">("guide");
+  const [tab, setTab] = useState<"quickstart" | "guide" | "faq" | "chat">("quickstart");
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -315,7 +315,7 @@ export default function SupportPage() {
       {/* Tabs */}
       <div className="flex gap-1 mx-4 mt-3 mb-3 p-1 rounded-xl flex-shrink-0"
         style={{ background: "rgba(20,12,4,0.8)", border: "1px solid rgba(90,55,15,0.3)" }}>
-        {([["guide", BookOpen, "User Guide"], ["faq", ChevronDown, "FAQs"], ["chat", Sparkles, "Ask AI"]] as const).map(([key, Icon, label]) => (
+        {([["quickstart", Mic, "Quick Start"], ["guide", BookOpen, "Guide"], ["faq", ChevronDown, "FAQs"], ["chat", Sparkles, "Ask AI"]] as const).map(([key, Icon, label]) => (
           <button key={key} onClick={() => setTab(key)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-serif transition-all"
             style={{
@@ -330,6 +330,92 @@ export default function SupportPage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 pb-6">
+
+        {/* Quick Start */}
+        {tab === "quickstart" && (
+          <div className="space-y-4 pb-4">
+            <p className="text-sm font-serif italic" style={{ color: "rgba(220,175,80,0.85)" }}>
+              New to History Drift? Follow these simple steps to record your first story.
+            </p>
+
+            {[
+              {
+                step: "1",
+                title: "Sign up or sign in",
+                color: "#c8843a",
+                body: "Go to historydrift.com and tap Sign Up. Enter your name, email, and a password. Check your email for a confirmation link and tap it to activate your account. Next time, just tap Sign In.",
+              },
+              {
+                step: "2",
+                title: "Choose your interviewer",
+                color: "#8a5a2a",
+                body: "On the home screen you'll see a row of interviewers — each has a different style. Swipe left and right to browse them. Tap any card to read about their approach, then tap Start Interview to begin.",
+              },
+              {
+                step: "3",
+                title: "Start the interview",
+                color: "#6a8a4a",
+                body: "The interviewer will introduce themselves and ask an opening question. Read the question on screen — your interviewer will also say it aloud. Take a moment to think before answering.",
+              },
+              {
+                step: "4",
+                title: "Record your answer (voice)",
+                color: "#4a7a8a",
+                body: "Tap the orange Record answer button to start speaking. Talk naturally — there's no rush and no wrong answers. You'll see a waveform while recording. When you're finished, tap Stop, then tap Save answer to submit.",
+              },
+              {
+                step: "5",
+                title: "Type your answer instead",
+                color: "#7a4a8a",
+                body: "Prefer to type? Tap Type instead at any time. A text box appears — type your answer and tap Submit Answer when ready. You can switch back to voice at any time by tapping Use voice.",
+              },
+              {
+                step: "6",
+                title: "Move to a new topic",
+                color: "#8a2a4a",
+                body: "Not feeling a question? Tap New topic / Skip question and the interviewer will move on to something different. You can also tap Replay question to hear it again.",
+              },
+              {
+                step: "7",
+                title: "Finish and summarise",
+                color: "#3a6a8a",
+                body: "When you're ready to stop, tap End & Summarize (or Done on mobile). The AI will generate a summary of everything you shared, including people, places, and highlights from your session. You can edit the title or summary if anything is wrong.",
+              },
+              {
+                step: "8",
+                title: "Your story builds over time",
+                color: "#6a6a2a",
+                body: "Each session adds to your Biography, Timeline, People, and Life Lessons. You can start a new session any time — tap Continue Interview from the top of any page to pick up where you left off.",
+              },
+            ].map(({ step, title, color, body }) => (
+              <div key={step} className="flex gap-3 rounded-2xl p-4"
+                style={{ background: "rgba(18,11,4,0.7)", border: `1px solid ${color}30` }}>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-serif font-bold text-sm"
+                  style={{ background: `${color}25`, border: `1px solid ${color}50`, color }}>
+                  {step}
+                </div>
+                <div>
+                  <div className="font-serif font-bold text-sm mb-1" style={{ color: "#f0d060" }}>{title}</div>
+                  <p className="font-serif text-sm leading-relaxed" style={{ color: "rgba(220,185,110,0.88)" }}>{body}</p>
+                </div>
+              </div>
+            ))}
+
+            <div className="px-4 py-4 rounded-xl text-center mt-2"
+              style={{ background: "rgba(18,11,4,0.5)", border: "1px solid rgba(80,50,15,0.2)" }}>
+              <p className="text-xs font-serif" style={{ color: "rgba(220,175,80,0.85)" }}>
+                Need more detail?{" "}
+                <button onClick={() => setTab("guide")} className="underline" style={{ color: "#c8843a" }}>
+                  Read the full User Guide
+                </button>
+                {" "}or{" "}
+                <button onClick={() => setTab("chat")} className="underline" style={{ color: "#c8843a" }}>
+                  Ask our AI assistant
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* User Guide */}
         {tab === "guide" && (
