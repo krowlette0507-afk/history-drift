@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUpPage() {
@@ -15,7 +14,6 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +27,6 @@ export default function SignUpPage() {
       });
       if (error) throw error;
       setSuccess(true);
-      setTimeout(() => router.push("/dashboard"), 2000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Sign up failed");
     } finally {
@@ -60,10 +57,20 @@ export default function SignUpPage() {
 
         <div className="rounded-2xl p-6" style={{ background: "rgba(30,18,6,0.8)", border: "1px solid rgba(101,67,20,0.3)" }}>
           {success ? (
-            <div className="text-center py-4">
-              <div className="text-3xl mb-3">✉️</div>
-              <p className="text-amber-200 font-serif">Check your email to confirm your account!</p>
-              <p className="text-amber-700/60 text-xs font-sans mt-2">Redirecting to dashboard...</p>
+            <div className="text-center py-6 flex flex-col items-center gap-4">
+              <div className="text-5xl">✉️</div>
+              <div>
+                <p className="text-amber-200 font-serif text-lg font-semibold">Check your email</p>
+                <p className="text-amber-400 font-sans text-sm mt-1 break-all">{email}</p>
+              </div>
+              <p className="text-amber-600/80 font-sans text-sm leading-relaxed">
+                We sent a confirmation link to that address. Click it to activate your account, then come back and sign in.
+              </p>
+              <Link href="/sign-in"
+                className="mt-2 px-6 py-2.5 rounded-xl text-sm font-serif font-semibold transition-colors"
+                style={{ background: "rgba(200,132,58,0.15)", border: "1px solid rgba(200,132,58,0.4)", color: "#d4a017" }}>
+                Go to Sign In →
+              </Link>
             </div>
           ) : (
             <form onSubmit={handleSignUp} className="space-y-4">

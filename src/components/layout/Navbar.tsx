@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { supabase } from "@/lib/supabase";
 import { getSessions } from "@/lib/storage";
-import { Mic, BookOpen, Clock, Users, MapPin, Lightbulb, Scroll, Lock, HelpCircle, LayoutDashboard, Settings, Bell, X, Menu, Sparkles, Heart } from "lucide-react";
+import { Mic, BookOpen, Clock, Users, MapPin, Lightbulb, Scroll, Lock, HelpCircle, LayoutDashboard, Settings, Bell, X, Menu, Sparkles, Heart, LogOut } from "lucide-react";
 
 const NOTIF_KEY = "ls_notif_seen_at";
 
@@ -35,9 +35,11 @@ const BOTTOM_TABS = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [hasActiveSession, setHasActiveSession] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const sessions = getSessions();
@@ -46,13 +48,13 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    async function checkNotifications() {
+    async function checkAuth() {
       const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
       if (!session) return;
       const seenAt = localStorage.getItem(NOTIF_KEY) ?? "1970-01-01";
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sb = supabase as any;
-      // Get user's invite IDs first
       const { data: invites } = await sb
         .from("family_invites")
         .select("id")
@@ -66,21 +68,30 @@ export default function Navbar() {
         .gt("created_at", seenAt);
       setUnreadCount(count ?? 0);
     }
-    checkNotifications();
+    checkAuth();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
   }, [pathname]);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    router.push("/sign-in");
+  }
 
   return (
     <>
       {/* ── Desktop sidebar (hidden on mobile) ── */}
       <nav className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-stone-950 via-amber-950/30 to-stone-950 border-r border-amber-900/30 flex-col z-40">
         <div className="p-6 border-b border-amber-900/30">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg">
               <span className="text-amber-100 font-serif font-bold text-sm">HD</span>
             </div>
             <div>
               <div className="text-amber-200 font-serif font-semibold text-lg leading-tight">History Drift</div>
-              <div className="text-amber-700 text-xs">Every life has a story worth preserving.</div>
+              <div className="text-amber-500 text-xs">Every life has a story worth preserving.</div>
             </div>
           </Link>
         </div>
@@ -108,7 +119,7 @@ export default function Navbar() {
                   "flex items-center gap-3 px-5 py-3 text-sm font-serif transition-all duration-150",
                   active
                     ? "bg-amber-900/40 text-amber-200 border-r-2 border-amber-500"
-                    : "text-amber-700 hover:text-amber-300 hover:bg-amber-950/50"
+                    : "text-amber-400 hover:text-amber-200 hover:bg-amber-950/50"
                 )}>
                 <Icon size={16} className="flex-shrink-0" />
                 <span>{label}</span>
@@ -116,19 +127,29 @@ export default function Navbar() {
             );
           })}
         </div>
-        <div className="border-t border-amber-900/30 p-4 flex gap-2">
-          <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
-            className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-700 hover:text-amber-400 text-xs transition-colors relative">
-            <Bell size={14} />
-            <span>Alerts</span>
-            {unreadCount > 0 && (
-              <span className="absolute top-1 right-3 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
-                style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
-            )}
-          </Link>
-          <Link href="/settings" className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-700 hover:text-amber-400 text-xs transition-colors">
-            <Settings size={14} /><span>Settings</span>
-          </Link>
+        <div className="border-t border-amber-900/30 p-4 flex gap-2 flex-col">
+          <div className="flex gap-2">
+            <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); }}
+              className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-400 hover:text-amber-200 text-xs transition-colors relative">
+              <Bell size={14} />
+              <span>Alerts</span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-3 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                  style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
+              )}
+            </Link>
+            <Link href="/settings" className="flex-1 flex items-center justify-center gap-2 py-2 text-amber-400 hover:text-amber-200 text-xs transition-colors">
+              <Settings size={14} /><span>Settings</span>
+            </Link>
+          </div>
+          {isLoggedIn && (
+            <button onClick={handleSignOut}
+              className="flex items-center justify-center gap-2 py-2 w-full text-xs transition-colors rounded-lg"
+              style={{ color: "rgba(220,100,80,0.85)", border: "1px solid rgba(220,80,60,0.2)" }}>
+              <LogOut size={14} />
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
       </nav>
 
@@ -137,7 +158,7 @@ export default function Navbar() {
         style={{ background: "rgba(10,6,2,0.97)", borderBottom: "1px solid rgba(101,67,20,0.3)", backdropFilter: "blur(8px)" }}>
         {/* Row 1: logo + icons */}
         <div className="flex items-center justify-between px-4 pt-3 pb-2">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center">
               <span className="text-amber-100 font-serif font-bold text-xs">HD</span>
             </div>
@@ -195,7 +216,7 @@ export default function Navbar() {
                     "flex items-center gap-4 px-6 py-4 text-base font-serif transition-all",
                     highlight
                       ? active ? "text-pink-300" : "text-pink-500"
-                      : active ? "text-amber-200 bg-amber-900/30" : "text-amber-600 hover:text-amber-300"
+                      : active ? "text-amber-200 bg-amber-900/30" : "text-amber-400 hover:text-amber-200"
                   )}>
                   <Icon size={20} className="flex-shrink-0" />
                   <span>{label}</span>
@@ -206,17 +227,31 @@ export default function Navbar() {
               );
             })}
           </div>
-          <div className="border-t border-amber-900/30 p-4 flex gap-3">
-            <Link href="/settings" onClick={() => setMenuOpen(false)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 text-amber-700 text-sm font-serif rounded-xl"
-              style={{ border: "1px solid rgba(101,67,20,0.3)" }}>
-              <Settings size={16} /><span>Settings</span>
-            </Link>
-            <Link href="/notifications" onClick={() => setMenuOpen(false)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 text-amber-700 text-sm font-serif rounded-xl"
-              style={{ border: "1px solid rgba(101,67,20,0.3)" }}>
-              <Bell size={16} /><span>Alerts</span>
-            </Link>
+          <div className="border-t border-amber-900/30 p-4 flex flex-col gap-3">
+            <div className="flex gap-3">
+              <Link href="/settings" onClick={() => setMenuOpen(false)}
+                className="flex-1 flex items-center justify-center gap-2 py-3 text-amber-400 text-sm font-serif rounded-xl"
+                style={{ border: "1px solid rgba(101,67,20,0.3)" }}>
+                <Settings size={16} /><span>Settings</span>
+              </Link>
+              <Link href="/family" onClick={() => { localStorage.setItem(NOTIF_KEY, new Date().toISOString()); setUnreadCount(0); setMenuOpen(false); }}
+                className="flex-1 flex items-center justify-center gap-2 py-3 text-amber-400 text-sm font-serif rounded-xl relative"
+                style={{ border: "1px solid rgba(101,67,20,0.3)" }}>
+                <Bell size={16} /><span>Alerts</span>
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-6 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                    style={{ background: "#c84a9a", color: "white" }}>{unreadCount}</span>
+                )}
+              </Link>
+            </div>
+            {isLoggedIn && (
+              <button onClick={() => { setMenuOpen(false); handleSignOut(); }}
+                className="flex items-center justify-center gap-2 py-3 w-full text-sm font-serif rounded-xl transition-colors"
+                style={{ color: "rgba(220,100,80,0.85)", border: "1px solid rgba(220,80,60,0.2)" }}>
+                <LogOut size={16} />
+                <span>Sign Out</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -231,7 +266,7 @@ export default function Navbar() {
               className="flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors"
               style={{ color: active ? "#d4a017" : "rgba(210,165,60,0.75)" }}>
               <Icon size={20} />
-              <span className="text-[10px] font-sans">{label}</span>
+              <span className="text-xs font-sans">{label}</span>
             </Link>
           );
         })}
@@ -239,7 +274,7 @@ export default function Navbar() {
           className="flex-1 flex flex-col items-center justify-center py-3 gap-1"
           style={{ color: "rgba(210,165,60,0.75)" }}>
           <Menu size={20} />
-          <span className="text-[10px] font-sans">More</span>
+          <span className="text-xs font-sans">More</span>
         </button>
       </div>
     </>
