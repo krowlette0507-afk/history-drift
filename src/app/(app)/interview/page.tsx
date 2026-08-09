@@ -17,18 +17,18 @@ import {
   Send, Edit3, Check, X, ChevronRight, ChevronDown,
   Sparkles, BookOpen, Clock, ArrowLeft, RotateCcw,
   Users, MapPin, Lightbulb, Quote, Calendar, Loader2,
-  CheckCircle, Circle
+  CheckCircle, Circle, Heart
 } from "lucide-react";
 
 /* â"€â"€â"€ Phase config â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const PHASE_QUESTIONS_PER: Record<PhaseId, number> = {
   hook: 3, character: 4, journey: 6, people: 5,
-  places: 4, adventures: 4, challenges: 4, wisdom: 4, legacy: 3,
+  heart: 4, places: 4, adventures: 4, challenges: 4, wisdom: 4, legacy: 3,
 };
 
 const PHASE_COLORS: Record<PhaseId, string> = {
   hook: "#d4862a", character: "#8a5c8a", journey: "#2a7a8a",
-  people: "#c84a4a", places: "#3a8a4a", adventures: "#c8822a",
+  people: "#c84a4a", heart: "#b05080", places: "#3a8a4a", adventures: "#c8822a",
   challenges: "#5a5a8a", wisdom: "#8a7a2a", legacy: "#2a6a5a",
 };
 
@@ -37,6 +37,7 @@ const PHASE_ICONS: Record<PhaseId, React.ReactNode> = {
   character: <Users size={12} />,
   journey: <Clock size={12} />,
   people: <Users size={12} />,
+  heart: <Heart size={12} />,
   places: <MapPin size={12} />,
   adventures: <BookOpen size={12} />,
   challenges: <ChevronRight size={12} />,
@@ -47,23 +48,23 @@ const PHASE_ICONS: Record<PhaseId, React.ReactNode> = {
 const OPENING_QUESTIONS: Record<string, Record<PhaseId, string>> = {
   dr_james_carter: {
     hook: "Before we begin, I'd love to know who I'm speaking with. Please share your name and tell me a little about yourself — where you're from, what stage of life you're in, whatever feels right. There's no wrong way to start.",
-    character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
+    character: "", journey: "", people: "", heart: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   professor_mei_lin: {
     hook: "I'm so glad you're here. Before we dive in, I'd love to know your name and a little about who you are — your background, where you grew up, whatever comes to mind first. Let's start simply.",
-    character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
+    character: "", journey: "", people: "", heart: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   sarah_bennett: {
     hook: "Welcome — I'm really glad you're here. Let's start by getting to know each other a little. What's your name, and can you give me a quick sense of who you are and where you're at in life right now?",
-    character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
+    character: "", journey: "", people: "", heart: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   miguel_alvarez: {
     hook: "Hey, really glad you're here. Before anything else — what's your name, and tell me a little about yourself. Where you're from, what your world looks like right now. Just talk to me.",
-    character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
+    character: "", journey: "", people: "", heart: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
   jordan_brooks: {
     hook: "Okay, let's do this! First things first — what's your name, and give me the quick version of you. Where you're from, what your life looks like, whatever you want me to know going in.",
-    character: "", journey: "", people: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
+    character: "", journey: "", people: "", heart: "", places: "", adventures: "", challenges: "", wisdom: "", legacy: "",
   },
 };
 
@@ -444,7 +445,7 @@ function InterviewerSelector({
 
       {/* Phase overview */}
       <div className="mb-6">
-        <div className="text-amber-700/50 text-xs font-sans uppercase tracking-widest mb-3">Interview Framework — 9 Phases</div>
+        <div className="text-amber-700/50 text-xs font-sans uppercase tracking-widest mb-3">Interview Framework — 10 Phases</div>
         <div className="grid grid-cols-3 gap-2">
           {INTERVIEW_PHASES.map((phase) => (
             <div
@@ -1408,7 +1409,7 @@ function InterviewInner() {
             &ldquo;Every life has a story worth preserving.&rdquo;
           </p>
           <p className="text-amber-700/80 font-sans text-sm mb-6 leading-relaxed">
-            You&apos;ve completed the Story Hook — the heart of your interview. Sign up to unlock all 9 interview phases, save your memories, and build your legacy story.
+            You&apos;ve completed the Story Hook — the heart of your interview. Sign up to unlock all 10 interview phases, save your memories, and build your legacy story.
           </p>
           <div className="space-y-3 mb-6">
             {["9 full interview phases", "AI-powered memory extraction", "Biography & legacy documents", "Private family sharing vault"].map((f) => (

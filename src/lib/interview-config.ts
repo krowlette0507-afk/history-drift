@@ -8,6 +8,7 @@ export const INTERVIEW_PHASES = [
   { id: "character",  name: "Character Building",  description: "Personality, values, fears, strengths, and motivations", questionCount: 4 },
   { id: "journey",    name: "Life Journey",        description: "Childhood through career, family and legacy", questionCount: 6 },
   { id: "people",     name: "People Who Mattered", description: "Family, friends, mentors, and important influences", questionCount: 5 },
+  { id: "heart",      name: "Heart",               description: "Love, grief, loss, fear, fault — the emotional interior of a life", questionCount: 4 },
   { id: "places",     name: "Places",              description: "Homes, neighborhoods, schools, travel, and meaningful places", questionCount: 4 },
   { id: "adventures", name: "Adventures",          description: "Funniest, scariest, most beautiful, and most meaningful experiences", questionCount: 4 },
   { id: "challenges", name: "Challenges",          description: "Hardship, loss, failure, recovery, and resilience", questionCount: 4 },
