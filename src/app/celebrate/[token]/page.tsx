@@ -30,7 +30,7 @@ interface Guest {
 
 function formatDate(d: string) {
   return new Date(d + "T12:00:00").toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
+    month: "long", day: "numeric",
   });
 }
 
