@@ -1,0 +1,80 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@/lib/supabase";
+
+export async function POST(req: NextRequest) {
+  try {
+    const {
+      token, response, party_size, party_members,
+      dietary_restrictions, song_request, notes, email, mobile,
+    } = await req.json();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = createServerClient() as any;
+
+    const { data: guests } = await supabase
+      .from("celebration_guests")
+      .select("*")
+      .eq("invitation_token", token)
+      .limit(1);
+    const guest = guests?.[0];
+    if (!guest) return NextResponse.json({ error: "Invalid invitation token" }, { status: 403 });
+
+    const now = new Date().toISOString();
+    const rsvpData = {
+      guest_id: guest.id,
+      celebration_event_id: guest.celebration_event_id,
+      response: response ?? "yes",
+      party_size: party_size ?? 1,
+      dietary_restrictions: dietary_restrictions ?? "",
+      song_request: song_request ?? "",
+      notes: notes ?? "",
+      updated_at: now,
+    };
+
+    const { data: existingRsvps } = await supabase
+      .from("celebration_rsvps")
+      .select("id, submitted_at")
+      .eq("guest_id", guest.id)
+      .limit(1);
+    const existing = existingRsvps?.[0];
+
+    let rsvp;
+    if (existing) {
+      const { data } = await supabase
+        .from("celebration_rsvps")
+        .update({ ...rsvpData, submitted_at: existing.submitted_at ?? now })
+        .eq("id", existing.id)
+        .select()
+        .single();
+      rsvp = data;
+      await supabase.from("celebration_guest_party_members").delete().eq("rsvp_id", existing.id);
+    } else {
+      const { data } = await supabase
+        .from("celebration_rsvps")
+        .insert({ ...rsvpData, submitted_at: now })
+        .select()
+        .single();
+      rsvp = data;
+    }
+
+    if (rsvp && party_members?.length) {
+      await supabase.from("celebration_guest_party_members").insert(
+        party_members.map((m: { name: string; dietary: string }) => ({
+          rsvp_id: rsvp.id,
+          guest_id: guest.id,
+          name: m.name,
+          meal_notes: m.dietary ?? "",
+        }))
+      );
+    }
+
+    await supabase
+      .from("celebration_guests")
+      .update({ email: email ?? guest.email, mobile: mobile ?? guest.mobile, rsvp_date: now })
+      .eq("id", guest.id);
+
+    return NextResponse.json({ ok: true, rsvp });
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
+}

@@ -152,12 +152,23 @@ export async function POST(req: NextRequest) {
         let imageUrl: string | null = null;
 
         try {
+          // Upload as a Blob: on some serverless runtimes a raw Node Buffer body
+          // gets coerced through UTF-8 and corrupts the JPEG (0xEF 0xBF 0xBD bytes).
+          const blob = new Blob([new Uint8Array(finalImageBuffer)], { type: "image/jpeg" });
           const { error: uploadErr } = await supabase.storage
             .from("relive-media")
-            .upload(fileName, finalImageBuffer, { contentType: "image/jpeg", upsert: false });
+            .upload(fileName, blob, { contentType: "image/jpeg", upsert: false });
           if (!uploadErr) {
             const { data: urlData } = supabase.storage.from("relive-media").getPublicUrl(fileName);
-            imageUrl = urlData.publicUrl;
+            // Verify the stored object is a real JPEG (starts with FF D8 FF) before
+            // trusting the URL; otherwise delete it and fall back to inline base64.
+            const check = await fetch(urlData.publicUrl, { headers: { Range: "bytes=0-2" } });
+            const head = new Uint8Array(await check.arrayBuffer());
+            if (head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff) {
+              imageUrl = urlData.publicUrl;
+            } else {
+              await supabase.storage.from("relive-media").remove([fileName]).catch(() => {});
+            }
           }
         } catch { /* non-fatal */ }
 
