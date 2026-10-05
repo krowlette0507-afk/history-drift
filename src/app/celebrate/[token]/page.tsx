@@ -71,37 +71,72 @@ const FAQ_ITEMS = [
     q: "Can I forward this invitation to other family members?",
     a: "Yes! Use the Share with Family buttons below to send the link by email, SMS, or copy it to paste anywhere. Anyone with the link can view the page and contribute.",
   },
+  {
+    q: "Can I change my RSVP after I submit it?",
+    a: "Yes. Come back to your invitation link anytime and tap 'Update My RSVP.' Your response will be updated immediately.",
+  },
+  {
+    q: "Can I edit or delete something I shared?",
+    a: "Please reach out to the host directly using the contact information on your invitation and they will take care of it.",
+  },
+  {
+    q: "Will these memories be kept after the celebration?",
+    a: "Yes. Every photo, story, and message is preserved permanently so the family can revisit them for years to come — that is the heart of what HistoryDrift is all about.",
+  },
+  {
+    q: "Who can see my RSVP response?",
+    a: "Only the host can see your RSVP. Your response is never shown publicly or shared with other guests.",
+  },
+  {
+    q: "Can I share on behalf of someone who can't use a smartphone?",
+    a: "Absolutely. You can upload their photos, type their story, or record a message on their behalf — just enter their name when prompted.",
+  },
 ];
 
 function FaqSection() {
+  const [sectionOpen, setSectionOpen] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <div className="warm-glass rounded-2xl p-5">
-      <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40 mb-4">Frequently Asked Questions</p>
-      <div className="flex flex-col divide-y" style={{ borderColor: "rgba(212,160,23,0.08)" }}>
-        {FAQ_ITEMS.map((item, i) => (
-          <div key={i} className="py-3">
-            <button
-              type="button"
-              onClick={() => setOpen(open === i ? null : i)}
-              className="w-full flex items-start justify-between gap-3 text-left"
-            >
-              <span className="font-serif text-sm text-[#f5ead8]/90 leading-snug">{item.q}</span>
-              <span
-                className="text-gold/50 text-lg leading-none flex-shrink-0 transition-transform duration-200"
-                style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)" }}
+    <div className="warm-glass rounded-2xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => { setSectionOpen((v) => !v); setOpen(null); }}
+        className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left"
+      >
+        <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">Frequently Asked Questions</p>
+        <span
+          className="text-gold/50 text-lg leading-none flex-shrink-0 transition-transform duration-200"
+          style={{ transform: sectionOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+        >
+          +
+        </span>
+      </button>
+      {sectionOpen && (
+        <div className="flex flex-col divide-y px-5 pb-3" style={{ borderColor: "rgba(212,160,23,0.08)" }}>
+          {FAQ_ITEMS.map((item, i) => (
+            <div key={i} className="py-3">
+              <button
+                type="button"
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full flex items-start justify-between gap-3 text-left"
               >
-                +
-              </span>
-            </button>
-            {open === i && (
-              <p className="font-serif text-xs text-[#f5ead8]/55 leading-relaxed mt-2 pr-6">
-                {item.a}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+                <span className="font-serif text-sm text-[#f5ead8]/90 leading-snug">{item.q}</span>
+                <span
+                  className="text-gold/50 text-lg leading-none flex-shrink-0 transition-transform duration-200"
+                  style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)" }}
+                >
+                  +
+                </span>
+              </button>
+              {open === i && (
+                <p className="font-serif text-xs text-[#f5ead8]/55 leading-relaxed mt-2 pr-6">
+                  {item.a}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
