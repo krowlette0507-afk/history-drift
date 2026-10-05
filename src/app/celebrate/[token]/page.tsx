@@ -141,6 +141,198 @@ function FaqSection() {
   );
 }
 
+interface CarouselItem {
+  id: string;
+  file_url: string;
+  caption: string;
+  carousel_order: number;
+}
+
+function CarouselSection({ eventId }: { eventId: string }) {
+  const [items, setItems] = useState<CarouselItem[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const [lbIndex, setLbIndex] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/celebrate/carousel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_id: eventId }),
+    })
+      .then((r) => r.json())
+      .then((d) => setItems(d.media ?? []));
+  }, [eventId]);
+
+  const openLightbox = (idx: number) => { setLbIndex(idx); setLightbox(true); };
+  const closeLightbox = () => setLightbox(false);
+  const prev = () => setLbIndex((i) => (i - 1 + items.length) % items.length);
+  const next = () => setLbIndex((i) => (i + 1) % items.length);
+
+  // Auto-advance in lightbox
+  useEffect(() => {
+    if (!lightbox || items.length <= 1) return;
+    const t = setInterval(() => setLbIndex((i) => (i + 1) % items.length), 6000);
+    return () => clearInterval(t);
+  }, [lightbox, items.length]);
+
+  // Auto-advance compact strip
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const t = setInterval(() => setCurrent((i) => (i + 1) % items.length), 5000);
+    return () => clearInterval(t);
+  }, [items.length]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <>
+      <div className="warm-glass rounded-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-5 pt-4 pb-2">
+          <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">Photo Gallery</p>
+          <button
+            type="button"
+            onClick={() => openLightbox(current)}
+            className="text-[10px] font-serif text-gold/50 hover:text-gold transition-colors"
+          >
+            ⤢ Expand
+          </button>
+        </div>
+        <div className="relative" style={{ height: "220px" }}>
+          {items.map((item, i) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => openLightbox(i)}
+              className="absolute inset-0 w-full h-full"
+              style={{ opacity: i === current ? 1 : 0, transition: "opacity 0.6s", cursor: "pointer" }}
+            >
+              <img
+                src={item.file_url}
+                alt={item.caption || ""}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            </button>
+          ))}
+          {items.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setCurrent((i) => (i - 1 + items.length) % items.length); }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-black/40"
+                style={{ background: "rgba(0,0,0,0.25)", color: "rgba(245,234,216,0.8)" }}
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setCurrent((i) => (i + 1) % items.length); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-black/40"
+                style={{ background: "rgba(0,0,0,0.25)", color: "rgba(245,234,216,0.8)" }}
+              >
+                ›
+              </button>
+            </>
+          )}
+        </div>
+        {items.length > 1 && (
+          <div className="flex justify-center gap-1.5 py-3">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrent(i)}
+                className="rounded-full transition-all"
+                style={{
+                  width: i === current ? "16px" : "6px",
+                  height: "6px",
+                  background: i === current ? "#d4a017" : "rgba(212,160,23,0.25)",
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 flex flex-col"
+          style={{ background: "rgba(0,0,0,0.97)", zIndex: 50 }}
+        >
+          {/* Close button */}
+          <div className="flex justify-end p-4 flex-shrink-0">
+            <button
+              type="button"
+              onClick={closeLightbox}
+              className="w-12 h-12 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
+              style={{ color: "rgba(255,255,255,0.8)", fontSize: "28px", lineHeight: 1 }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Image */}
+          <div className="flex-1 relative flex items-center justify-center px-14 pb-4 min-h-0">
+            <img
+              src={items[lbIndex]?.file_url}
+              alt={items[lbIndex]?.caption || ""}
+              className="max-w-full max-h-full rounded-xl"
+              style={{ objectFit: "contain" }}
+            />
+            {items.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prev}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/15"
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)", fontSize: "22px" }}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/15"
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)", fontSize: "22px" }}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Caption + dots */}
+          <div className="flex-shrink-0 pb-6 px-4 flex flex-col items-center gap-3">
+            {items[lbIndex]?.caption && (
+              <p className="font-serif text-xs text-white/50 text-center">{items[lbIndex].caption}</p>
+            )}
+            {items.length > 1 && (
+              <div className="flex gap-1.5">
+                {items.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setLbIndex(i)}
+                    className="rounded-full transition-all"
+                    style={{
+                      width: i === lbIndex ? "20px" : "6px",
+                      height: "6px",
+                      background: i === lbIndex ? "#d4a017" : "rgba(212,160,23,0.3)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            <p className="font-serif text-[10px] text-white/25">{lbIndex + 1} / {items.length}</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function InvitationPage() {
   const { token } = useParams<{ token: string }>();
   const [event, setEvent] = useState<CelebrationEvent | null>(null);
@@ -347,6 +539,9 @@ export default function InvitationPage() {
           </button>
         </div>
       </div>
+
+      {/* Photo Carousel */}
+      <CarouselSection eventId={event.id} />
 
       {/* FAQ */}
       <FaqSection />

@@ -44,6 +44,17 @@ interface Guest {
   celebration_rsvps: { response: string; party_size: number; submitted_at: string }[];
 }
 
+interface CarouselMedia {
+  id: string;
+  file_url: string;
+  media_type: string;
+  caption: string;
+  carousel_approved: boolean;
+  carousel_order: number;
+  original_filename: string;
+  celebration_memories: { storyteller_name: string; title: string } | null;
+}
+
 async function adminFetch(path: string, body?: object) {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token ?? "";
@@ -61,7 +72,7 @@ export default function CelebrateAdminPage() {
   const [selectedEvent, setSelectedEvent] = useState<CelebrationEvent | null>(null);
   const [rsvpSummary, setRsvpSummary] = useState<RsvpSummary | null>(null);
   const [memories, setMemories] = useState<RecentMemory[]>([]);
-  const [tab, setTab] = useState<"overview" | "guests" | "memories" | "create">("overview");
+  const [tab, setTab] = useState<"overview" | "guests" | "memories" | "carousel" | "create">("overview");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
 
@@ -73,6 +84,12 @@ export default function CelebrateAdminPage() {
   const [guestForm, setGuestForm] = useState({ first_name: "", last_name: "", email: "", mobile: "" });
   const [lastAdded, setLastAdded] = useState<Guest | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+
+  // Carousel tab state
+  const [carouselMedia, setCarouselMedia] = useState<CarouselMedia[]>([]);
+  const [carouselLoading, setCarouselLoading] = useState(false);
+  const [carouselSaving, setCarouselSaving] = useState(false);
+  const [carouselSaved, setCarouselSaved] = useState(false);
 
   // Create form state
   const [form, setForm] = useState({
@@ -131,6 +148,61 @@ export default function CelebrateAdminPage() {
   useEffect(() => {
     if (tab === "guests" && selectedEvent) loadGuests();
   }, [tab, selectedEvent, loadGuests]);
+
+  const loadCarouselMedia = useCallback(async () => {
+    if (!selectedEvent) return;
+    setCarouselLoading(true);
+    const res = await adminFetch("/api/celebrate/admin/carousel", { action: "get", event_id: selectedEvent.id });
+    const d = await res.json();
+    setCarouselMedia(d.media ?? []);
+    setCarouselLoading(false);
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    if (tab === "carousel" && selectedEvent) loadCarouselMedia();
+  }, [tab, selectedEvent, loadCarouselMedia]);
+
+  const toggleCarouselApproved = (id: string) => {
+    setCarouselMedia((prev) => {
+      const item = prev.find((m) => m.id === id);
+      if (!item) return prev;
+      const wasApproved = item.carousel_approved;
+      const approvedItems = prev.filter((m) => m.carousel_approved && m.id !== id);
+      const newOrder = wasApproved ? 999 : approvedItems.length + 1;
+      return prev.map((m) =>
+        m.id === id ? { ...m, carousel_approved: !wasApproved, carousel_order: newOrder } : m
+      );
+    });
+  };
+
+  const moveCarouselItem = (id: string, dir: -1 | 1) => {
+    setCarouselMedia((prev) => {
+      const approved = prev.filter((m) => m.carousel_approved).sort((a, b) => a.carousel_order - b.carousel_order);
+      const idx = approved.findIndex((m) => m.id === id);
+      const swapIdx = idx + dir;
+      if (swapIdx < 0 || swapIdx >= approved.length) return prev;
+      const updated = [...approved];
+      [updated[idx], updated[swapIdx]] = [updated[swapIdx], updated[idx]];
+      updated.forEach((m, i) => { m.carousel_order = i + 1; });
+      const approvedIds = new Set(approved.map((m) => m.id));
+      return prev.map((m) => {
+        const upd = updated.find((u) => u.id === m.id);
+        if (upd) return { ...m, carousel_order: upd.carousel_order };
+        if (!approvedIds.has(m.id)) return m;
+        return m;
+      });
+    });
+  };
+
+  const saveCarousel = async () => {
+    if (!selectedEvent) return;
+    setCarouselSaving(true);
+    const items = carouselMedia.map((m) => ({ id: m.id, carousel_approved: m.carousel_approved, carousel_order: m.carousel_order }));
+    await adminFetch("/api/celebrate/admin/carousel", { action: "save", event_id: selectedEvent.id, items });
+    setCarouselSaving(false);
+    setCarouselSaved(true);
+    setTimeout(() => setCarouselSaved(false), 2000);
+  };
 
   const addGuest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,12 +296,12 @@ export default function CelebrateAdminPage() {
       )}
 
       {/* Tab nav */}
-      <div className="flex gap-1" style={{ borderBottom: "1px solid rgba(212,160,23,0.1)" }}>
-        {(["overview", "guests", "memories", "create"] as const).map((t) => (
+      <div className="flex gap-1 overflow-x-auto" style={{ borderBottom: "1px solid rgba(212,160,23,0.1)" }}>
+        {(["overview", "guests", "memories", "carousel", "create"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="px-4 py-2.5 font-serif text-xs capitalize transition-colors"
+            className="flex-shrink-0 px-4 py-2.5 font-serif text-xs capitalize transition-colors"
             style={
               tab === t
                 ? { color: "#d4a017", borderBottom: "2px solid #d4a017" }
@@ -437,6 +509,129 @@ export default function CelebrateAdminPage() {
                 </span>
               </div>
             ))
+          )}
+        </div>
+      )}
+
+      {/* Carousel tab */}
+      {tab === "carousel" && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="font-serif text-xs text-amber-700/50">
+              {carouselMedia.filter((m) => m.carousel_approved).length} of {carouselMedia.length} photo{carouselMedia.length !== 1 ? "s" : ""} in carousel
+            </p>
+            <button
+              onClick={saveCarousel}
+              disabled={carouselSaving}
+              className="px-3 py-1.5 rounded-lg font-serif text-xs font-semibold text-[#0f0a04] transition-opacity hover:opacity-80 disabled:opacity-50"
+              style={{ background: carouselSaved ? "rgba(34,197,94,0.8)" : "linear-gradient(135deg,#d4a017 0%,#c8843a 100%)" }}
+            >
+              {carouselSaving ? "Saving…" : carouselSaved ? "✓ Saved" : "Save Carousel"}
+            </button>
+          </div>
+
+          {carouselLoading ? (
+            <p className="font-serif text-sm text-amber-700/40 text-center py-8 animate-pulse">Loading photos…</p>
+          ) : carouselMedia.length === 0 ? (
+            <p className="font-serif text-sm text-amber-700/40 text-center py-8">No photos shared yet.</p>
+          ) : (
+            <>
+              {/* Approved items in order */}
+              {carouselMedia.filter((m) => m.carousel_approved).sort((a, b) => a.carousel_order - b.carousel_order).length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">In Carousel</p>
+                  {carouselMedia
+                    .filter((m) => m.carousel_approved)
+                    .sort((a, b) => a.carousel_order - b.carousel_order)
+                    .map((m, idx, arr) => (
+                      <div
+                        key={m.id}
+                        className="rounded-xl p-3 flex items-center gap-3"
+                        style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.2)" }}
+                      >
+                        <img
+                          src={m.file_url}
+                          alt=""
+                          className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif text-sm text-amber-200 truncate">
+                            {m.celebration_memories?.storyteller_name ?? "Unknown"}
+                          </p>
+                          <p className="font-serif text-[10px] text-amber-700/40 truncate">
+                            {m.celebration_memories?.title ?? ""}
+                          </p>
+                          <p className="font-serif text-[10px] text-gold/50 mt-0.5">Position {idx + 1}</p>
+                        </div>
+                        <div className="flex flex-col gap-1 flex-shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => moveCarouselItem(m.id, -1)}
+                            disabled={idx === 0}
+                            className="w-7 h-7 rounded-md text-xs flex items-center justify-center disabled:opacity-20 transition-colors hover:bg-gold/10"
+                            style={{ border: "1px solid rgba(212,160,23,0.25)", color: "#d4a017" }}
+                          >
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveCarouselItem(m.id, 1)}
+                            disabled={idx === arr.length - 1}
+                            className="w-7 h-7 rounded-md text-xs flex items-center justify-center disabled:opacity-20 transition-colors hover:bg-gold/10"
+                            style={{ border: "1px solid rgba(212,160,23,0.25)", color: "#d4a017" }}
+                          >
+                            ↓
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleCarouselApproved(m.id)}
+                          className="flex-shrink-0 px-2.5 py-1 rounded-lg font-serif text-[10px] transition-all"
+                          style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}
+                        >
+                          ✓ In
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              {/* Un-approved items */}
+              {carouselMedia.filter((m) => !m.carousel_approved).length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-[10px] font-serif uppercase tracking-widest text-amber-700/30 mt-2">Not in Carousel</p>
+                  {carouselMedia.filter((m) => !m.carousel_approved).map((m) => (
+                    <div
+                      key={m.id}
+                      className="rounded-xl p-3 flex items-center gap-3"
+                      style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(212,160,23,0.08)" }}
+                    >
+                      <img
+                        src={m.file_url}
+                        alt=""
+                        className="w-14 h-14 rounded-lg object-cover flex-shrink-0 opacity-60"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-serif text-sm text-amber-200/60 truncate">
+                          {m.celebration_memories?.storyteller_name ?? "Unknown"}
+                        </p>
+                        <p className="font-serif text-[10px] text-amber-700/30 truncate">
+                          {m.celebration_memories?.title ?? ""}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleCarouselApproved(m.id)}
+                        className="flex-shrink-0 px-2.5 py-1 rounded-lg font-serif text-[10px] transition-all hover:border-gold/30"
+                        style={{ background: "rgba(212,160,23,0.06)", color: "rgba(212,160,23,0.4)", border: "1px solid rgba(212,160,23,0.12)" }}
+                      >
+                        + Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
