@@ -46,6 +46,66 @@ function DetailRow({ icon, label, value }: { icon: string; label: string; value:
   );
 }
 
+const FAQ_ITEMS = [
+  {
+    q: "What can I share?",
+    a: "Photos of yourself with Cecil, old photos of Cecil from your collection, short videos up to 1 minute, a written story or memory, or even an audio recording in your own voice. All of it is welcome.",
+  },
+  {
+    q: "Can I still participate if I can't attend?",
+    a: "Absolutely. Select 'No' or 'Maybe' when you RSVP and still share a photo, story, or heartfelt message. Cecil and the family will see every wish — your presence in spirit means just as much.",
+  },
+  {
+    q: "Is my content private and secure?",
+    a: "Yes. Everything you share — photos, stories, messages — is stored securely and visible only to the Rowlette family. Nothing is made public or shared outside this celebration.",
+  },
+  {
+    q: "How long can a video be?",
+    a: "Up to 1 minute. A short, sincere clip — telling a favourite memory or simply saying happy birthday — is perfect.",
+  },
+  {
+    q: "Do I need an account or app?",
+    a: "No account, no download. Your personal link is all you need to RSVP, share memories, and view the gallery.",
+  },
+  {
+    q: "Can I forward this invitation to other family members?",
+    a: "Yes! Use the Share with Family buttons below to send the link by email, SMS, or copy it to paste anywhere. Anyone with the link can view the page and contribute.",
+  },
+];
+
+function FaqSection() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="warm-glass rounded-2xl p-5">
+      <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40 mb-4">Frequently Asked Questions</p>
+      <div className="flex flex-col divide-y" style={{ borderColor: "rgba(212,160,23,0.08)" }}>
+        {FAQ_ITEMS.map((item, i) => (
+          <div key={i} className="py-3">
+            <button
+              type="button"
+              onClick={() => setOpen(open === i ? null : i)}
+              className="w-full flex items-start justify-between gap-3 text-left"
+            >
+              <span className="font-serif text-sm text-[#f5ead8]/90 leading-snug">{item.q}</span>
+              <span
+                className="text-gold/50 text-lg leading-none flex-shrink-0 transition-transform duration-200"
+                style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)" }}
+              >
+                +
+              </span>
+            </button>
+            {open === i && (
+              <p className="font-serif text-xs text-[#f5ead8]/55 leading-relaxed mt-2 pr-6">
+                {item.a}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function InvitationPage() {
   const { token } = useParams<{ token: string }>();
   const [event, setEvent] = useState<CelebrationEvent | null>(null);
@@ -252,6 +312,9 @@ export default function InvitationPage() {
           </button>
         </div>
       </div>
+
+      {/* FAQ */}
+      <FaqSection />
     </div>
   );
 }
