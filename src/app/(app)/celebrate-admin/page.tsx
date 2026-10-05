@@ -32,6 +32,18 @@ interface RecentMemory {
   has_photo: boolean;
 }
 
+interface Guest {
+  id: string;
+  first_name: string;
+  last_name: string | null;
+  email: string | null;
+  mobile: string | null;
+  invitation_token: string;
+  invitation_sent: boolean;
+  created_at: string;
+  celebration_rsvps: { response: string; party_size: number; submitted_at: string }[];
+}
+
 async function adminFetch(path: string, body?: object) {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token ?? "";
@@ -49,9 +61,17 @@ export default function CelebrateAdminPage() {
   const [selectedEvent, setSelectedEvent] = useState<CelebrationEvent | null>(null);
   const [rsvpSummary, setRsvpSummary] = useState<RsvpSummary | null>(null);
   const [memories, setMemories] = useState<RecentMemory[]>([]);
-  const [tab, setTab] = useState<"overview" | "rsvps" | "memories" | "create">("overview");
+  const [tab, setTab] = useState<"overview" | "guests" | "memories" | "create">("overview");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+
+  // Guest tab state
+  const [guests, setGuests] = useState<Guest[]>([]);
+  const [guestsLoading, setGuestsLoading] = useState(false);
+  const [addingGuest, setAddingGuest] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [guestForm, setGuestForm] = useState({ first_name: "", last_name: "", email: "", mobile: "" });
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   // Create form state
   const [form, setForm] = useState({
@@ -97,6 +117,43 @@ export default function CelebrateAdminPage() {
         setMemories(d.recent_memories ?? []);
       });
   }, [selectedEvent]);
+
+  const loadGuests = useCallback(async () => {
+    if (!selectedEvent) return;
+    setGuestsLoading(true);
+    const res = await adminFetch("/api/celebrate/admin/guests", { event_id: selectedEvent.id });
+    const d = await res.json();
+    setGuests(d.guests ?? []);
+    setGuestsLoading(false);
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    if (tab === "guests" && selectedEvent) loadGuests();
+  }, [tab, selectedEvent, loadGuests]);
+
+  const addGuest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent) return;
+    setAddingGuest(true);
+    const res = await adminFetch("/api/celebrate/admin/add-guest", {
+      event_id: selectedEvent.id,
+      ...guestForm,
+    });
+    const d = await res.json();
+    if (res.ok) {
+      setGuests((g) => [...g, d.guest]);
+      setGuestForm({ first_name: "", last_name: "", email: "", mobile: "" });
+      setShowAddForm(false);
+    }
+    setAddingGuest(false);
+  };
+
+  const copyLink = (token: string) => {
+    const link = `${window.location.origin}/celebrate/${token}`;
+    navigator.clipboard?.writeText(link);
+    setCopiedToken(token);
+    setTimeout(() => setCopiedToken(null), 2000);
+  };
 
   const createEvent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,7 +224,7 @@ export default function CelebrateAdminPage() {
 
       {/* Tab nav */}
       <div className="flex gap-1" style={{ borderBottom: "1px solid rgba(212,160,23,0.1)" }}>
-        {(["overview", "rsvps", "memories", "create"] as const).map((t) => (
+        {(["overview", "guests", "memories", "create"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -178,7 +235,7 @@ export default function CelebrateAdminPage() {
                 : { color: "rgba(245,234,216,0.4)" }
             }
           >
-            {t === "create" ? "+ New Event" : t}
+            {t === "create" ? "+ New Event" : t === "guests" ? `Guests${guests.length ? ` (${guests.length})` : ""}` : t}
           </button>
         ))}
       </div>
@@ -232,6 +289,109 @@ export default function CelebrateAdminPage() {
               Each guest receives a unique link. Manage guests via Supabase.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Guests tab */}
+      {tab === "guests" && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="font-serif text-xs text-amber-700/50">
+              {guests.length} guest{guests.length !== 1 ? "s" : ""} added
+            </p>
+            <button
+              onClick={() => setShowAddForm((v) => !v)}
+              className="px-3 py-1.5 rounded-lg font-serif text-xs font-semibold text-[#0f0a04] transition-opacity hover:opacity-80"
+              style={{ background: "linear-gradient(135deg,#d4a017 0%,#c8843a 100%)" }}
+            >
+              {showAddForm ? "Cancel" : "+ Add Guest"}
+            </button>
+          </div>
+
+          {showAddForm && (
+            <form
+              onSubmit={addGuest}
+              className="rounded-2xl p-4 flex flex-col gap-3"
+              style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(212,160,23,0.2)" }}
+            >
+              <p className="text-[10px] font-serif uppercase tracking-widest text-amber-700/50">New Guest</p>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { key: "first_name", placeholder: "First name *", required: true },
+                  { key: "last_name", placeholder: "Last name" },
+                  { key: "email", placeholder: "Email" },
+                  { key: "mobile", placeholder: "Mobile" },
+                ].map(({ key, placeholder, required }) => (
+                  <input
+                    key={key}
+                    type="text"
+                    placeholder={placeholder}
+                    required={required}
+                    value={guestForm[key as keyof typeof guestForm]}
+                    onChange={(e) => setGuestForm((f) => ({ ...f, [key]: e.target.value }))}
+                    className={inputClass}
+                    style={inputStyle}
+                  />
+                ))}
+              </div>
+              <button
+                type="submit"
+                disabled={addingGuest}
+                className="w-full py-3 rounded-xl font-serif text-sm font-semibold text-[#0f0a04] disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg,#d4a017 0%,#c8843a 100%)" }}
+              >
+                {addingGuest ? "Adding…" : "Add & Generate Link →"}
+              </button>
+            </form>
+          )}
+
+          {guestsLoading ? (
+            <p className="font-serif text-sm text-amber-700/40 text-center py-6 animate-pulse">Loading guests…</p>
+          ) : guests.length === 0 ? (
+            <p className="font-serif text-sm text-amber-700/40 text-center py-8">No guests added yet.</p>
+          ) : (
+            guests.map((g) => {
+              const rsvp = g.celebration_rsvps?.[0];
+              const rsvpColor = rsvp?.response === "yes" ? "#22c55e" : rsvp?.response === "no" ? "#ef4444" : rsvp?.response === "maybe" ? "#eab308" : "rgba(212,160,23,0.3)";
+              const rsvpLabel = rsvp?.response ?? "pending";
+              return (
+                <div
+                  key={g.id}
+                  className="rounded-xl p-3.5 flex items-center gap-3"
+                  style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(212,160,23,0.1)" }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-serif text-sm text-amber-200 truncate">
+                      {g.first_name} {g.last_name ?? ""}
+                    </p>
+                    <p className="font-mono text-[10px] text-amber-700/40 truncate mt-0.5">
+                      /celebrate/{g.invitation_token}
+                    </p>
+                    {(g.email || g.mobile) && (
+                      <p className="font-serif text-[10px] text-amber-700/40 truncate">
+                        {[g.email, g.mobile].filter(Boolean).join(" · ")}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span
+                      className="px-2 py-0.5 rounded-full text-[10px] font-serif capitalize"
+                      style={{ background: `${rsvpColor}20`, color: rsvpColor }}
+                    >
+                      {rsvpLabel}
+                    </span>
+                    <button
+                      onClick={() => copyLink(g.invitation_token)}
+                      className="px-2.5 py-1 rounded-lg font-serif text-[10px] transition-colors"
+                      style={{ background: "rgba(212,160,23,0.1)", color: copiedToken === g.invitation_token ? "#22c55e" : "rgba(212,160,23,0.6)" }}
+                    >
+                      {copiedToken === g.invitation_token ? "Copied!" : "Copy link"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       )}
 

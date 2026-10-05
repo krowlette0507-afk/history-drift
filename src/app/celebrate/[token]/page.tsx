@@ -116,7 +116,7 @@ export default function InvitationPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Hero carousel */}
-      <div className="relative rounded-2xl overflow-hidden aspect-[16/9] bg-[#1c1208]">
+      <div className="relative rounded-2xl overflow-hidden bg-[#1c1208]" style={{ height: "260px" }}>
         {images.length > 0 ? (
           <>
             {images.map((src, i) => (
@@ -125,7 +125,7 @@ export default function InvitationPage() {
                 src={src}
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                style={{ opacity: i === slide ? 1 : 0 }}
+                style={{ opacity: i === slide ? 1 : 0, objectPosition: "center 20%" }}
               />
             ))}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
