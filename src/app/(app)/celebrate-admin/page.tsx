@@ -71,6 +71,7 @@ export default function CelebrateAdminPage() {
   const [addingGuest, setAddingGuest] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [guestForm, setGuestForm] = useState({ first_name: "", last_name: "", email: "", mobile: "" });
+  const [lastAdded, setLastAdded] = useState<Guest | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   // Create form state
@@ -142,8 +143,8 @@ export default function CelebrateAdminPage() {
     const d = await res.json();
     if (res.ok) {
       setGuests((g) => [...g, d.guest]);
+      setLastAdded(d.guest);
       setGuestForm({ first_name: "", last_name: "", email: "", mobile: "" });
-      setShowAddForm(false);
     }
     setAddingGuest(false);
   };
@@ -300,7 +301,7 @@ export default function CelebrateAdminPage() {
               {guests.length} guest{guests.length !== 1 ? "s" : ""} added
             </p>
             <button
-              onClick={() => setShowAddForm((v) => !v)}
+              onClick={() => { setShowAddForm((v) => !v); setLastAdded(null); }}
               className="px-3 py-1.5 rounded-lg font-serif text-xs font-semibold text-[#0f0a04] transition-opacity hover:opacity-80"
               style={{ background: "linear-gradient(135deg,#d4a017 0%,#c8843a 100%)" }}
             >
@@ -315,6 +316,17 @@ export default function CelebrateAdminPage() {
               style={{ background: "rgba(18,11,4,0.7)", border: "1px solid rgba(212,160,23,0.2)" }}
             >
               <p className="text-[10px] font-serif uppercase tracking-widest text-amber-700/50">New Guest</p>
+              {lastAdded && (
+                <div
+                  className="rounded-lg px-3 py-2 flex items-center gap-2"
+                  style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}
+                >
+                  <span className="text-green-400 text-xs">✓</span>
+                  <span className="font-serif text-xs text-green-400">
+                    {lastAdded.first_name} {lastAdded.last_name ?? ""} added — link ready to copy below
+                  </span>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { key: "first_name", placeholder: "First name *", required: true },

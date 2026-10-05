@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const {
       token, response, party_size, party_members,
-      dietary_restrictions, song_request, notes, email, mobile,
+      dietary_restrictions, notes, email, mobile,
     } = await req.json();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
       response: response ?? "yes",
       party_size: party_size ?? 1,
       dietary_restrictions: dietary_restrictions ?? "",
-      song_request: song_request ?? "",
       notes: notes ?? "",
       updated_at: now,
     };
@@ -59,11 +58,11 @@ export async function POST(req: NextRequest) {
 
     if (rsvp && party_members?.length) {
       await supabase.from("celebration_guest_party_members").insert(
-        party_members.map((m: { name: string; dietary: string }) => ({
+        party_members.map((m: { name: string; is_child: boolean }) => ({
           rsvp_id: rsvp.id,
           guest_id: guest.id,
           name: m.name,
-          meal_notes: m.dietary ?? "",
+          adult_or_child: m.is_child ? "child" : "adult",
         }))
       );
     }

@@ -14,7 +14,6 @@ interface Guest {
 interface Rsvp {
   response: "yes" | "no" | "maybe";
   dietary_restrictions?: string;
-  song_request?: string;
   notes?: string;
   party_size?: number;
 }
@@ -31,9 +30,8 @@ export default function RsvpPage() {
 
   const [response, setResponse] = useState<"yes" | "no" | "maybe">("yes");
   const [partySize, setPartySize] = useState(1);
-  const [partyMembers, setPartyMembers] = useState<Array<{ name: string; dietary: string }>>([]);
+  const [partyMembers, setPartyMembers] = useState<Array<{ name: string; is_child: boolean }>>([]);
   const [dietary, setDietary] = useState("");
-  const [songRequest, setSongRequest] = useState("");
   const [notes, setNotes] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -58,7 +56,6 @@ export default function RsvpPage() {
           setResponse(r.response ?? "yes");
           setPartySize(r.party_size ?? 1);
           setDietary(r.dietary_restrictions ?? "");
-          setSongRequest(r.song_request ?? "");
           setNotes(r.notes ?? "");
         }
       })
@@ -72,7 +69,7 @@ export default function RsvpPage() {
     }
     setPartyMembers((prev) => {
       const next = [...prev];
-      while (next.length < partySize - 1) next.push({ name: "", dietary: "" });
+      while (next.length < partySize - 1) next.push({ name: "", is_child: false });
       return next.slice(0, partySize - 1);
     });
   }, [partySize]);
@@ -91,7 +88,6 @@ export default function RsvpPage() {
           party_size: partySize,
           party_members: partyMembers,
           dietary_restrictions: dietary,
-          song_request: songRequest,
           notes,
           email: email || undefined,
           mobile: mobile || undefined,
@@ -182,12 +178,12 @@ export default function RsvpPage() {
 
           {partyMembers.length > 0 && (
             <div className="mt-4 flex flex-col gap-3">
-              <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">Party members</p>
+              <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">Who's coming with you?</p>
               {partyMembers.map((m, i) => (
-                <div key={i} className="flex gap-2">
+                <div key={i} className="flex gap-2 items-center">
                   <input
                     type="text"
-                    placeholder={`Name of guest ${i + 2}`}
+                    placeholder={`Guest ${i + 2} name`}
                     value={m.name}
                     onChange={(e) => {
                       const next = [...partyMembers];
@@ -197,18 +193,31 @@ export default function RsvpPage() {
                     className={inputClass + " flex-1"}
                     style={inputStyle}
                   />
-                  <input
-                    type="text"
-                    placeholder="Dietary needs"
-                    value={m.dietary}
-                    onChange={(e) => {
-                      const next = [...partyMembers];
-                      next[i] = { ...next[i], dietary: e.target.value };
-                      setPartyMembers(next);
-                    }}
-                    className={inputClass}
-                    style={{ ...inputStyle, width: "40%" }}
-                  />
+                  <div className="flex gap-1 flex-shrink-0">
+                    {(["Adult", "Child"] as const).map((label) => {
+                      const isChild = label === "Child";
+                      const active = m.is_child === isChild;
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => {
+                            const next = [...partyMembers];
+                            next[i] = { ...next[i], is_child: isChild };
+                            setPartyMembers(next);
+                          }}
+                          className="px-3 py-1.5 rounded-lg font-serif text-xs transition-all"
+                          style={
+                            active
+                              ? { background: "linear-gradient(135deg,#d4a017,#c8843a)", color: "#0f0a04" }
+                              : { background: "rgba(212,160,23,0.07)", border: "1px solid rgba(212,160,23,0.15)", color: "rgba(245,234,216,0.5)" }
+                          }
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
@@ -245,19 +254,6 @@ export default function RsvpPage() {
           placeholder="e.g. vegetarian, nut allergy…"
           value={dietary}
           onChange={(e) => setDietary(e.target.value)}
-          className={inputClass}
-          style={inputStyle}
-        />
-      </div>
-
-      {/* Song request */}
-      <div className="warm-glass rounded-2xl p-5 flex flex-col gap-3">
-        <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40">Song request</p>
-        <input
-          type="text"
-          placeholder="What song gets you on the dance floor?"
-          value={songRequest}
-          onChange={(e) => setSongRequest(e.target.value)}
           className={inputClass}
           style={inputStyle}
         />
