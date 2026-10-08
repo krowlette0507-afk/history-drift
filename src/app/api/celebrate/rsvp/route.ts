@@ -19,12 +19,14 @@ export async function POST(req: NextRequest) {
     const guest = guests?.[0];
     if (!guest) return NextResponse.json({ error: "Invalid invitation token" }, { status: 403 });
 
+    const cappedPartySize = Math.min(Math.max(1, party_size ?? 1), 5);
+
     const now = new Date().toISOString();
     const rsvpData = {
       guest_id: guest.id,
       celebration_event_id: guest.celebration_event_id,
       response: response ?? "yes",
-      party_size: party_size ?? 1,
+      party_size: cappedPartySize,
       dietary_restrictions: dietary_restrictions ?? "",
       notes: notes ?? "",
       updated_at: now,
@@ -56,9 +58,10 @@ export async function POST(req: NextRequest) {
       rsvp = data;
     }
 
-    if (rsvp && party_members?.length) {
+    const cappedMembers = (party_members ?? []).slice(0, cappedPartySize - 1);
+    if (rsvp && cappedMembers.length) {
       await supabase.from("celebration_guest_party_members").insert(
-        party_members.map((m: { name: string; is_child: boolean }) => ({
+        cappedMembers.map((m: { name: string; is_child: boolean }) => ({
           rsvp_id: rsvp.id,
           guest_id: guest.id,
           name: m.name,

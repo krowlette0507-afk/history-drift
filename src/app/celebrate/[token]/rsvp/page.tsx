@@ -168,7 +168,7 @@ export default function RsvpPage() {
             <span className="font-serif text-2xl text-[#f5ead8] min-w-[2ch] text-center">{partySize}</span>
             <button
               type="button"
-              onClick={() => setPartySize((n) => Math.min(20, n + 1))}
+              onClick={() => setPartySize((n) => Math.min(5, n + 1))}
               className="w-10 h-10 rounded-full font-serif text-gold text-lg flex items-center justify-center transition-colors hover:bg-gold/10"
               style={{ border: "1px solid rgba(212,160,23,0.3)" }}
             >
