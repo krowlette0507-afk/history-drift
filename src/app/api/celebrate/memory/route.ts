@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       await supabase.from("celebration_memory_media").insert(
         media.map((m: { media_type?: string; file_url: string; caption?: string; original_filename?: string }) => ({
           memory_id: memory.id,
-          celebration_event_id: guest.celebration_event_id,
+          celebration_event_id: eventId,
           media_type: m.media_type ?? "image",
           file_url: m.file_url,
           caption: m.caption ?? "",

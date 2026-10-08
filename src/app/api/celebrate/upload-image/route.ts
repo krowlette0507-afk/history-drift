@@ -18,11 +18,9 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error;
 
-    const { data: signed } = await supabase.storage
-      .from("celebrate-media")
-      .createSignedUrl(path, 60 * 60 * 24 * 365);
+    const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/celebrate-media/${path}`;
 
-    return NextResponse.json({ url: path, signed_url: signed?.signedUrl });
+    return NextResponse.json({ url: publicUrl });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

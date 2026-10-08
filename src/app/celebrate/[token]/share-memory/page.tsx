@@ -59,6 +59,28 @@ export default function ShareMemoryPage() {
           </div>
           <span className="ml-auto text-gold/30 group-hover:text-gold/60 transition-colors self-center">→</span>
         </Link>
+
+        <Link
+          href={`/celebrate/${token}/share-memory/video`}
+          className="warm-glass rounded-2xl p-6 flex items-start gap-4 transition-all hover:border-gold/40 group"
+          style={{ border: "1px solid rgba(212,160,23,0.2)" }}
+        >
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+            style={{ background: "linear-gradient(135deg,rgba(212,160,23,0.15),rgba(200,132,58,0.1))" }}
+          >
+            🎬
+          </div>
+          <div>
+            <h2 className="font-serif font-semibold text-[#f5ead8] mb-1 group-hover:text-gold transition-colors">
+              Record a Video Message
+            </h2>
+            <p className="font-serif text-xs text-[#f5ead8]/50 leading-relaxed">
+              Record up to 30 seconds right from your camera — say happy birthday or share a memory in your own voice.
+            </p>
+          </div>
+          <span className="ml-auto text-gold/30 group-hover:text-gold/60 transition-colors self-center">→</span>
+        </Link>
       </div>
 
       <Link
