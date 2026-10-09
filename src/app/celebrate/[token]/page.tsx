@@ -20,6 +20,7 @@ interface CelebrationEvent {
   rsvp_deadline?: string;
   host_contact?: string;
   hero_images?: string[];
+  wishes_token?: string | null;
 }
 
 interface Guest {
@@ -341,6 +342,7 @@ export default function InvitationPage() {
   const [slide, setSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const [origin, setOrigin] = useState("");
+  const [copiedWishes, setCopiedWishes] = useState(false);
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
@@ -372,6 +374,14 @@ export default function InvitationPage() {
   }, [images.length, nextSlide]);
 
   const shareUrl = `${origin}/celebrate/${token}`;
+
+  const wishesUrl = event?.wishes_token ? `${origin}/wishes/${event.wishes_token}` : null;
+  const copyWishes = () => {
+    if (!wishesUrl) return;
+    navigator.clipboard?.writeText(wishesUrl);
+    setCopiedWishes(true);
+    setTimeout(() => setCopiedWishes(false), 2000);
+  };
 
   const shareEmail = () => {
     const subject = encodeURIComponent(`You're invited: ${event?.title ?? "Celebration"}`);
@@ -510,6 +520,24 @@ export default function InvitationPage() {
         >
           🎁 View Photo Gallery
         </Link>
+
+        {wishesUrl && (
+          <div className="warm-glass rounded-2xl p-4 flex items-center gap-3"
+            style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
+            <span className="text-xl flex-shrink-0">🎂</span>
+            <div className="flex-1 min-w-0">
+              <p className="font-serif text-sm font-semibold text-[#f5ead8]">Best Wishes Link</p>
+              <p className="font-serif text-xs text-[#f5ead8]/40 leading-relaxed">
+                Share with anyone who can&apos;t attend — they can still wish {event?.honoree_name} a happy birthday.
+              </p>
+            </div>
+            <button type="button" onClick={copyWishes}
+              className="flex-shrink-0 px-3 py-1.5 rounded-lg font-serif text-xs transition-colors"
+              style={{ background: "rgba(212,160,23,0.1)", color: copiedWishes ? "#22c55e" : "rgba(212,160,23,0.6)" }}>
+              {copiedWishes ? "✓ Copied" : "Copy Link"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Share with family */}

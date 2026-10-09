@@ -19,13 +19,21 @@ interface Rsvp {
   party_size?: number;
 }
 
+interface EventInfo {
+  honoree_name: string;
+  hero_images?: string[];
+  wishes_token?: string | null;
+}
+
 export default function RsvpPage() {
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
 
+  const [event, setEvent] = useState<EventInfo | null>(null);
   const [guest, setGuest] = useState<Guest | null>(null);
   const [existing, setExisting] = useState<Rsvp | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copiedWishes, setCopiedWishes] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,6 +55,7 @@ export default function RsvpPage() {
       .then((d) => {
         const g = d.guest;
         const r = d.rsvp;
+        setEvent(d.event ?? null);
         setGuest(g ?? null);
         if (g) {
           setEmail(g.email ?? "");
@@ -118,18 +127,53 @@ export default function RsvpPage() {
     );
   }
 
+  const heroImages = event?.hero_images?.filter(Boolean) ?? [];
+  const wishesUrl = event?.wishes_token
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/wishes/${event.wishes_token}`
+    : null;
+
+  const copyWishes = () => {
+    if (!wishesUrl) return;
+    navigator.clipboard?.writeText(wishesUrl);
+    setCopiedWishes(true);
+    setTimeout(() => setCopiedWishes(false), 2000);
+  };
+
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-serif text-xl font-bold text-[#f5ead8] chalk-text mb-1">
-          {existing ? "Update Your RSVP" : "RSVP"}
-        </h1>
-        {guest && (
-          <p className="text-sm font-serif text-gold/60">
-            We're so glad you're coming, {guest.first_name}!
-          </p>
-        )}
-      </div>
+      {/* Hero photo */}
+      {heroImages.length > 0 && (
+        <div className="relative rounded-2xl overflow-hidden flex items-center justify-center"
+          style={{ background: "#0f0a04", minHeight: "240px" }}>
+          <img src={heroImages[0]} alt={event?.honoree_name ?? ""}
+            className="w-full h-full"
+            style={{ maxHeight: "300px", objectFit: "contain", objectPosition: "center top" }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          <div className="absolute bottom-0 left-0 p-4">
+            <h1 className="font-serif text-2xl font-bold text-[#f5ead8] chalk-text leading-tight">
+              {existing ? "Update Your RSVP" : "RSVP"}
+            </h1>
+            {guest && (
+              <p className="font-serif text-sm text-gold/70 mt-0.5">
+                Welcome, {guest.first_name}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {heroImages.length === 0 && (
+        <div>
+          <h1 className="font-serif text-xl font-bold text-[#f5ead8] chalk-text mb-1">
+            {existing ? "Update Your RSVP" : "RSVP"}
+          </h1>
+          {guest && (
+            <p className="text-sm font-serif text-gold/60">
+              We&apos;re so glad you&apos;re coming, {guest.first_name}!
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Attending? */}
       <div className="warm-glass rounded-2xl p-5">
@@ -296,11 +340,30 @@ export default function RsvpPage() {
         <div className="flex-1">
           <p className="font-serif text-sm font-semibold text-[#f5ead8]">Share a Story or Memory</p>
           <p className="font-serif text-xs text-[#f5ead8]/45 mt-0.5 leading-relaxed">
-            While you&apos;re here — share a photo, a memory, or a video message for Cecil.
+            Share a photo, a memory, or a video message for Cecil.
           </p>
         </div>
         <span className="text-gold/30 flex-shrink-0">→</span>
       </Link>
+
+      {/* Best Wishes share */}
+      {wishesUrl && (
+        <div className="warm-glass rounded-2xl p-5 flex items-center gap-4"
+          style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
+          <span className="text-2xl flex-shrink-0">🎂</span>
+          <div className="flex-1 min-w-0">
+            <p className="font-serif text-sm font-semibold text-[#f5ead8]">Share the Best Wishes Link</p>
+            <p className="font-serif text-xs text-[#f5ead8]/45 mt-0.5 leading-relaxed">
+              Send this to anyone who can&apos;t attend — they can still wish Cecil a happy birthday.
+            </p>
+          </div>
+          <button type="button" onClick={copyWishes}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg font-serif text-xs transition-colors"
+            style={{ background: "rgba(212,160,23,0.1)", color: copiedWishes ? "#22c55e" : "rgba(212,160,23,0.6)" }}>
+            {copiedWishes ? "✓ Copied" : "Copy"}
+          </button>
+        </div>
+      )}
     </form>
   );
 }
