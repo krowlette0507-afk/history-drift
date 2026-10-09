@@ -14,6 +14,7 @@ interface CelebrationEvent {
   venue: string;
   is_active: boolean;
   created_at: string;
+  wishes_token: string | null;
 }
 
 interface RsvpSummary {
@@ -84,6 +85,7 @@ export default function CelebrateAdminPage() {
   const [guestForm, setGuestForm] = useState({ first_name: "", last_name: "", email: "", mobile: "" });
   const [lastAdded, setLastAdded] = useState<Guest | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [copiedWishes, setCopiedWishes] = useState(false);
 
   // Carousel tab state
   const [carouselMedia, setCarouselMedia] = useState<CarouselMedia[]>([]);
@@ -348,8 +350,52 @@ export default function CelebrateAdminPage() {
             </div>
           )}
 
+          {/* Best Wishes Link */}
+          {selectedEvent.wishes_token ? (
+            <div
+              className="rounded-2xl p-4 flex flex-col gap-3"
+              style={{ background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.2)" }}
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-serif uppercase tracking-widest text-gold/50">Best Wishes Link</p>
+                <span className="font-serif text-[10px] text-green-400/70 px-2 py-0.5 rounded-full"
+                  style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
+                  Shareable
+                </span>
+              </div>
+              <p className="font-serif text-xs text-amber-200/50 leading-relaxed">
+                Share this link freely — family group chats, social media, anywhere. Recipients can send birthday wishes and photos but <strong className="text-amber-200/70 font-normal">cannot RSVP to attend</strong>.
+              </p>
+              <div className="rounded-xl px-3 py-2 flex items-center gap-2"
+                style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(212,160,23,0.12)" }}>
+                <code className="font-mono text-[10px] text-amber-300/60 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {typeof window !== "undefined" ? window.location.origin : ""}/wishes/{selectedEvent.wishes_token}
+                </code>
+                <button
+                  onClick={() => {
+                    const link = `${window.location.origin}/wishes/${selectedEvent.wishes_token}`;
+                    navigator.clipboard?.writeText(link);
+                    setCopiedWishes(true);
+                    setTimeout(() => setCopiedWishes(false), 2000);
+                  }}
+                  className="flex-shrink-0 px-2.5 py-1 rounded-lg font-serif text-[10px] transition-colors"
+                  style={{ background: "rgba(212,160,23,0.1)", color: copiedWishes ? "#22c55e" : "rgba(212,160,23,0.6)" }}
+                >
+                  {copiedWishes ? "✓ Copied" : "Copy"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl px-4 py-3"
+              style={{ background: "rgba(212,160,23,0.04)", border: "1px solid rgba(212,160,23,0.1)" }}>
+              <p className="font-serif text-xs text-amber-700/40">
+                Best Wishes link not yet generated. Run the SQL migration to create it for this event.
+              </p>
+            </div>
+          )}
+
           <div>
-            <p className="text-[10px] font-serif uppercase tracking-widest text-amber-700/50 mb-2">Guest Link</p>
+            <p className="text-[10px] font-serif uppercase tracking-widest text-amber-700/50 mb-2">Private RSVP Links</p>
             <div
               className="rounded-xl px-3 py-2.5 flex items-center gap-2"
               style={{ background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.15)" }}
@@ -359,7 +405,7 @@ export default function CelebrateAdminPage() {
               </code>
             </div>
             <p className="font-serif text-xs text-amber-700/40 mt-1">
-              Each guest receives a unique link. Manage guests via Supabase.
+              Each guest receives a unique private link. Manage via the Guests tab.
             </p>
           </div>
         </div>

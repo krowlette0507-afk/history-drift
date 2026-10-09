@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const supabase = createServerClient() as any;
   const { data: events } = await supabase
     .from("celebration_events")
-    .select("id, title, honoree_name, date, venue, is_active, created_at")
+    .select("id, title, honoree_name, date, venue, is_active, created_at, wishes_token")
     .order("created_at", { ascending: false });
   return NextResponse.json({ events: events ?? [] });
 }
