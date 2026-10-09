@@ -182,23 +182,28 @@ export default function WishesPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Hero */}
-      <div className="relative rounded-2xl overflow-hidden" style={{ height: "220px" }}>
+      <div className="relative rounded-2xl overflow-hidden flex flex-col items-center"
+        style={{ background: "linear-gradient(160deg,#1c1208 0%,#0f0a04 100%)", minHeight: "300px" }}>
         {images.length > 0 ? (
-          <>
+          <div className="relative w-full flex-1" style={{ minHeight: "260px" }}>
             {images.map((src, i) => (
-              <img key={i} src={src} alt="" className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                style={{ opacity: i === slide ? 1 : 0, objectPosition: "center 20%" }} />
+              <img key={i} src={src} alt={event.honoree_name}
+                className="absolute inset-0 w-full h-full transition-opacity duration-700"
+                style={{ opacity: i === slide ? 1 : 0, objectFit: "contain", objectPosition: "center top" }} />
             ))}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-          </>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          </div>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2d1a08] to-[#0f0a04]" />
+          <div className="flex-1 flex items-center justify-center py-10">
+            <span className="text-6xl opacity-20">🎂</span>
+          </div>
         )}
-        <div className="absolute bottom-0 left-0 p-5">
+        <div className="absolute bottom-0 left-0 right-0 p-5">
           <p className="font-serif text-xs text-gold/60 uppercase tracking-widest mb-1">Birthday Wishes</p>
           <h1 className="font-serif text-2xl font-bold text-[#f5ead8] chalk-text leading-tight">
             {event.honoree_name}
           </h1>
+          <p className="font-serif text-xs text-gold/50 mt-1">Born November 25</p>
         </div>
       </div>
 

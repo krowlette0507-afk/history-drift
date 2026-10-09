@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Guest {
   id: string;
@@ -284,6 +285,22 @@ export default function RsvpPage() {
       >
         {saving ? "Sending…" : `${existing ? "Update" : "Submit"} RSVP →`}
       </button>
+
+      {/* Share a memory prompt */}
+      <Link
+        href={`/celebrate/${token}/share-memory`}
+        className="warm-glass rounded-2xl p-5 flex items-center gap-4 transition-all hover:border-gold/40"
+        style={{ border: "1px solid rgba(212,160,23,0.2)", textDecoration: "none" }}
+      >
+        <span className="text-2xl flex-shrink-0">📸</span>
+        <div className="flex-1">
+          <p className="font-serif text-sm font-semibold text-[#f5ead8]">Share a Story or Memory</p>
+          <p className="font-serif text-xs text-[#f5ead8]/45 mt-0.5 leading-relaxed">
+            While you&apos;re here — share a photo, a memory, or a video message for Cecil.
+          </p>
+        </div>
+        <span className="text-gold/30 flex-shrink-0">→</span>
+      </Link>
     </form>
   );
 }
