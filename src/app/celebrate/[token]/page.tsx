@@ -413,7 +413,8 @@ export default function InvitationPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Hero carousel */}
-      <div className="relative rounded-2xl overflow-hidden bg-[#1c1208]" style={{ height: "260px" }}>
+      <div className="relative rounded-2xl overflow-hidden flex flex-col"
+        style={{ background: "#0f0a04", minHeight: "300px" }}>
         {images.length > 0 ? (
           <>
             {images.map((src, i) => (
@@ -421,14 +422,21 @@ export default function InvitationPage() {
                 key={i}
                 src={src}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-                style={{ opacity: i === slide ? 1 : 0, objectPosition: "center 20%" }}
+                className="w-full transition-opacity duration-700"
+                style={{
+                  opacity: i === slide ? 1 : 0,
+                  position: i === 0 ? "relative" : "absolute",
+                  inset: 0,
+                  objectFit: "contain",
+                  objectPosition: "center top",
+                  maxHeight: "380px",
+                }}
               />
             ))}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
           </>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2d1a08] to-[#0f0a04]" />
+          <div className="flex-1 bg-gradient-to-br from-[#2d1a08] to-[#0f0a04]" style={{ minHeight: "300px" }} />
         )}
 
         <div className="absolute bottom-0 left-0 p-5">
