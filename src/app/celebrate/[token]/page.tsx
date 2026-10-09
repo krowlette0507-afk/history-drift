@@ -373,24 +373,12 @@ export default function InvitationPage() {
     return () => clearInterval(t);
   }, [images.length, nextSlide]);
 
-  const shareUrl = `${origin}/celebrate/${token}`;
-
   const wishesUrl = event?.wishes_token ? `${origin}/wishes/${event.wishes_token}` : null;
   const copyWishes = () => {
     if (!wishesUrl) return;
     navigator.clipboard?.writeText(wishesUrl);
     setCopiedWishes(true);
     setTimeout(() => setCopiedWishes(false), 2000);
-  };
-
-  const shareEmail = () => {
-    const subject = encodeURIComponent(`You're invited: ${event?.title ?? "Celebration"}`);
-    const body = encodeURIComponent(`${event?.welcome_message ?? "Join us!"}\n\n${shareUrl}`);
-    window.open(`mailto:?subject=${subject}&body=${body}`);
-  };
-
-  const shareSms = () => {
-    window.open(`sms:?body=${encodeURIComponent(`${event?.title ?? "Celebration"} — ${shareUrl}`)}`);
   };
 
   if (loading) {
@@ -548,33 +536,6 @@ export default function InvitationPage() {
         )}
       </div>
 
-      {/* Share with family */}
-      <div className="warm-glass rounded-2xl p-5">
-        <p className="text-[10px] font-serif uppercase tracking-widest text-gold/40 mb-3">Share with Family</p>
-        <div className="flex gap-2">
-          <button
-            onClick={shareEmail}
-            className="flex-1 py-2.5 rounded-lg font-serif text-sm text-[#f5ead8]/70 hover:text-[#f5ead8] transition-colors"
-            style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)" }}
-          >
-            ✉ Email
-          </button>
-          <button
-            onClick={shareSms}
-            className="flex-1 py-2.5 rounded-lg font-serif text-sm text-[#f5ead8]/70 hover:text-[#f5ead8] transition-colors"
-            style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)" }}
-          >
-            💬 SMS
-          </button>
-          <button
-            onClick={() => navigator.clipboard?.writeText(shareUrl)}
-            className="flex-1 py-2.5 rounded-lg font-serif text-sm text-[#f5ead8]/70 hover:text-[#f5ead8] transition-colors"
-            style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)" }}
-          >
-            🔗 Copy link
-          </button>
-        </div>
-      </div>
 
       {/* Photo Carousel */}
       <CarouselSection eventId={event.id} />
