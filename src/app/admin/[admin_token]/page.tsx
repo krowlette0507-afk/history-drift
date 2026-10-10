@@ -244,13 +244,15 @@ export default function AdminDashboard() {
   const pendingMem = memories.filter((m) => m.status === "submitted").length;
 
   // ── Tab content ──────────────────────────────────────────────────────────
-  const TABS: { id: Tab; label: string; show?: boolean }[] = [
-    { id: "overview",  label: "Overview" },
-    { id: "guests",    label: `Guests${guests.length ? ` (${guests.length})` : ""}` },
-    { id: "memories",  label: `Memories${pendingMem ? ` ·${pendingMem}` : ""}` },
-    { id: "carousel",  label: "Carousel" },
-    { id: "admins",    label: "Admins", show: admin.is_super },
-  ].filter((t) => t.show !== false);
+  const TABS: { id: Tab; label: string; show?: boolean }[] = (
+    [
+      { id: "overview",  label: "Overview" },
+      { id: "guests",    label: `Guests${guests.length ? ` (${guests.length})` : ""}` },
+      { id: "memories",  label: `Memories${pendingMem ? ` ·${pendingMem}` : ""}` },
+      { id: "carousel",  label: "Carousel" },
+      { id: "admins",    label: "Admins", show: admin.is_super },
+    ] as { id: Tab; label: string; show?: boolean }[]
+  ).filter((t) => t.show !== false);
 
   return (
     <div className="flex flex-col gap-6">
