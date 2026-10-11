@@ -45,6 +45,9 @@ export default function AdminDashboard() {
   const [addingGuest, setAddingGuest] = useState(false);
   const [addGuestError, setAddGuestError] = useState("");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [sendingInvites, setSendingInvites] = useState(false);
+  const [sendResult, setSendResult] = useState<{ sent: number; skipped: number } | null>(null);
+  const [sendingGuestId, setSendingGuestId] = useState<string | null>(null);
 
   // Memories
   const [memories, setMemories] = useState<Memory[]>([]);
@@ -207,6 +210,45 @@ export default function AdminDashboard() {
     setTimeout(() => setCopiedAdminToken(null), 2000);
   };
 
+  const exportCSV = () => {
+    const headers = ["First Name", "Last Name", "Email", "Mobile", "Invite URL", "RSVP Status"];
+    const rows = guests.map((g) => [
+      g.first_name,
+      g.last_name ?? "",
+      g.email ?? "",
+      g.mobile ?? "",
+      `${origin}/celebrate/${g.invitation_token}`,
+      g.celebration_rsvps?.[0]?.response ?? "no reply",
+    ]);
+    const csv = [headers, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `guests-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const sendAllInvites = async () => {
+    const pending = guests.filter((g) => g.email && !g.celebration_rsvps?.length).length;
+    if (!pending) { alert("No guests with email addresses who haven't replied yet."); return; }
+    if (!confirm(`Send email invites to ${pending} guest${pending !== 1 ? "s" : ""} who haven't replied yet?`)) return;
+    setSendingInvites(true);
+    setSendResult(null);
+    const d = await api("/api/admin/send-invite", { action: "all_pending" });
+    setSendResult({ sent: d.sent ?? 0, skipped: d.skipped ?? 0 });
+    setSendingInvites(false);
+  };
+
+  const sendGuestInvite = async (guestId: string) => {
+    setSendingGuestId(guestId);
+    await api("/api/admin/send-invite", { action: "single", guest_id: guestId });
+    setSendingGuestId(null);
+  };
+
   const emailInvite = (g: Guest) => {
     const url = `${origin}/celebrate/${g.invitation_token}`;
     const subject = encodeURIComponent(`You're invited: ${event?.title ?? "Celebration"}`);
@@ -339,13 +381,35 @@ export default function AdminDashboard() {
       {/* ── GUESTS ───────────────────────────────────────────────────────── */}
       {tab === "guests" && (
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-3">
-            <p className="font-serif text-sm text-[#f5ead8]/60">{guests.length} guest{guests.length !== 1 ? "s" : ""} invited</p>
-            <button onClick={() => setShowAddGuest((v) => !v)}
-              className="px-4 py-2 rounded-xl font-serif text-sm font-semibold text-[#0f0a04] transition-opacity hover:opacity-90"
-              style={{ background: "linear-gradient(135deg,#d4a017,#c8843a)" }}>
-              + Add Guest
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <p className="font-serif text-sm text-[#f5ead8]/60">{guests.length} guest{guests.length !== 1 ? "s" : ""} invited</p>
+              <div className="flex gap-2 flex-wrap">
+                {guests.length > 0 && (
+                  <button onClick={exportCSV}
+                    className="px-3 py-2 rounded-xl font-serif text-xs transition-opacity hover:opacity-80"
+                    style={{ background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.25)", color: "rgba(245,234,216,0.7)" }}>
+                    📥 Export CSV
+                  </button>
+                )}
+                <button onClick={sendAllInvites} disabled={sendingInvites}
+                  className="px-3 py-2 rounded-xl font-serif text-xs transition-opacity hover:opacity-80 disabled:opacity-40"
+                  style={{ background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.25)", color: "rgba(245,234,216,0.7)" }}>
+                  {sendingInvites ? "Sending…" : "📤 Send All Invites"}
+                </button>
+                <button onClick={() => setShowAddGuest((v) => !v)}
+                  className="px-4 py-2 rounded-xl font-serif text-sm font-semibold text-[#0f0a04] transition-opacity hover:opacity-90"
+                  style={{ background: "linear-gradient(135deg,#d4a017,#c8843a)" }}>
+                  + Add Guest
+                </button>
+              </div>
+            </div>
+            {sendResult && (
+              <p className="font-serif text-xs text-green-400/80">
+                ✓ Sent {sendResult.sent} invite{sendResult.sent !== 1 ? "s" : ""}
+                {sendResult.skipped > 0 ? ` · ${sendResult.skipped} skipped (no email or already replied)` : ""}
+              </p>
+            )}
           </div>
 
           {showAddGuest && (
@@ -407,7 +471,14 @@ export default function AdminDashboard() {
                         <button onClick={() => emailInvite(g)}
                           className="px-3 py-1.5 rounded-lg font-serif text-xs transition-colors"
                           style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: "rgba(245,234,216,0.6)" }}>
-                          ✉ Email Invite
+                          ✉ Draft Email
+                        </button>
+                      )}
+                      {g.email && (
+                        <button onClick={() => sendGuestInvite(g.id)} disabled={sendingGuestId === g.id}
+                          className="px-3 py-1.5 rounded-lg font-serif text-xs transition-colors disabled:opacity-40"
+                          style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: "rgba(245,234,216,0.6)" }}>
+                          {sendingGuestId === g.id ? "Sending…" : "📤 Auto-send"}
                         </button>
                       )}
                       {g.mobile && (
