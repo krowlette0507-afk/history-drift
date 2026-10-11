@@ -136,13 +136,18 @@ export async function POST(req: NextRequest) {
         ? new Date(event.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })
         : null;
       try {
-        await resend.emails.send({
+        const result = await resend.emails.send({
           from: "History Drift <noreply@historydrift.com>",
           to: guest.email,
           subject: `You're invited to celebrate ${event.honoree_name}`,
           html: inviteEmailHtml(guest, event, inviteUrl, eventDate),
         });
-        sent++;
+        if (result.error) {
+          errors.push(`${guest.email}: ${JSON.stringify(result.error)}`);
+          skipped++;
+        } else {
+          sent++;
+        }
       } catch (err) {
         errors.push(`${guest.email}: ${String(err)}`);
         skipped++;

@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   const [addGuestError, setAddGuestError] = useState("");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [sendingInvites, setSendingInvites] = useState(false);
-  const [sendResult, setSendResult] = useState<{ sent: number; skipped: number } | null>(null);
+  const [sendResult, setSendResult] = useState<{ sent: number; skipped: number; errors?: string[] } | null>(null);
   const [sendingGuestId, setSendingGuestId] = useState<string | null>(null);
 
   // Memories
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
     setSendingInvites(true);
     setSendResult(null);
     const d = await api("/api/admin/send-invite", { action: "all_pending" });
-    setSendResult({ sent: d.sent ?? 0, skipped: d.skipped ?? 0 });
+    setSendResult({ sent: d.sent ?? 0, skipped: d.skipped ?? 0, errors: d.errors });
     setSendingInvites(false);
   };
 
@@ -415,10 +415,15 @@ export default function AdminDashboard() {
               </div>
             </div>
             {sendResult && (
-              <p className="font-serif text-xs text-green-400/80">
-                ✓ Sent {sendResult.sent} invite{sendResult.sent !== 1 ? "s" : ""}
-                {sendResult.skipped > 0 ? ` · ${sendResult.skipped} skipped (no email or already replied)` : ""}
-              </p>
+              <div className="flex flex-col gap-1">
+                <p className="font-serif text-xs text-green-400/80">
+                  ✓ Sent {sendResult.sent} invite{sendResult.sent !== 1 ? "s" : ""}
+                  {sendResult.skipped > 0 ? ` · ${sendResult.skipped} skipped` : ""}
+                </p>
+                {sendResult.errors?.map((e, i) => (
+                  <p key={i} className="font-serif text-xs text-red-400/70">{e}</p>
+                ))}
+              </div>
             )}
           </div>
 
