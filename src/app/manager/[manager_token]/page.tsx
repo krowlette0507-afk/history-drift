@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 interface ManagerRecord {
   id: string;
@@ -51,14 +52,8 @@ interface Guest {
 const inputCls = "w-full px-3 py-2.5 rounded-xl font-serif text-sm text-[#f5ead8] placeholder-[#f5ead8]/25 outline-none focus:ring-1 focus:ring-gold/50 transition-all";
 const inputStyle = { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(212,160,23,0.2)" };
 
-function rsvpLabel(g: Guest) {
-  const r = g.celebration_rsvps?.[0];
-  if (!r) return null;
-  return r.response;
-}
-
 function RsvpBadge({ guest }: { guest: Guest }) {
-  const r = rsvpLabel(guest);
+  const r = guest.celebration_rsvps?.[0]?.response;
   if (!r) return <span className="text-xs font-serif px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(245,234,216,0.3)" }}>No reply</span>;
   const map = {
     yes: { bg: "rgba(34,197,94,0.15)", color: "#22c55e", label: "Attending" },
@@ -77,6 +72,7 @@ export default function ManagerPage() {
   const [errMsg, setErrMsg] = useState("");
   const [manager, setManager] = useState<ManagerRecord | null>(null);
   const [event, setEvent] = useState<EventInfo | null>(null);
+  const [invitationToken, setInvitationToken] = useState<string | null>(null);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [panelOpen, setPanelOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -90,6 +86,7 @@ export default function ManagerPage() {
   const [addSaving, setAddSaving] = useState(false);
 
   const [copiedRsvp, setCopiedRsvp] = useState(false);
+  const [copiedWishes, setCopiedWishes] = useState(false);
   const [sendingReminder, setSendingReminder] = useState<string | null>(null);
   const [reminderSent, setReminderSent] = useState<Record<string, boolean>>({});
 
@@ -115,6 +112,7 @@ export default function ManagerPage() {
         if (d.error) { setErrMsg(d.error); setLoading(false); return; }
         setManager(d.manager);
         setEvent(d.event);
+        setInvitationToken(d.invitation_token ?? null);
         setLoading(false);
         fetchGuests();
       })
@@ -125,11 +123,35 @@ export default function ManagerPage() {
   const myGuestsAttending = myGuests.filter((g) => g.celebration_rsvps?.[0]?.response === "yes");
   const myPartyTotal = myGuestsAttending.reduce((sum, g) => sum + (g.celebration_rsvps?.[0]?.party_size ?? 1), 0);
 
+  const rsvpUrl = `${APP_URL}/rsvp/${manager_token}`;
+  const wishesUrl = event?.wishes_token ? `${APP_URL}/wishes/${event.wishes_token}` : null;
+
   const copyRsvpLink = () => {
-    const url = `${APP_URL}/rsvp/${manager_token}`;
-    navigator.clipboard?.writeText(url);
+    navigator.clipboard?.writeText(rsvpUrl);
     setCopiedRsvp(true);
     setTimeout(() => setCopiedRsvp(false), 2500);
+  };
+
+  const copyWishesLink = () => {
+    if (!wishesUrl) return;
+    navigator.clipboard?.writeText(wishesUrl);
+    setCopiedWishes(true);
+    setTimeout(() => setCopiedWishes(false), 2500);
+  };
+
+  const shareRsvpEmail = () => {
+    const honoree = event?.honoree_name ?? "the celebration";
+    const subject = encodeURIComponent(`You're invited — ${honoree}'s Celebration`);
+    const body = encodeURIComponent(
+      `Hi,\n\nI'd love for you to join us for ${honoree}'s celebration!\n\nClick the link below to see the event details and RSVP:\n\n${rsvpUrl}\n\nHope to see you there!`
+    );
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+
+  const shareRsvpSms = () => {
+    const honoree = event?.honoree_name ?? "a celebration";
+    const body = encodeURIComponent(`You're invited to ${honoree}'s celebration! RSVP here: ${rsvpUrl}`);
+    window.open(`sms:?body=${body}`);
   };
 
   const addGuest = async (e: React.FormEvent) => {
@@ -217,19 +239,20 @@ export default function ManagerPage() {
       </header>
 
       {/* Celebration view */}
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-4">
         {heroImages.length > 0 && (
-          <div className="rounded-2xl overflow-hidden mb-6" style={{ background: "#0f0a04" }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#0f0a04" }}>
             <img src={heroImages[0]} alt={event.honoree_name}
               className="w-full" style={{ maxHeight: "320px", objectFit: "cover", objectPosition: "center top" }} />
           </div>
         )}
 
-        <div className="text-center mb-8">
+        <div className="text-center">
           <p className="font-serif text-[10px] uppercase tracking-widest text-gold/40 mb-2">Celebrating</p>
           <h1 className="font-serif text-3xl font-bold text-[#f5ead8] chalk-text">{event.honoree_name}</h1>
         </div>
 
+        {/* Event details */}
         <div className="warm-glass rounded-2xl p-5 flex flex-col gap-0" style={{ border: "1px solid rgba(212,160,23,0.15)" }}>
           {eventDate && (
             <div className="flex gap-3 py-3 border-b border-gold/10">
@@ -256,20 +279,95 @@ export default function ManagerPage() {
           )}
         </div>
 
-        {/* Share RSVP link */}
-        <div className="warm-glass rounded-2xl p-5 mt-4 flex flex-col gap-3" style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
+        {/* Share RSVP link — copy + email + SMS */}
+        <div className="warm-glass rounded-2xl p-5 flex flex-col gap-3" style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
           <p className="font-serif text-sm font-semibold text-[#f5ead8]">📲 Share Your RSVP Link</p>
           <p className="font-serif text-xs text-[#f5ead8]/45 leading-relaxed">
-            Copy your personal link below and send it to the people you're inviting. They'll see the full event details and can RSVP directly.
+            Send your personal RSVP link to the people you&apos;re inviting. They&apos;ll see full event details and can RSVP directly.
           </p>
-          <button
-            onClick={copyRsvpLink}
-            className="py-2.5 rounded-xl font-serif text-sm font-semibold transition-all"
-            style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: copiedRsvp ? "#22c55e" : "rgba(212,160,23,0.8)" }}
-          >
-            {copiedRsvp ? "✓ Copied!" : "Copy RSVP Link"}
-          </button>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={copyRsvpLink}
+              className="py-2.5 rounded-xl font-serif text-xs font-semibold transition-all"
+              style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: copiedRsvp ? "#22c55e" : "rgba(212,160,23,0.8)" }}
+            >
+              {copiedRsvp ? "✓ Copied" : "🔗 Copy"}
+            </button>
+            <button
+              onClick={shareRsvpEmail}
+              className="py-2.5 rounded-xl font-serif text-xs font-semibold transition-all"
+              style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: "rgba(212,160,23,0.8)" }}
+            >
+              ✉️ Email
+            </button>
+            <button
+              onClick={shareRsvpSms}
+              className="py-2.5 rounded-xl font-serif text-xs font-semibold transition-all"
+              style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: "rgba(212,160,23,0.8)" }}
+            >
+              💬 Text
+            </button>
+          </div>
         </div>
+
+        {/* Share Your Story */}
+        {invitationToken && (
+          <Link
+            href={`/celebrate/${invitationToken}/share-memory`}
+            className="warm-glass rounded-2xl p-5 flex items-center gap-4 transition-all hover:border-gold/40"
+            style={{ border: "1px solid rgba(212,160,23,0.2)", textDecoration: "none" }}
+          >
+            <span className="text-2xl flex-shrink-0">📸</span>
+            <div className="flex-1">
+              <p className="font-serif text-sm font-semibold text-[#f5ead8]">Share Your Story</p>
+              <p className="font-serif text-xs text-[#f5ead8]/45 mt-0.5 leading-relaxed">
+                Share a photo, memory, or video message for {event.honoree_name}.
+              </p>
+            </div>
+            <span className="text-gold/30 flex-shrink-0 font-serif">→</span>
+          </Link>
+        )}
+
+        {/* Best Wishes */}
+        {wishesUrl && (
+          <div className="warm-glass rounded-2xl p-5 flex flex-col gap-3" style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl flex-shrink-0">🎂</span>
+              <div className="flex-1">
+                <p className="font-serif text-sm font-semibold text-[#f5ead8]">Best Wishes</p>
+                <p className="font-serif text-xs text-[#f5ead8]/45 mt-0.5 leading-relaxed">
+                  Send wishes directly, or share the link with people who can&apos;t attend.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <Link
+                href={wishesUrl}
+                className="py-2.5 rounded-xl font-serif text-xs font-semibold text-center transition-all"
+                style={{ background: "linear-gradient(135deg,#d4a017,#c8843a)", color: "#0f0a04", textDecoration: "none" }}
+              >
+                Send Wishes
+              </Link>
+              <button
+                onClick={copyWishesLink}
+                className="py-2.5 rounded-xl font-serif text-xs font-semibold transition-all"
+                style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: copiedWishes ? "#22c55e" : "rgba(212,160,23,0.8)" }}
+              >
+                {copiedWishes ? "✓ Copied" : "🔗 Copy"}
+              </button>
+              <button
+                onClick={() => {
+                  const body = encodeURIComponent(`Send your best wishes to ${event.honoree_name}: ${wishesUrl}`);
+                  window.open(`sms:?body=${body}`);
+                }}
+                className="py-2.5 rounded-xl font-serif text-xs font-semibold transition-all"
+                style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.3)", color: "rgba(212,160,23,0.8)" }}
+              >
+                💬 Text
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Manager Panel */}
@@ -319,7 +417,7 @@ export default function ManagerPage() {
                 className="flex-1 py-2.5 rounded-xl font-serif text-sm font-semibold transition-all"
                 style={{ background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.25)", color: copiedRsvp ? "#22c55e" : "rgba(212,160,23,0.7)" }}
               >
-                {copiedRsvp ? "✓ Copied!" : "📲 Copy RSVP Link"}
+                {copiedRsvp ? "✓ Copied!" : "📲 Copy RSVP"}
               </button>
             </div>
 
@@ -378,7 +476,6 @@ export default function ManagerPage() {
 
                     {isExpanded && (
                       <div className="px-4 pb-4 pt-0 flex flex-col gap-3 border-t border-gold/10">
-                        {/* Party members */}
                         {partyCount > 0 && (
                           <div className="pt-3">
                             <p className="text-[10px] font-serif uppercase tracking-widest text-gold/35 mb-2">Their party</p>
@@ -391,8 +488,6 @@ export default function ManagerPage() {
                             </div>
                           </div>
                         )}
-
-                        {/* Actions */}
                         <div className="flex gap-2 pt-1 flex-wrap">
                           {!hasRsvp && g.email && (
                             <button
