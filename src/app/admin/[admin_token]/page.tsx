@@ -68,6 +68,8 @@ export default function AdminDashboard() {
   const [newAdminName, setNewAdminName] = useState("");
   const [addingAdmin, setAddingAdmin] = useState(false);
   const [copiedAdminToken, setCopiedAdminToken] = useState<string | null>(null);
+  const [sendingAdminId, setSendingAdminId] = useState<string | null>(null);
+  const [sentAdminId, setSentAdminId] = useState<string | null>(null);
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
@@ -208,6 +210,14 @@ export default function AdminDashboard() {
     navigator.clipboard?.writeText(`${origin}/admin/${token}`);
     setCopiedAdminToken(token);
     setTimeout(() => setCopiedAdminToken(null), 2000);
+  };
+
+  const sendAdminInvite = async (id: string) => {
+    setSendingAdminId(id);
+    await api("/api/admin/admins", { action: "send_invite", target_id: id });
+    setSendingAdminId(null);
+    setSentAdminId(id);
+    setTimeout(() => setSentAdminId(null), 3000);
   };
 
   const exportCSV = () => {
@@ -709,7 +719,12 @@ export default function AdminDashboard() {
                     <button onClick={() => copyAdminLink(a.admin_token)}
                       className="flex-1 py-1.5 rounded-lg font-serif text-xs transition-colors"
                       style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: copiedAdminToken === a.admin_token ? "#22c55e" : "rgba(245,234,216,0.6)" }}>
-                      {copiedAdminToken === a.admin_token ? "✓ Copied" : "🔗 Copy Admin Link"}
+                      {copiedAdminToken === a.admin_token ? "✓ Copied" : "🔗 Copy Link"}
+                    </button>
+                    <button onClick={() => sendAdminInvite(a.id)} disabled={sendingAdminId === a.id}
+                      className="flex-1 py-1.5 rounded-lg font-serif text-xs transition-colors disabled:opacity-40"
+                      style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: sentAdminId === a.id ? "#22c55e" : "rgba(245,234,216,0.6)" }}>
+                      {sendingAdminId === a.id ? "Sending…" : sentAdminId === a.id ? "✓ Sent" : "📤 Email Link"}
                     </button>
                     {!a.is_super && (
                       <button onClick={() => toggleAdmin(a.id)}
