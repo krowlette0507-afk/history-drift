@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 
-type Tab = "overview" | "guests" | "memories" | "carousel" | "admins";
+type Tab = "overview" | "guests" | "memories" | "carousel" | "admins" | "managers";
 type RsvpResponse = "yes" | "no" | "maybe";
 
 interface AdminRecord { id: string; email: string; name: string | null; admin_token: string; is_active: boolean; is_super: boolean; last_accessed_at: string | null; created_at: string; }
@@ -71,6 +71,17 @@ export default function AdminDashboard() {
   const [sendingAdminId, setSendingAdminId] = useState<string | null>(null);
   const [sentAdminId, setSentAdminId] = useState<string | null>(null);
 
+  // Managers
+  interface ManagerRecord { id: string; email: string; name: string | null; manager_token: string; is_active: boolean; created_at: string; last_accessed_at: string | null; }
+  const [managers, setManagers] = useState<ManagerRecord[]>([]);
+  const [managersLoading, setManagersLoading] = useState(false);
+  const [newManagerEmail, setNewManagerEmail] = useState("");
+  const [newManagerName, setNewManagerName] = useState("");
+  const [addingManager, setAddingManager] = useState(false);
+  const [copiedManagerToken, setCopiedManagerToken] = useState<string | null>(null);
+  const [sendingManagerId, setSendingManagerId] = useState<string | null>(null);
+  const [sentManagerId, setSentManagerId] = useState<string | null>(null);
+
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
   useEffect(() => {
@@ -122,12 +133,20 @@ export default function AdminDashboard() {
     setAdminsLoading(false);
   }, [api]);
 
+  const loadManagers = useCallback(async () => {
+    setManagersLoading(true);
+    const d = await api("/api/admin/managers", { action: "list" });
+    setManagers(d.managers ?? []);
+    setManagersLoading(false);
+  }, [api]);
+
   useEffect(() => {
     if (!admin) return;
     if (tab === "guests") loadGuests();
     if (tab === "memories") loadMemories();
     if (tab === "carousel") loadCarousel();
     if (tab === "admins" && admin.is_super) loadAdmins();
+    if (tab === "managers" && admin.is_super) loadManagers();
     if (tab === "overview") { loadGuests(); loadMemories("all"); }
   }, [tab, admin]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -220,6 +239,36 @@ export default function AdminDashboard() {
     setTimeout(() => setSentAdminId(null), 3000);
   };
 
+  const addManager = async () => {
+    if (!newManagerEmail.trim()) return;
+    setAddingManager(true);
+    const d = await api("/api/admin/managers", { action: "create", email: newManagerEmail, name: newManagerName });
+    if (!d.error) {
+      setManagers((prev) => [...prev, d.manager]);
+      setNewManagerEmail(""); setNewManagerName("");
+    }
+    setAddingManager(false);
+  };
+
+  const toggleManager = async (id: string) => {
+    const d = await api("/api/admin/managers", { action: "toggle", target_id: id });
+    setManagers((prev) => prev.map((m) => m.id === id ? { ...m, is_active: d.is_active } : m));
+  };
+
+  const copyManagerLink = (manager_token: string) => {
+    navigator.clipboard?.writeText(`${origin}/manager/${manager_token}`);
+    setCopiedManagerToken(manager_token);
+    setTimeout(() => setCopiedManagerToken(null), 2000);
+  };
+
+  const sendManagerInvite = async (id: string) => {
+    setSendingManagerId(id);
+    await api("/api/admin/managers", { action: "send_invite", target_id: id });
+    setSendingManagerId(null);
+    setSentManagerId(id);
+    setTimeout(() => setSentManagerId(null), 3000);
+  };
+
   const exportCSV = () => {
     const headers = ["First Name", "Last Name", "Email", "Mobile", "Invite URL", "RSVP Status"];
     const rows = guests.map((g) => [
@@ -303,6 +352,7 @@ export default function AdminDashboard() {
       { id: "memories",  label: `Memories${pendingMem ? ` ·${pendingMem}` : ""}` },
       { id: "carousel",  label: "Carousel" },
       { id: "admins",    label: "Admins", show: admin.is_super },
+      { id: "managers",  label: `Managers${managers.length ? ` (${managers.length})` : ""}`, show: admin.is_super },
     ] as { id: Tab; label: string; show?: boolean }[]
   ).filter((t) => t.show !== false);
 
@@ -676,6 +726,70 @@ export default function AdminDashboard() {
                 {savingCarousel ? "Saving…" : carouselSaved ? "✓ Saved" : "Save Carousel Order"}
               </button>
             </>
+          )}
+        </div>
+      )}
+
+      {/* ── MANAGERS ─────────────────────────────────────────────────────── */}
+      {tab === "managers" && admin.is_super && (
+        <div className="flex flex-col gap-4">
+          <div className="warm-glass rounded-2xl p-5 flex flex-col gap-3">
+            <p className="font-serif text-[10px] uppercase tracking-widest text-gold/40">Add Manager</p>
+            <input type="email" placeholder="Their email address *" value={newManagerEmail}
+              onChange={(e) => setNewManagerEmail(e.target.value)} className={inputCls} style={inputStyle} />
+            <input type="text" placeholder="Their name (optional)" value={newManagerName}
+              onChange={(e) => setNewManagerName(e.target.value)} className={inputCls} style={inputStyle} />
+            <button onClick={addManager} disabled={addingManager || !newManagerEmail.trim()}
+              className="py-2.5 rounded-xl font-serif text-sm font-semibold text-[#0f0a04] disabled:opacity-40"
+              style={{ background: "linear-gradient(135deg,#d4a017,#c8843a)" }}>
+              {addingManager ? "Creating…" : "Create Manager Link →"}
+            </button>
+            <p className="font-serif text-[10px] text-[#f5ead8]/30">
+              Managers can share a personal RSVP link with their guests and track responses. They cannot see the full admin dashboard.
+            </p>
+          </div>
+
+          {managersLoading ? (
+            <p className="font-serif text-sm text-gold/30 text-center py-8 animate-pulse">Loading…</p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {managers.length === 0 && (
+                <p className="font-serif text-sm text-[#f5ead8]/30 text-center py-8">No managers yet.</p>
+              )}
+              {managers.map((m) => (
+                <div key={m.id} className="warm-glass rounded-2xl p-4 flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-serif font-semibold text-[#f5ead8]">{m.name ?? m.email}</p>
+                      {m.name && <p className="font-serif text-xs text-[#f5ead8]/40">{m.email}</p>}
+                      <p className="font-serif text-[10px] text-[#f5ead8]/25 mt-0.5">
+                        {m.last_accessed_at
+                          ? `Last access: ${new Date(m.last_accessed_at).toLocaleDateString()}`
+                          : "Never accessed"}
+                      </p>
+                    </div>
+                    {badge(m.is_active ? "Active" : "Inactive", m.is_active ? "#22c55e" : "#6b7280")}
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => copyManagerLink(m.manager_token)}
+                      className="flex-1 py-1.5 rounded-lg font-serif text-xs transition-colors"
+                      style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: copiedManagerToken === m.manager_token ? "#22c55e" : "rgba(245,234,216,0.6)" }}>
+                      {copiedManagerToken === m.manager_token ? "✓ Copied" : "🔗 Copy Link"}
+                    </button>
+                    <button onClick={() => sendManagerInvite(m.id)} disabled={sendingManagerId === m.id}
+                      className="flex-1 py-1.5 rounded-lg font-serif text-xs transition-colors disabled:opacity-40"
+                      style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.15)", color: sentManagerId === m.id ? "#22c55e" : "rgba(245,234,216,0.6)" }}>
+                      {sendingManagerId === m.id ? "Sending…" : sentManagerId === m.id ? "✓ Sent" : "📤 Email Link"}
+                    </button>
+                    <button onClick={() => toggleManager(m.id)}
+                      className="px-4 py-1.5 rounded-lg font-serif text-xs transition-colors"
+                      style={{ background: "rgba(212,160,23,0.05)", border: "1px solid rgba(212,160,23,0.12)", color: m.is_active ? "rgba(239,68,68,0.6)" : "rgba(34,197,94,0.6)" }}>
+                      {m.is_active ? "Deactivate" : "Reactivate"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
